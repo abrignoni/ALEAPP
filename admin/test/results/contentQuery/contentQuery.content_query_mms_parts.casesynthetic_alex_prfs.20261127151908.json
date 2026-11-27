@@ -1,0 +1,90 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "MMS Parts (content query)",
+    "function_name": "content_query_mms_parts",
+    "case_number": "casesynthetic_alex_prfs",
+    "number_of_columns": 14,
+    "number_of_rows": 3,
+    "total_data_size_bytes": 457,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_mms_parts.casesynthetic_alex_prfs.zip",
+    "start_time": "2026-11-27T15:19:08.782536+00:00",
+    "end_time": "2026-11-27T15:19:08.821095+00:00",
+    "run_time_seconds": 0.0005254745483398438,
+    "last_commit": {
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+    }
+  },
+  "headers": [
+    "Message ID",
+    "Sequence",
+    "Content Type",
+    "Name",
+    "File Name",
+    "Content Location",
+    "Content ID",
+    "Charset",
+    "Text",
+    "Device Path",
+    "Part ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "7",
+      "-1",
+      "application/smil",
+      "NULL",
+      "NULL",
+      "smil.xml",
+      "<smil>",
+      "NULL",
+      "<smil><body/></smil>",
+      "NULL",
+      "20",
+      "",
+      1,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/mms/mms_part.txt"
+    ],
+    [
+      "7",
+      "0",
+      "image/jpeg",
+      "IMG_0001.jpg",
+      "NULL",
+      "IMG_0001.jpg",
+      "<img1>",
+      "NULL",
+      "NULL",
+      "/data/user/0/com.android.providers.telephony/app_parts/PART_1767243600000_IMG_0001.jpg",
+      "21",
+      "",
+      2,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/mms/mms_part.txt"
+    ],
+    [
+      "8",
+      "0",
+      "text/plain",
+      "NULL",
+      "NULL",
+      "text_0.txt",
+      "<text_0>",
+      "106",
+      "Two lines\nof text",
+      "NULL",
+      "22",
+      "",
+      3,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/mms/mms_part.txt"
+    ]
+  ]
+}

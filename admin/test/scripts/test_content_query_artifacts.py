@@ -160,8 +160,102 @@ class UnreadableFileTest(unittest.TestCase):
         calls = [row for row in rows if row[2] == 'content://call_log/calls']
         self.assertEqual(sorted(row[4] for row in calls), sorted([reader.ROWS, reader.UNREADABLE]))
         unreadable = next(row for row in calls if row[4] == reader.UNREADABLE)
-        self.assertTrue(unreadable[6].startswith('could not be read: '))
-        self.assertNotIn(self.folder.name, unreadable[6])
+        self.assertTrue(unreadable[7].startswith('could not be read: '))
+        self.assertNotIn(self.folder.name, unreadable[7])
+
+
+class AlexPrfsTest(unittest.TestCase):
+    """The extra/content_provider folder of an ALEX PRFS zip, with the .status.json beside each file."""
+
+    def setUp(self):
+        reader.clear_cache()
+        self.addCleanup(reader.clear_cache)
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.root = os.path.join(self.folder.name, 'extra', 'content_provider')
+        self.paths = []
+
+    def write(self, name, text=None, status=None):
+        base = os.path.join(self.root, *name.split('/'))
+        os.makedirs(os.path.dirname(base), exist_ok=True)
+        if text is not None:
+            with open(base + '.txt', 'w', encoding='utf-8', newline='') as handle:
+                handle.write(text)
+            self.paths.append(base + '.txt')
+        if status is not None:
+            with open(base + '.status.json', 'w', encoding='utf-8', newline='') as handle:
+                handle.write(status)
+            self.paths.append(base + '.status.json')
+
+    def files(self):
+        headers, rows, sources = contentQuery.content_query_files.__wrapped__(StubContext(self.folder.name,
+                                                                                        self.paths))
+        names = [header[0] if isinstance(header, tuple) else header for header in headers]
+        by_file = {row[3]: dict(zip(names, row)) for row in rows if row[3]}
+        return names, by_file, [row for row in rows if not row[3]], sources.split('\n')
+
+    def test_files_artifact(self):
+        self.write('sms/sms', 'Row: 0 _id=12, address=+15550100001, body=Hi, date=1767225600000\n',
+                   '{"uri": "content://sms", "status": "rows"}')
+        self.write('call_log/call_log_calls', 'No result found.\n', '{"uri": "content://call_log/calls", '
+                                                                    '"status": "empty"}')
+        # ALEX's own parser finds no row when the first row-like line is not 'Row: 0'.
+        self.write('mms/mms', 'Row: 1 note=x\nRow: 0 _id=7, thread_id=5, date=1767243600, msg_box=1\n',
+                   '{"uri": "content://mms", "status": "error"}')
+        self.write('mms/mms_addr', None, '{"uri": "content://mms/addr", "status": "empty"}')
+        self.write('mms/mms_part', 'Row: 0 _id=40, mid=7, seq=0, ct=text/plain, text=Hi\n')
+        self.write('com.android.contacts/com.android.contacts_contacts', 'Row: 0 _id=1, display_name=Ana\n',
+                   'not json')
+        self.write('sms/sms_inbox', 'Row: 0 _id=12, address=+15550100001, body=Hi\n',
+                   '{"uri": "content://sms/inbox", "status": "rows"}')
+        self.write('sms/sms_sent', None, '{"uri": "content://sms/sent", "status": "empty"}')
+        names, by_file, no_file_name, sources = self.files()
+        self.assertEqual(names[4:6], ['Status', 'Tool Status'])
+        self.assertTrue(all(row['Layout'] == reader.ALEX_PRFS for row in by_file.values()))
+        sms = by_file['sms/sms.txt']
+        self.assertEqual((sms['Status'], sms['Tool Status'], sms['Rows'], sms['Detail']), (reader.ROWS, 'rows', 1, ''))
+        self.assertEqual(sms['Folder'], 'extra/content_provider')
+        calls = by_file['call_log/call_log_calls.txt']
+        self.assertEqual((calls['Status'], calls['Tool Status'], calls['Detail']), (reader.NO_RESULT, 'empty', ''))
+        mms = by_file['mms/mms.txt']
+        self.assertEqual((mms['Status'], mms['Tool Status']), (reader.ROWS, 'error'))
+        self.assertIn('ALEX wrote status error', mms['Detail'])
+        addr = by_file['mms/mms_addr.txt']
+        self.assertEqual((addr['Status'], addr['Tool Status'], addr['Read By']),
+                         (reader.NO_FILE, 'empty', 'MMS Addresses (content query)'))
+        self.assertIn('not kept', addr['Detail'])
+        part = by_file['mms/mms_part.txt']
+        self.assertEqual((part['Tool Status'], part['Detail']), ('', 'no .status.json beside this file'))
+        contacts = by_file['com.android.contacts/com.android.contacts_contacts.txt']
+        self.assertEqual((contacts['Status'], contacts['Tool Status']), (reader.ROWS, ''))
+        self.assertIn('not JSON', contacts['Detail'])
+        media = by_file['media/media_external_file.txt']
+        self.assertEqual((media['Status'], media['Tool Status']), (reader.NO_FILE, ''))
+        self.assertIn('not kept', media['Detail'])
+        inbox = by_file['sms/sms_inbox.txt']
+        self.assertEqual((inbox['URI'], inbox['Tool Status'], inbox['Read By']), ('', 'rows', 'not read'))
+        sent = by_file['sms/sms_sent.txt']
+        self.assertEqual((sent['URI'], sent['Status'], sent['Tool Status'], sent['Read By']),
+                         ('', reader.NO_FILE, 'empty', 'not read'))
+        # ALEX queries content://com.android.calendar/events in neither layout.
+        self.assertEqual([row[2] for row in no_file_name], ['content://com.android.calendar/events'])
+        self.assertEqual(sorted(sources), sorted(self.paths))
+
+    def test_only_status_files(self):
+        self.write('sms/sms', None, '{"uri": "content://sms", "status": "error"}')
+        _names, by_file, _no_name, _sources = self.files()
+        sms = by_file['sms/sms.txt']
+        self.assertEqual((sms['Layout'], sms['Status'], sms['Tool Status']), (reader.ALEX_PRFS, reader.NO_FILE, 'error'))
+
+    def test_data_artifacts_read_the_prfs_files(self):
+        self.write('sms/sms', 'Row: 0 _id=12, address=+15550100001, body=Hi, date=1767225600000\n',
+                   '{"uri": "content://sms", "status": "rows"}')
+        self.write('mms/mms', 'Row: 0 _id=7, thread_id=5, date=1767243600, msg_box=1\n')
+        txt = [path for path in self.paths if path.endswith('.txt')]
+        _headers, rows, _sources = contentQuery._read(StubContext(self.folder.name, txt), 'sms')  # pylint: disable=protected-access
+        self.assertEqual(len(rows), 1)
+        _headers, rows, _sources = contentQuery._read(StubContext(self.folder.name, txt), 'mms')  # pylint: disable=protected-access
+        self.assertIn(contentQuery.NOTE_ADDRESSES_NOT_KEPT, rows[0][-3])  # Parse Note
 
 
 if __name__ == '__main__':

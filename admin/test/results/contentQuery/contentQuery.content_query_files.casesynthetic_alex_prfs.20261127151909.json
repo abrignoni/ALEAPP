@@ -1,0 +1,182 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Content Query Files",
+    "function_name": "content_query_files",
+    "case_number": "casesynthetic_alex_prfs",
+    "number_of_columns": 10,
+    "number_of_rows": 12,
+    "total_data_size_bytes": 3046,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_files.casesynthetic_alex_prfs.zip",
+    "start_time": "2026-11-27T15:19:09.579591+00:00",
+    "end_time": "2026-11-27T15:19:09.626903+00:00",
+    "run_time_seconds": 0.004309654235839844,
+    "last_commit": {
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+    }
+  },
+  "headers": [
+    "Layout",
+    "Folder",
+    "URI",
+    "File",
+    "Status",
+    "Tool Status",
+    "Rows",
+    "Detail",
+    "Columns",
+    "Read By"
+  ],
+  "data": [
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://sms",
+      "sms/sms.txt",
+      "rows",
+      "rows",
+      5,
+      "",
+      "_id, thread_id, address, person, date, date_sent, read, status, type, subject, body, seen, sub_id, creator",
+      "SMS (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://mms",
+      "mms/mms.txt",
+      "rows",
+      "error",
+      3,
+      "1 line(s) of text before the first row, not read: Row: 1 note=pasted before the rows; ALEX wrote status error for this file, which its own row parser sets; the text reads as rows",
+      "_id, thread_id, date, date_sent, msg_box, read, sub, ct_t, m_type, seen, sub_id, creator, text_only",
+      "MMS (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://mms/part",
+      "mms/mms_part.txt",
+      "rows",
+      "rows",
+      3,
+      "",
+      "_id, mid, seq, ct, name, chset, cid, cl, fn, _data, text",
+      "MMS Parts (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://mms/addr",
+      "mms/mms_addr.txt",
+      "rows",
+      "rows",
+      9,
+      "",
+      "_id, msg_id, contact_id, address, type, charset, sub_id",
+      "MMS Addresses (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://call_log/calls",
+      "call_log/call_log_calls.txt",
+      "No result found.",
+      "empty",
+      "",
+      "",
+      "",
+      "Call Log (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://com.android.contacts/contacts",
+      "com.android.contacts/com.android.contacts_contacts.txt",
+      "access denied (SecurityException)",
+      "error",
+      "",
+      "provider com.android.contacts: java.lang.SecurityException: Permission Denial: opening provider com.android.providers.contacts.ContactsProvider2 from (null) (pid=12345, uid=2000) requires android.permission.READ_CONTACTS or android.permission.WRITE_CONTACTS",
+      "",
+      "Contacts (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://com.android.contacts/data/phones",
+      "com.android.contacts/com.android.contacts_data_phones.txt",
+      "rows",
+      "rows",
+      2,
+      "",
+      "_id, contact_id, raw_contact_id, display_name, data1, data2, data3, data4, data15, account_type, account_name, contact_last_updated_timestamp, hash_id",
+      "Contact Phone Numbers (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://com.android.calendar/events",
+      "",
+      "not queried by this tool",
+      "",
+      "",
+      "",
+      "",
+      "Calendar Events (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://com.android.calendar/event_entities",
+      "com.android.calendar/com.android.calendar_event_entities.txt",
+      "empty file",
+      "empty",
+      "",
+      "",
+      "",
+      "Calendar Event Entities (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://com.android.calendar/calendars",
+      "com.android.calendar/com.android.calendar_calendars.txt",
+      "rows",
+      "",
+      2,
+      "no .status.json beside this file",
+      "_id, account_name, account_type, calendar_displayName, ownerAccount, visible, sync_events, deleted",
+      "Calendars (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "content://media/external/file",
+      "media/media_external_file.txt",
+      "no file",
+      "error",
+      "",
+      "the .status.json of this file is here but the file is not, so it was not kept in this extraction",
+      "",
+      "MediaStore Files (content query)"
+    ],
+    [
+      "ALEX PRFS zip",
+      "ALEX_PRFS_SYNTH0006/extra/content_provider",
+      "",
+      "sms/sms_inbox.txt",
+      "rows",
+      "rows",
+      5,
+      "",
+      "_id, thread_id, address, person, date, date_sent, read, status, type, subject, body, seen, sub_id, creator",
+      "not read"
+    ]
+  ]
+}

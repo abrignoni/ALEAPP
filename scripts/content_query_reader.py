@@ -54,6 +54,7 @@ Parsing:
    list; when the whole row holds it too, the row says the boundary is ambiguous.
 """
 import collections
+import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
@@ -448,12 +449,28 @@ def epoch_to_utc(text, unit):
 # content://<key>/<sub> with each '/' of <sub> written as '_'. Up to commit 8f27e7a no file
 # is written when the output holds any of: Error while accessing provider, Unsupported
 # argument, No result found, command not found. From ed3d41eb the file is written whenever
-# the output holds a row. The PRFS zip layout of ed3d41eb (extra/content_provider/) is not read.
+# the output holds a row.
+# ALEX's PRFS zip (from ed3d41eb, when the extraction is written to a zip): the same
+# <key>/<name>.txt under extra/content_provider/, written for every URI it queries, also when
+# the output is empty or an error, with <name>.status.json beside it: {"uri": "content://...",
+# "status": "rows" | "empty" | "error"}. ALEX sets the status with its own row parser
+# (content_to_json): rows when it finds a row, empty when the output is blank or exactly
+# 'No result found.', and error otherwise. With JSON output on it also writes <name>.json,
+# which is not read here.
 TRIAGE = 'android_triage'
 ALEX = 'ALEX'
+ALEX_PRFS = 'ALEX PRFS zip'
 TRIAGE_FOLDER = re.compile(r'\d{8}_\d{2}_\d{2}_\d{2}_contentprovider\Z')
 TRIAGE_OWN_FILES = ('content_providers_list.txt',)
 ALEX_FOLDER_PREFIX = 'content_provider_'
+ALEX_PRFS_FOLDER = ('extra', 'content_provider')
+STATUS_SUFFIX = '.status.json'
+# What ALEX's status says, as the reader's statuses it stands for.
+TOOL_STATUSES = {
+    'rows': (ROWS,),
+    'empty': (NO_RESULT, EMPTY_FILE),
+    'error': (ACCESS_DENIED, PROVIDER_ERROR, UNRECOGNISED),
+}
 
 Uri = collections.namedtuple('Uri', 'key uri triage alex')
 URIS = (
@@ -480,11 +497,18 @@ def _parts(path):
     return [part for part in re.split(r'[\\/]', str(path)) if part]
 
 
+def _alex_name(parts):
+    """True when the last two parts are <key>/<key>.txt or <key>/<key>_<sub>.txt."""
+    name, parent = parts[-1], parts[-2]
+    return name == parent + '.txt' or name.startswith(parent + '_')
+
+
 def layout_of(path):
     """(layout, folder) for a content query output file of a known layout, else None.
 
-    The folder is the layout's output folder (the *_contentprovider folder of android_triage
-    or the content_provider_<serial> folder of ALEX), as a path of the same spelling."""
+    The folder is the layout's output folder (the *_contentprovider folder of android_triage,
+    the content_provider_<serial> folder of ALEX, or the extra/content_provider folder of an
+    ALEX PRFS zip), as a path of the same spelling."""
     parts = _parts(path)
     if len(parts) < 2 or not parts[-1].endswith('.txt'):
         return None
@@ -493,10 +517,46 @@ def layout_of(path):
         if name in TRIAGE_OWN_FILES or name == parent + '.txt':
             return None
         return TRIAGE, os.path.dirname(str(path))
-    if len(parts) >= 3 and parts[-3].startswith(ALEX_FOLDER_PREFIX):
-        if name == parent + '.txt' or name.startswith(parent + '_'):
-            return ALEX, os.path.dirname(os.path.dirname(str(path)))
+    if len(parts) >= 4 and tuple(parts[-4:-2]) == ALEX_PRFS_FOLDER and _alex_name(parts):
+        return ALEX_PRFS, os.path.dirname(os.path.dirname(str(path)))
+    if len(parts) >= 3 and parts[-3].startswith(ALEX_FOLDER_PREFIX) and _alex_name(parts):
+        return ALEX, os.path.dirname(os.path.dirname(str(path)))
     return None
+
+
+def status_file_of(path):
+    """(layout, folder, path of the .txt it describes) for a .status.json of an ALEX PRFS zip, else None."""
+    text = str(path)
+    if not text.endswith(STATUS_SUFFIX):
+        return None
+    output = text[:-len(STATUS_SUFFIX)] + '.txt'
+    layout = layout_of(output)
+    if layout is None or layout[0] != ALEX_PRFS:
+        return None
+    return layout[0], layout[1], output
+
+
+def read_tool_status(path):
+    """(status, problem) of an ALEX .status.json: the status as written and '', or '' and why it was not read."""
+    try:
+        with open(path, 'rb') as handle:
+            raw = handle.read()
+    except OSError as error:
+        return '', 'status file not readable: ' + type(error).__name__ + (
+            f' ({error.strerror})' if error.strerror else '')
+    try:
+        data = json.loads(raw.decode('utf-8-sig'))
+    except (UnicodeDecodeError, ValueError) as error:
+        return '', f'status file is not JSON: {type(error).__name__}'
+    status = data.get('status') if isinstance(data, dict) else None
+    if not isinstance(status, str):
+        return '', 'status file holds no status text'
+    return status, ''
+
+
+def tool_status_disagrees(tool_status, status):
+    """True when ALEX's status for a file does not stand for the status read from its text."""
+    return tool_status in TOOL_STATUSES and status not in TOOL_STATUSES[tool_status]
 
 
 def layout_file(layout, uri):
@@ -520,6 +580,9 @@ def missing_file_detail(layout):
         return ('android_triage creates the file of every URI it queries with a shell redirect, even when the '
                 'query prints nothing, so the file was not kept in this extraction or the run stopped '
                 'before this query')
+    if layout == ALEX_PRFS:
+        return ('ALEX writes the file of every URI it queries into its PRFS zip, also when the query printed no '
+                'row, so the file was not kept in this extraction or the run stopped before this query')
     return ('unknown: ALEX writes no file when the query printed no row (No result found. or an error), and up to '
             'commit 8f27e7a also when the output holds one of its four error strings anywhere, including inside '
             'a value')

@@ -1,11 +1,12 @@
 __artifacts_v2__ = {
     "content_query_files": {
         "name": "Content Query Files",
-        "description": "What each saved content query output file of an android_triage or ALEX raw text extraction "
-                       "holds: rows, No result found., an access or provider error, an empty file, or no file.",
+        "description": "What each saved content query output file of an android_triage or ALEX raw text extraction, "
+                       "or of an ALEX PRFS zip, holds: rows, No result found., an access or provider error, an empty "
+                       "file, or no file, with the status ALEX wrote beside it in a PRFS zip.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Logs & Diagnostics",
         "notes": "One row per URI that the Content Query artifacts read, for each output folder found, and one row per "
@@ -15,7 +16,8 @@ __artifacts_v2__ = {
                  "writes under the device's ANDROID_ID folder, and the content_provider_<serial> folder that ALEX "
                  "(prosch88/ALEX, alex.py, query_content, "
                  "https://github.com/prosch88/ALEX/blob/9ef34bf02c7f7ff29e1ad1a1db3c7b2ac6e3f048/alex.py#L4280-L4388) "
-                 "writes when its content provider output is saved as raw text, with one <key> folder per provider. "
+                 "writes when its content provider output is saved as raw text, with one <key> folder per provider, "
+                 "and the extra/content_provider folder of an ALEX PRFS zip (below). "
                  "ALEX's JSON output and the databases it rebuilds from it are not read here. Status says what the "
                  "file holds: rows (with the row count), 'No result found.' (the content command prints it when the "
                  "provider returns no cursor or an empty one), 'access denied (SecurityException)' when the text holds "
@@ -38,8 +40,17 @@ __artifacts_v2__ = {
                  "https://github.com/prosch88/ALEX/blob/ed3d41ebea64f73f86f4568f29ff6cf5a1a10cf1/alex.py#L4280-L4321) "
                  "it writes the file whenever the output holds a row, so a missing file then means no row was printed "
                  "(No result found. or an error). Either way, for ALEX a missing file is reported as unknown, since no "
-                 "rows and an error look the same. From ed3d41eb ALEX's PRFS zip also keeps the raw text of each query "
-                 "and a status file under extra/content_provider/; that layout is not read here. A row of a folder "
+                 "rows and an error look the same. From ed3d41eb ALEX's PRFS zip (layout 'ALEX PRFS zip') keeps the "
+                 "same <key>/<name>.txt under extra/content_provider/, written for every URI ALEX queries, also when "
+                 "the output is empty or an error, so a file missing there was not kept in the extraction or the "
+                 "run stopped before that query. Beside each file ALEX writes <name>.status.json; Tool Status "
+                 "shows its status as written (rows, empty or error) and is blank for the other layouts. ALEX "
+                 "sets it with its own row parser: rows when it finds a row, empty when the output is blank or "
+                 "exactly 'No result found.', error otherwise. Status still comes from the text, and Detail says "
+                 "when ALEX's status does not stand for it (rows for rows; empty for 'No result found.' or an "
+                 "empty file; error for access denied, provider error or text not recognised), when the status "
+                 "file is missing or cannot be read, and, on a row of its own, when a status file has no text "
+                 "file beside it. The <name>.json ALEX writes with JSON output on is not read. A row of a folder "
                  "can say 'not queried by this tool' when the layout has no file for "
                  "that URI (android_triage does not query SMS, MMS or the call log; ALEX does not query "
                  "content://com.android.calendar/events). Rows of a file ending with a provider error after its last "
@@ -50,7 +61,8 @@ __artifacts_v2__ = {
                  "listed. Evidence tier: source-verified (format from the AOSP source above, layouts from the source "
                  "of "
                  "each tool at the commits linked) and tested on synthetic files only.",
-        "paths": ('*/*_contentprovider/*.txt', '*/content_provider_*/*.txt'),
+        "paths": ('*/*_contentprovider/*.txt', '*/content_provider_*/*.txt', '*/extra/content_provider/*.txt',
+                  '*/extra/content_provider/*.status.json'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "file-text",
     },
@@ -60,16 +72,18 @@ __artifacts_v2__ = {
                        "with dates read as milliseconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/sms/sms.txt); android_triage does not "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/sms/sms.txt, or "
+                 "extra/content_provider/sms/sms.txt in an ALEX PRFS zip); android_triage does not "
                  "query SMS. ALEX also keeps sms_inbox, sms_sent, sms_draft, sms_outbox, sms_queued and sms_all, which "
                  "are views of the same table; they are not read, so a message is not reported twice. ALEX up to "
                  "commit 8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or another of "
                  "its four error strings anywhere, so with it one such message body leaves no sms.txt at all; from "
                  "ed3d41eb (2026-11-25) it writes the file whenever the output holds a row. Content Query Files "
-                 "reports a missing file as unknown. "
+                 "reports a missing file as unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Date and Date Sent: the provider contract gives the type INTEGER (long) and no unit "
                  "(Telephony.TextBasedSmsColumns.DATE and DATE_SENT, "
                  "https://developer.android.com/reference/android/provider/Telephony.TextBasedSmsColumns#DATE). They "
@@ -98,7 +112,7 @@ __artifacts_v2__ = {
                  "listed column that a device does not print is blank and named in the log. Source Line is the line "
                  "of the file where the row starts. Evidence tier: source-verified and tested on synthetic files "
                  "only.",
-        "paths": ('*/content_provider_*/sms/sms.txt',),
+        "paths": ('*/content_provider_*/sms/sms.txt', '*/extra/content_provider/sms/sms.txt'),
         "output_types": "standard",
         "artifact_icon": "message",
         "multiline_columns": ["Body", "Parse Note"],
@@ -109,10 +123,11 @@ __artifacts_v2__ = {
                        "printed, with dates read as seconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms.txt); android_triage does not "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms.txt, or "
+                 "extra/content_provider/mms/mms.txt in an ALEX PRFS zip); android_triage does not "
                  "query MMS. ALEX's mms_inbox, mms_sent and mms_outbox files are views of the same table and are not "
                  "read. From, To, Cc and Bcc are the address values of the rows of mms_addr.txt in the same folder "
                  "(content://mms/addr) whose msg_id is the message's _id, by type, in file order and joined with "
@@ -151,7 +166,8 @@ __artifacts_v2__ = {
                  "found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -168,7 +184,8 @@ __artifacts_v2__ = {
                  "listed column that a device does not print is blank and named in the log. Source Line is the line "
                  "of the file where the row starts. Evidence tier: source-verified and tested on synthetic files "
                  "only.",
-        "paths": ('*/content_provider_*/mms/mms.txt', '*/content_provider_*/mms/mms_addr.txt'),
+        "paths": ('*/content_provider_*/mms/mms.txt', '*/extra/content_provider/mms/mms.txt',
+                  '*/content_provider_*/mms/mms_addr.txt', '*/extra/content_provider/mms/mms_addr.txt'),
         "output_types": "standard",
         "artifact_icon": "message",
         "multiline_columns": ["Subject", "Parse Note"],
@@ -179,10 +196,11 @@ __artifacts_v2__ = {
                        "as printed, with the PduHeaders name of each address type.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt); android_triage "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_addr.txt, or "
+                 "extra/content_provider/mms/mms_addr.txt in an ALEX PRFS zip); android_triage "
         "does "
                  "not query MMS. AOSP's MmsProvider does not match content://mms/addr (it matches "
                  "content://mms/<id>/addr, line 1211 at "
@@ -205,7 +223,8 @@ __artifacts_v2__ = {
                  "8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -218,7 +237,8 @@ __artifacts_v2__ = {
                  "columns of each file), and a listed column that a device does not print is blank and named in the "
                  "log. Source Line is the line of the file where the row starts. Evidence tier: source-verified and "
                  "tested on synthetic files only.",
-        "paths": ('*/content_provider_*/mms/mms_addr.txt', '*/content_provider_*/mms/mms.txt'),
+        "paths": ('*/content_provider_*/mms/mms_addr.txt', '*/extra/content_provider/mms/mms_addr.txt',
+                  '*/content_provider_*/mms/mms.txt', '*/extra/content_provider/mms/mms.txt'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "users",
         "multiline_columns": ["Parse Note"],
@@ -229,10 +249,11 @@ __artifacts_v2__ = {
                        "printed; the part content (media) is not in this output.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_part.txt); android_triage "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/mms/mms_part.txt, or "
+                 "extra/content_provider/mms/mms_part.txt in an ALEX PRFS zip); android_triage "
         "does "
                  "not query MMS. A part row gives the part's message (mid, the _id of the row in MMS (content query)), "
                  "position (seq), content type (ct), names (name, fn, cl, cid), character set (chset), the path of the "
@@ -244,7 +265,8 @@ __artifacts_v2__ = {
                  "output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -261,7 +283,7 @@ __artifacts_v2__ = {
                  "listed column that a device does not print is blank and named in the log. Source Line is the line "
                  "of the file where the row starts. Evidence tier: source-verified and tested on synthetic files "
                  "only.",
-        "paths": ('*/content_provider_*/mms/mms_part.txt',),
+        "paths": ('*/content_provider_*/mms/mms_part.txt', '*/extra/content_provider/mms/mms_part.txt'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "paperclip",
         "multiline_columns": ["Text", "Parse Note"],
@@ -272,10 +294,11 @@ __artifacts_v2__ = {
                        "as printed, with the date read as milliseconds and the duration as seconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Calls & Contacts",
-        "notes": "Read from ALEX raw text output only (content_provider_<serial>/call_log/call_log_calls.txt); "
+        "notes": "Read from ALEX raw text output only (content_provider_<serial>/call_log/call_log_calls.txt, or "
+                 "extra/content_provider/call_log/call_log_calls.txt in an ALEX PRFS zip); "
                  "android_triage does not query the call log. Date is read as milliseconds since 1970-01-01 UTC and "
                  "Duration (s) is the duration value as printed, in seconds, per the provider contract "
                  "(CallLog.Calls.DATE, 'in milliseconds since the epoch', and CallLog.Calls.DURATION, 'in seconds', "
@@ -289,7 +312,8 @@ __artifacts_v2__ = {
                  "output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -306,7 +330,8 @@ __artifacts_v2__ = {
                  "listed column that a device does not print is blank and named in the log. Source Line is the line "
                  "of the file where the row starts. Evidence tier: source-verified and tested on synthetic files "
                  "only.",
-        "paths": ('*/content_provider_*/call_log/call_log_calls.txt',),
+        "paths": ('*/content_provider_*/call_log/call_log_calls.txt',
+                  '*/extra/content_provider/call_log/call_log_calls.txt'),
         "output_types": "standard",
         "artifact_icon": "phone",
         "multiline_columns": ["Parse Note"],
@@ -317,11 +342,13 @@ __artifacts_v2__ = {
                        "content://com.android.contacts/contacts, as printed.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_contacts.txt) and ALEX raw text output "
-                 "(content_provider_<serial>/com.android.contacts/com.android.contacts_contacts.txt). One row per "
+                 "(content_provider_<serial>/com.android.contacts/com.android.contacts_contacts.txt, or "
+                 "extra/content_provider/com.android.contacts/com.android.contacts_contacts.txt in an ALEX PRFS "
+                 "zip). One row per "
                  "aggregated contact the provider returned; the phone numbers are in Contact Phone Numbers (content "
                  "query), keyed by Contact ID. Last Updated is contact_last_updated_timestamp read as milliseconds "
                  "since 1970-01-01 UTC, per the provider contract "
@@ -332,7 +359,8 @@ __artifacts_v2__ = {
                  "result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -350,7 +378,8 @@ __artifacts_v2__ = {
                  "of the file where the row starts. Source File holds the file each row came from. Evidence tier: "
                  "source-verified and tested on synthetic files only.",
         "paths": ('*/*_contentprovider/contacts_contacts.txt',
-                  '*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt'),
+                  '*/content_provider_*/com.android.contacts/com.android.contacts_contacts.txt',
+                  '*/extra/content_provider/com.android.contacts/com.android.contacts_contacts.txt'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "users",
         "multiline_columns": ["Display Name", "Parse Note"],
@@ -361,11 +390,13 @@ __artifacts_v2__ = {
                        "content://com.android.contacts/data/phones, as printed.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Calls & Contacts",
         "notes": "Read from android_triage (<date>_contentprovider/contacts_data_phones.txt) and ALEX raw text output "
-                 "(content_provider_<serial>/com.android.contacts/com.android.contacts_data_phones.txt). One row per "
+                 "(content_provider_<serial>/com.android.contacts/com.android.contacts_data_phones.txt, or "
+                 "extra/content_provider/com.android.contacts/com.android.contacts_data_phones.txt in an ALEX PRFS "
+                 "zip). One row per "
                  "phone number data row. Number is data1, Phone Type data2, Label data3 and Normalized Number data4, "
                  "as "
                  "printed (ContactsContract.CommonDataKinds.Phone NUMBER, TYPE, LABEL and NORMALIZED_NUMBER, "
@@ -380,7 +411,8 @@ __artifacts_v2__ = {
                  "(prosch88/ALEX) writes no file when the output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -398,7 +430,8 @@ __artifacts_v2__ = {
                  "of the file where the row starts. Source File holds the file each row came from. Evidence tier: "
                  "source-verified and tested on synthetic files only.",
         "paths": ('*/*_contentprovider/contacts_data_phones.txt',
-                  '*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt'),
+                  '*/content_provider_*/com.android.contacts/com.android.contacts_data_phones.txt',
+                  '*/extra/content_provider/com.android.contacts/com.android.contacts_data_phones.txt'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "users",
         "multiline_columns": ["Display Name", "Parse Note"],
@@ -409,7 +442,7 @@ __artifacts_v2__ = {
                        "content://com.android.calendar/events, as printed, with start and end read as milliseconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Productivity",
         "notes": "Read from android_triage only (<date>_contentprovider/calendar_events.txt); ALEX does not query "
@@ -450,11 +483,13 @@ __artifacts_v2__ = {
                        "milliseconds.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Productivity",
         "notes": "Read from android_triage (<date>_contentprovider/calendar_event_entities.txt) and ALEX raw text "
-                 "output (content_provider_<serial>/com.android.calendar/com.android.calendar_event_entities.txt). "
+                 "output (content_provider_<serial>/com.android.calendar/com.android.calendar_event_entities.txt, or "
+                 "extra/content_provider/com.android.calendar/com.android.calendar_event_entities.txt in an ALEX "
+                 "PRFS zip). "
                  "This is a second URI of the same provider as Calendar Events (content query); android_triage "
                  "queries both, so an event can be in both artifacts. Start and End are dtstart and dtend read as "
                  "milliseconds since 1970-01-01 UTC, per the provider contract (CalendarContract.EventsColumns.DTSTART "
@@ -469,7 +504,8 @@ __artifacts_v2__ = {
                  "output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -487,7 +523,8 @@ __artifacts_v2__ = {
                  "Source File holds the file each row came from. Evidence tier: source-verified and tested on "
                  "synthetic files only.",
         "paths": ('*/*_contentprovider/calendar_event_entities.txt',
-                  '*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt'),
+                  '*/content_provider_*/com.android.calendar/com.android.calendar_event_entities.txt',
+                  '*/extra/content_provider/com.android.calendar/com.android.calendar_event_entities.txt'),
         "output_types": "standard",
         "artifact_icon": "calendar",
         "multiline_columns": ["Title", "Description", "Location", "Parse Note"],
@@ -498,11 +535,13 @@ __artifacts_v2__ = {
                        "content://com.android.calendar/calendars, as printed.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Productivity",
         "notes": "Read from android_triage (<date>_contentprovider/calendar_calendars.txt) and ALEX raw text output "
-                 "(content_provider_<serial>/com.android.calendar/com.android.calendar_calendars.txt). One row per "
+                 "(content_provider_<serial>/com.android.calendar/com.android.calendar_calendars.txt, or "
+                 "extra/content_provider/com.android.calendar/com.android.calendar_calendars.txt in an ALEX PRFS "
+                 "zip). One row per "
                  "calendar; Calendar ID is the _id that the event rows name in their calendar_id. Account Name, "
                  "Account Type, Display Name (calendar_displayName), Owner Account (ownerAccount), Visible, Sync "
                  "Events "
@@ -510,7 +549,8 @@ __artifacts_v2__ = {
                  "output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -526,7 +566,8 @@ __artifacts_v2__ = {
                  "Source File holds the file each row came from. Evidence tier: source-verified and tested on "
                  "synthetic files only.",
         "paths": ('*/*_contentprovider/calendar_calendars.txt',
-                  '*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt'),
+                  '*/content_provider_*/com.android.calendar/com.android.calendar_calendars.txt',
+                  '*/extra/content_provider/com.android.calendar/com.android.calendar_calendars.txt'),
         "output_types": ["html", "tsv", "lava"],
         "artifact_icon": "calendar",
         "multiline_columns": ["Parse Note"],
@@ -537,11 +578,13 @@ __artifacts_v2__ = {
                        "content://media/external/file, as printed, with dates read per the MediaStore contract.",
         "author": "@Maxitelmo, Claude",
         "creation_date": "2026-11-25",
-        "last_update_date": "2026-11-26",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Photos & Media",
         "notes": "Read from android_triage (<date>_contentprovider/media_external_file.txt) and ALEX raw text output "
-                 "(content_provider_<serial>/media/media_external_file.txt). One row per file the MediaStore indexed "
+                 "(content_provider_<serial>/media/media_external_file.txt, or "
+                 "extra/content_provider/media/media_external_file.txt in an ALEX PRFS zip). One row per file the "
+                 "MediaStore indexed "
                  "on external storage and returned to the shell user; the files themselves are not in this output. "
                  "Date Added and Date Modified are date_added and date_modified read as seconds since 1970-01-01 UTC, "
                  "and Date Taken is datetaken read as milliseconds since 1970-01-01 UTC, per the provider contract "
@@ -558,7 +601,8 @@ __artifacts_v2__ = {
                  "to commit 8f27e7a (prosch88/ALEX) writes no file when the output holds 'No result found' or "
                  "another of its four error strings anywhere, including inside a value; from ed3d41eb (2026-11-25) it "
                  "writes the file whenever the output holds a row. Content Query Files reports a missing file as "
-                 "unknown. "
+                 "unknown; in an ALEX PRFS zip (from ed3d41eb), "
+                 "which holds the file of every URI ALEX queries, as not kept. "
                  "Format: rows are read from the text that the content command prints (AOSP Content.java, lines 664 to "
                  "706 at "
                  "https://android.googlesource.com/platform/frameworks/base/+/8d2ed506045d5d6cf25ef7ef77a30da910733657/cmds/content/src/com/android/commands/content/Content.java): "
@@ -573,7 +617,8 @@ __artifacts_v2__ = {
                  "blank and named in the log. Source Line is the line of the file where the row starts. Source File "
                  "holds the file each row came from. Evidence tier: source-verified and tested on synthetic files "
                  "only.",
-        "paths": ('*/*_contentprovider/media_external_file.txt', '*/content_provider_*/media/media_external_file.txt'),
+        "paths": ('*/*_contentprovider/media_external_file.txt', '*/content_provider_*/media/media_external_file.txt',
+                  '*/extra/content_provider/media/media_external_file.txt'),
         "output_types": "standard",
         "artifact_icon": "photo",
         "multiline_columns": ["Parse Note"],
@@ -591,6 +636,8 @@ ADDRESS_CODES = ('137', '151', '130', '129')
 NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes none when the query '
                           'printed no row or an error, and up to commit 8f27e7a also when the output holds one of '
                           'its four error strings)')
+NOTE_ADDRESSES_NOT_KEPT = ('addresses unknown: no mms/mms_addr.txt in this folder (ALEX writes it into its PRFS zip '
+                           'for every query, so it was not kept in this extraction)')
 NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
 NOTE_ADDRESSES_INCOMPLETE = ('addresses unknown: no FROM, TO, CC or BCC row for this message was read, and '
                              'mms_addr.txt is incomplete ({reason})')
@@ -764,7 +811,7 @@ def _joined(context, key, layout, relative):
             logfunc(f'Content query {relative}: no mms_addr.txt in this folder, From, To, Cc and Bcc are unknown')
 
             def unknown(_values, notes):
-                notes.append(NOTE_ADDRESSES_UNKNOWN)
+                notes.append(NOTE_ADDRESSES_NOT_KEPT if layout[0] == reader.ALEX_PRFS else NOTE_ADDRESSES_UNKNOWN)
                 return ['', '', '', '']
             return unknown, None
         dump, reason = _sibling_dump(context, addr_path, relative, ('msg_id', 'type'))
@@ -917,12 +964,19 @@ def content_query_media_files(context):
 
 @artifact_processor
 def content_query_files(context):
-    headers = ('Layout', 'Folder', 'URI', 'File', 'Status', ('Rows', 'number'), 'Detail', 'Columns', 'Read By')
-    folders = {}
+    headers = ('Layout', 'Folder', 'URI', 'File', 'Status', 'Tool Status', ('Rows', 'number'), 'Detail', 'Columns',
+               'Read By')
+    folders, statuses = {}, {}
     for path in context.get_files_found():
         layout = reader.layout_of(path)
         if layout is not None:
             folders.setdefault(layout, []).append(path)
+            continue
+        status_file = reader.status_file_of(path)
+        if status_file is not None:
+            layout_name, folder, output = status_file
+            folders.setdefault((layout_name, folder), [])
+            statuses[_relative(context, output)] = path
     rows, sources = [], []
     for (layout, folder), paths in sorted(folders.items()):
         by_name = {}
@@ -933,31 +987,68 @@ def content_query_files(context):
         for uri in reader.URIS:
             name = reader.layout_file(layout, uri)
             if name is None:
-                rows.append((layout, folder_relative, uri.uri, '', 'not queried by this tool', '', '', '',
+                rows.append((layout, folder_relative, uri.uri, '', 'not queried by this tool', '', '', '', '',
                              READ_BY[uri.key]))
                 continue
             path = by_name.pop(uri.key, None)
             if path is None:
-                rows.append((layout, folder_relative, uri.uri, name, reader.NO_FILE, '',
+                status_path = statuses.pop(f'{folder_relative}/{name}', None)
+                if status_path is not None:
+                    rows.append(_status_only_row(layout, folder_relative, uri.uri, name, status_path,
+                                                 READ_BY[uri.key]))
+                    sources.append(status_path)
+                    continue
+                rows.append((layout, folder_relative, uri.uri, name, reader.NO_FILE, '', '',
                              reader.missing_file_detail(layout), '', READ_BY[uri.key]))
                 continue
-            rows.append(_file_row(context, layout, folder_relative, uri.uri, path, READ_BY[uri.key]))
+            rows.append(_file_row(context, layout, folder_relative, uri.uri, path, READ_BY[uri.key], statuses,
+                                  sources))
             sources.append(path)
         for path in sorted(by_name.values()):
-            rows.append(_file_row(context, layout, folder_relative, '', path, 'not read'))
+            rows.append(_file_row(context, layout, folder_relative, '', path, 'not read', statuses, sources))
             sources.append(path)
+        prefix = folder_relative + '/'
+        for output in sorted(key for key in statuses if key.startswith(prefix)):
+            status_path = statuses.pop(output)
+            rows.append(_status_only_row(layout, folder_relative, '', output[len(prefix):], status_path, 'not read'))
+            sources.append(status_path)
     return headers, rows, '\n'.join(sources)
 
 
-def _file_row(context, layout, folder_relative, uri, path, read_by):
+def _tool_status(layout, relative, statuses, sources):
+    """(ALEX's status of a PRFS zip file, problem) from the .status.json beside it; ('', '') for other layouts."""
+    if layout != reader.ALEX_PRFS:
+        return '', ''
+    status_path = statuses.pop(relative, None)
+    if status_path is None:
+        return '', f'no {reader.STATUS_SUFFIX} beside this file'
+    sources.append(status_path)
+    return reader.read_tool_status(status_path)
+
+
+def _status_only_row(layout, folder_relative, uri, name, status_path, read_by):
+    """The row of a .status.json whose .txt is not in this extraction."""
+    tool_status, problem = reader.read_tool_status(status_path)
+    detail = '; '.join(filter(None, [f'the {reader.STATUS_SUFFIX} of this file is here but the file is not, so '
+                                     'it was not kept in this extraction', problem]))
+    return (layout, folder_relative, uri, name, reader.NO_FILE, tool_status, '', detail, '', read_by)
+
+
+def _file_row(context, layout, folder_relative, uri, path, read_by, statuses, sources):
     relative = _relative(context, path)
     name = relative[len(folder_relative) + 1:] if relative.startswith(folder_relative + '/') else relative
+    tool_status, problem = _tool_status(layout, relative, statuses, sources)
     try:
         dump = reader.read_file(path, context.get_seeker())
     except OSError as error:
         logfunc(f'Content query {layout} {relative}: {_read_error(error)}')
-        return (layout, folder_relative, uri, name, reader.UNREADABLE, '', _read_error(error), '', read_by)
-    detail = '; '.join(([dump.detail] if dump.detail else []) + dump.warnings)
+        detail = '; '.join(filter(None, [_read_error(error), problem]))
+        return (layout, folder_relative, uri, name, reader.UNREADABLE, tool_status, '', detail, '', read_by)
+    notes = ([dump.detail] if dump.detail else []) + dump.warnings + ([problem] if problem else [])
+    if reader.tool_status_disagrees(tool_status, dump.status):
+        notes.append(f'ALEX wrote status {tool_status} for this file, which its own row parser sets; the text '
+                     f'reads as {dump.status}')
+        logfunc(f'Content query {layout} {relative}: ALEX status {tool_status}, text read as {dump.status}')
     count = len(dump.records) if dump.status == reader.ROWS else ''
-    return (layout, folder_relative, uri, name, dump.status, count, detail,
+    return (layout, folder_relative, uri, name, dump.status, tool_status, count, '; '.join(notes),
             ', '.join(dump.columns), read_by)

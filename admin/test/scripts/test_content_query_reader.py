@@ -255,6 +255,48 @@ class LayoutTest(unittest.TestCase):
         self.assertIsNone(reader.layout_of(f'{self.ALEX}/sms/other.txt'))
         self.assertIsNone(reader.layout_of('root/x/other/sms/sms.txt'))
 
+    def test_alex_prfs_files(self):
+        prfs = 'root/extra/content_provider'
+        path = f'{prfs}/com.android.contacts/com.android.contacts_data_phones.txt'
+        self.assertEqual(reader.layout_of(path), (reader.ALEX_PRFS, prfs))
+        self.assertEqual(reader.uri_of(reader.ALEX_PRFS, path).key, 'contact_phones')
+        self.assertEqual(reader.layout_of(f'{prfs}/sms/sms.txt'), (reader.ALEX_PRFS, prfs))
+        self.assertIsNone(reader.uri_of(reader.ALEX_PRFS, f'{prfs}/sms/sms_inbox.txt'))
+        self.assertIsNone(reader.layout_of(f'{prfs}/sms/other.txt'))
+        self.assertIsNone(reader.layout_of('root/extra/other/sms/sms.txt'))
+        self.assertIsNone(reader.layout_of(f'{prfs}/sms/sms.json'))
+        self.assertEqual(reader.status_file_of(f'{prfs}/sms/sms.status.json'),
+                         (reader.ALEX_PRFS, prfs, f'{prfs}/sms/sms.txt'))
+        self.assertIsNone(reader.status_file_of('root/x/content_provider_SYNTH0001/sms/sms.status.json'))
+        self.assertIsNone(reader.status_file_of(f'{prfs}/sms/sms.json'))
+        self.assertIn('not kept', reader.missing_file_detail(reader.ALEX_PRFS))
+        self.assertTrue(reader.missing_file_detail(reader.ALEX).startswith('unknown'))
+
+    def test_tool_status(self):
+        with tempfile.TemporaryDirectory() as folder:
+            def status_of(raw):
+                path = os.path.join(folder, 'x.status.json')
+                with open(path, 'wb') as handle:
+                    handle.write(raw)
+                return reader.read_tool_status(path)
+            self.assertEqual(status_of(b'{"uri": "content://sms", "status": "rows"}'), ('rows', ''))
+            self.assertEqual(status_of(b'\xef\xbb\xbf{"status": "empty"}'), ('empty', ''))
+            self.assertEqual(status_of(b'{"status": "pending"}'), ('pending', ''))
+            self.assertEqual(status_of(b'not json')[0], '')
+            self.assertIn('not JSON', status_of(b'not json')[1])
+            self.assertIn('no status text', status_of(b'{"uri": "content://sms"}')[1])
+            self.assertIn('no status text', status_of(b'["rows"]')[1])
+            self.assertIn('not readable', reader.read_tool_status(os.path.join(folder, 'missing.status.json'))[1])
+        self.assertFalse(reader.tool_status_disagrees('rows', reader.ROWS))
+        self.assertFalse(reader.tool_status_disagrees('empty', reader.NO_RESULT))
+        self.assertFalse(reader.tool_status_disagrees('empty', reader.EMPTY_FILE))
+        self.assertFalse(reader.tool_status_disagrees('error', reader.UNRECOGNISED))
+        self.assertTrue(reader.tool_status_disagrees('error', reader.ROWS))
+        self.assertTrue(reader.tool_status_disagrees('rows', reader.NO_RESULT))
+        # A status ALEX does not write is shown as written, not compared.
+        self.assertFalse(reader.tool_status_disagrees('pending', reader.ROWS))
+        self.assertFalse(reader.tool_status_disagrees('', reader.ROWS))
+
     def test_windows_separators(self):
         path = '\\\\?\\C:\\case\\a1b2c3d4e5f60718\\20261125_10_15_30_contentprovider\\media_external_file.txt'
         layout, _folder = reader.layout_of(path)
