@@ -126,6 +126,20 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(names, ['_id', 'n0', 'n1', 'n2'])
         self.assertLess(peak, 64 * 1024)
 
+    def test_row_zero_names_that_fit_are_returned_without_reading_row_one_names(self):
+        # One 'Row: 0' name and many distinct 'Row: 1' names: the 'Row: 0' names fit in the
+        # shortlist, so the 'Row: 1' names are not indexed (#2172 review).
+        candidates = reader._candidates(reader._lines(  # pylint: disable=protected-access
+            'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 1 n{i}=x\n' for i in range(40000))))
+        tracemalloc.start()
+        try:
+            names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
+            _current, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertEqual(names, ['_id'])
+        self.assertLess(peak, 64 * 1024)
+
     def test_row_zero_name_forming_a_sequence_is_tried_after_many_leading_lines(self):
         # More leading 'Row: 0' lines with distinct first columns than MAX_READINGS: the name
         # that forms a 'Row: 0'/'Row: 1' sequence must still be tried (#2130).

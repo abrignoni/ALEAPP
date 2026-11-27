@@ -170,11 +170,21 @@ def _row_zero_names(candidates):
     names that form a sequence (a later 'Row: 1' line with the same first column), then the rest,
     so leading lines cannot crowd out the name of the real rows.
 
-    Only those choices are kept while the lines are scanned, not every distinct name: the
-    position of the last 'Row: 1' line of each name is found first, then the 'Row: 0' lines are
-    read in order. A name left out at its first 'Row: 0' line stays out: its list was full,
-    and a later line of a sequence name past its last 'Row: 1' line could only make it a
-    fallback, which is not used when the sequence names fill the shortlist."""
+    Only those choices are kept while the lines are scanned, not every distinct name. When the
+    'Row: 0' names fit in the shortlist they are returned without looking at the 'Row: 1'
+    lines. Otherwise the position of the last 'Row: 1' line of each name is found first, then
+    the 'Row: 0' lines are read in order. A name left out at its first 'Row: 0' line stays out:
+    its list was full, and a later line of a sequence name past its last 'Row: 1' line could
+    only make it a fallback, which is not used when the sequence names fill the shortlist."""
+    names = []
+    for _index, number, rest in candidates:
+        name = FIRST_NAME.match(rest) if number == 0 else None
+        if name and name.group(1) not in names:
+            names.append(name.group(1))
+            if len(names) > MAX_READINGS:
+                break
+    else:
+        return names
     last_row_one = {}
     for index, number, rest in candidates:
         name = FIRST_NAME.match(rest) if number == 1 else None
