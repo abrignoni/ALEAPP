@@ -4,6 +4,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from datetime import datetime, timezone
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -286,9 +287,13 @@ class LayoutTest(unittest.TestCase):
             self.assertIn('not JSON', status_of(b'not json')[1])
             self.assertIn('no status text', status_of(b'{"uri": "content://sms"}')[1])
             self.assertIn('no status text', status_of(b'["rows"]')[1])
-            # Deep nesting makes json.loads raise RecursionError; it is reported for this file only.
-            self.assertEqual(status_of(b'[' * 100000 + b']' * 100000),
-                             ('', 'status file is not JSON: RecursionError'))
+            # Deep nesting: json.loads raises RecursionError up to Python 3.13 and reads the array from
+            # 3.14 on. Either way the file gets a problem text and no status.
+            self.assertIn(status_of(b'[' * 100000 + b']' * 100000),
+                          (('', 'status file is not JSON: RecursionError'), ('', 'status file holds no status text')))
+            # The RecursionError path itself, on every Python version.
+            with mock.patch.object(reader.json, 'loads', side_effect=RecursionError):
+                self.assertEqual(status_of(b'{"status": "rows"}'), ('', 'status file is not JSON: RecursionError'))
             self.assertIn('not readable', reader.read_tool_status(os.path.join(folder, 'missing.status.json'))[1])
         self.assertFalse(reader.tool_status_disagrees('rows', reader.ROWS))
         self.assertFalse(reader.tool_status_disagrees('empty', reader.NO_RESULT))

@@ -254,6 +254,18 @@ class AlexPrfsTest(unittest.TestCase):
         self.assertEqual(by_folder_file[('extra/content_provider', 'call_log/call_log_calls.txt')][5], 'empty')
         self.assertEqual([row for row in rows if row[1] == 'extra/content_provider' and 'x/extra' in row[3]], [])
 
+    def test_status_file_that_cannot_be_read_stays_on_its_own_row(self):
+        # A deeply nested status file: on any Python version its row says why it has no status,
+        # and the other files keep theirs.
+        self.write('sms/sms', 'Row: 0 _id=1, body=a\n', '[' * 100000 + ']' * 100000)
+        self.write('call_log/call_log_calls', 'No result found.\n', '{"status": "empty"}')
+        _names, by_file, _no_name, _sources = self.files()
+        sms = by_file['sms/sms.txt']
+        self.assertEqual((sms['Status'], sms['Tool Status']), (reader.ROWS, ''))
+        self.assertTrue(sms['Detail'].startswith('status file '), sms['Detail'])
+        calls = by_file['call_log/call_log_calls.txt']
+        self.assertEqual((calls['Status'], calls['Tool Status'], calls['Detail']), (reader.NO_RESULT, 'empty', ''))
+
     def test_only_status_files(self):
         self.write('sms/sms', None, '{"uri": "content://sms", "status": "error"}')
         _names, by_file, _no_name, _sources = self.files()
