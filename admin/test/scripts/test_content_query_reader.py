@@ -102,13 +102,22 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual([record.number for record in dump.records], [0, 1, 2])
 
     def test_many_distinct_row_zero_names_are_not_all_collected(self):
-        # Only the first MAX_READINGS names are ever tried; collecting every distinct name with a
-        # list membership test was quadratic (40,000 names took over ten seconds).
+        # At most MAX_READINGS names are ever tried; collecting every distinct name with a list
+        # membership test was quadratic (40,000 names took over ten seconds).
         text = ('Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
                 + 'Row: 1 _id=2, body=y\n')
         self.assertEqual(len(reader._row_zero_names(reader._candidates(reader._lines(text)))), reader.MAX_READINGS)  # pylint: disable=protected-access
         dump = reader.parse_text(text)
         self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+
+    def test_row_zero_name_forming_a_sequence_is_tried_after_many_leading_lines(self):
+        # More leading 'Row: 0' lines with distinct first columns than MAX_READINGS: the name
+        # that forms a 'Row: 0'/'Row: 1' sequence must still be tried (#2130).
+        lead = ''.join(f'Row: 0 n{i}=x\n' for i in range(reader.MAX_READINGS + 1))
+        dump = reader.parse_text(lead + 'Row: 0 _id=1, body=a\nRow: 1 _id=2, body=b\n')
+        self.assertEqual(dump.columns, ('_id', 'body'))
+        self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+        self.assertTrue(any('before the first row' in warning for warning in dump.warnings))
 
     def test_large_dump_with_a_quoted_row_zero_is_read(self):
         # The second reading makes the whole text one row of many names; the repeated-name check

@@ -36,7 +36,8 @@ Parsing:
    (the one most such lines start with when there is no ``Row: 0`` line). When ``Row: 0``
    lines name different first columns (a line before the rows, or a value quoting rows),
    the earliest is kept when a ``Row: 1`` line with the same first column follows it. Only
-   when it does not, each of the first four is tried and the reading kept has the fewest
+   when it does not, up to four are tried (the earliest, then those that form such a
+   sequence, then the rest, in order) and the reading kept has the fewest
    rows that cannot be split, then the least text before its first row, then the earliest
    ``Row: 0``. Every
    other line belongs to the value before it. A value line that is itself exactly
@@ -164,17 +165,27 @@ def _candidates(lines):
 
 
 def _row_zero_names(candidates):
-    """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, up
-    to MAX_READINGS: no more are ever tried."""
-    names, seen = [], set()
-    for _index, number, rest in candidates:
-        name = FIRST_NAME.match(rest)
-        if number == 0 and name and name.group(1) not in seen:
-            seen.add(name.group(1))
+    """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, at
+    most MAX_READINGS: no more are ever tried. When there are more, the earliest is kept, then the
+    names that form a sequence (a later 'Row: 1' line with the same first column), then the rest,
+    so leading lines cannot crowd out the name of the real rows."""
+    first_line, names = {}, []
+    for index, number, rest in candidates:
+        name = FIRST_NAME.match(rest) if number == 0 else None
+        if name and name.group(1) not in first_line:
+            first_line[name.group(1)] = index
             names.append(name.group(1))
-            if len(names) == MAX_READINGS:
-                break
-    return names
+    if len(names) <= MAX_READINGS:
+        return names
+    in_sequence = set()
+    for index, number, rest in candidates:
+        name = FIRST_NAME.match(rest) if number == 1 else None
+        if name and first_line.get(name.group(1), index) < index:
+            in_sequence.add(name.group(1))
+    ranked = names[:1] + [name for name in names[1:] if name in in_sequence]
+    ranked += [name for name in names[1:] if name not in in_sequence]
+    kept = set(ranked[:MAX_READINGS])
+    return [name for name in names if name in kept]
 
 
 def _row_starts(candidates, first=None):
