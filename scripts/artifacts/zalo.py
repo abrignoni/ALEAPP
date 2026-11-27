@@ -250,7 +250,7 @@ def _container(path):
     return None
 
 
-_ROOT_STOP = ('data', 'media', 'storage', 'sdcard', 'userdata', 'user', 'user_de')
+_ROOT_STOP = ('data', 'data_mirror', 'media', 'storage', 'sdcard', 'userdata', 'user', 'user_de')
 
 
 def _evidence_root(relative_path):

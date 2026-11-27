@@ -233,6 +233,17 @@ class ZaloTests(unittest.TestCase):
         self.assertEqual(by_name['orphan.pdf']['Named by a Message'], 'No')
         self.assertEqual(by_name['orphan.pdf']['Media Format'], 'PDF')
 
+    def test_mirror_only_database_keeps_its_media(self):
+        app = self.root / 'data_mirror/data_ce/null/0/com.zing.zalo/databases'
+        main_db(app / 'zalo')
+        chat_db(app / ACCOUNT_A / f'{PEER}.db',
+                [(ACCOUNT_A, 2, 12, 3, BASE_MS, '', 'zalo/picture/a.jxl')])
+        media_file(self.root, 'data/media/0/Android/data/com.zing.zalo/files/zalo/picture/a.jxl', JXL)
+        row, = self.run_artifact(zalo.zalo_messages)
+        self.assertEqual(row['Media Format'], 'JPEG XL')
+        media, = self.run_artifact(zalo.zalo_media)
+        self.assertEqual(media['Named by a Message'], 'Yes')
+
 
 if __name__ == '__main__':
     unittest.main()
