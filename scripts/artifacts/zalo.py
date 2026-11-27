@@ -10,51 +10,53 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Messaging",
         "notes": (
-            "Reads the ChatContent table of each conversation database under "
-            "databases/<account id>/ of com.zing.zalo: <peer id>.db for a one to one conversation "
-            "and group_<group id>.db for a group. A write-ahead log beside a database is applied; a "
-            "database with no log beside it is read alone. Every storage spelling of one app data "
-            "folder (data/data and data/user/0) is read as one folder. Account ID is the account "
-            "folder's name, the same id Zalo stores as currentUserUid in its zalo database. "
-            "Conversation Key is the Android user, the account and the conversation (group_<id> for "
-            "a group) joined by slashes; it is what the conversation view groups by, so two accounts "
-            "that talk to the same person keep separate conversations. Direction is derived, not "
-            "stored: Outgoing when SenderId equals Account ID, otherwise Incoming. Timestamp is "
-            "TimeStamp read as Unix milliseconds; a value too large for a date is left blank. In the "
-            "decompiled Zalo 26.11.01 code a message the app builds without a time takes it from a "
-            "clock made of SystemClock.elapsedRealtime() and a stored server time (classes sv3, vv3, "
-            "vtg and z5q); when that value is not above the highest time already held, the app uses "
-            "that highest time plus one. It is not a direct reading of the device clock. How a "
-            "received message's time is set was not traced. Message Type is MsgType as stored and "
-            "Type Name is the raw type name the app's MessageTypeMapper gives it (classes r9g and "
-            "q9g): 0 and 20 are both webchat, 20 being a webchat message whose layoutType is 1, and a "
-            "type the mapper does not list has no Type Name. Status, TTL and Reply To Client ID "
-            "(RefCliMsgId) are as stored; what each Status value means is not established. Media is "
-            "the file the row's LocalPath names. An absolute "
-            "/storage/emulated/<n>/Android/data/com.zing.zalo/ path is looked up below that folder "
-            "for Android user <n>. A relative path starting zalo/picture/, zalo/voice/, zalo/paint, "
-            "zalo/bg, zalo/data/, zalo/download, zalo/zinstant/chat or zalo/semicache, which the app "
-            "resolves against its external files folder (v9g.D, ji7), is looked up below "
-            "Android/data/com.zing.zalo/files/ for the database's Android user. The app falls back to "
-            "another folder when its external files folder is not writable; that case is not looked "
-            "up. Other relative prefixes and absolute paths outside that folder are not looked up, "
-            "and those rows have a blank Media and a blank Media Format. A path that is looked up and "
-            "matches no file shows File not in extraction in Media Format. Media Format is read from "
-            "the file's first bytes, not its name; a JPEG XL file is checked in as media but shows in "
-            "the report only where the browser supports JPEG XL. Zalo - Media Files lists the files "
-            "of the media folders, including those no message names. Sender Name and Conversation "
-            "come from the zalo database: the alias stored for the user under the account "
-            "(alias_friend), else the display name in the account's contact_profile_friend_<account "
-            "id> table, else contact_profile_5; a group's name is from group_info_v6. Hidden Chat is "
-            "Yes when uid_hidden_chat_table holds the conversation's id, or group_<id> for a group, "
-            "for the account; the group case was not exercised, and a blank does not show that a "
-            "chat is not hidden. Message is MsgContent as stored. The BinNet blob and the E2EE, SeqId "
-            "and FLStatus columns are not read, so a row with no MsgContent and no LocalPath has no "
-            "Message and no Media. Not reported: zalo_search.db (a search index that repeats message "
-            "text), zalo_x_1.db (message id and seen-status bookkeeping), call_data (call background "
-            "image addresses, not call records), table_pin_board, poll_info, "
-            "conversation_common_info2, phone_contacts_v2 (a copy of the device's contacts) and the "
-            "app's settings and analytics stores."),
+            (
+            'Class and line references are to the Zalo 26.11.01 APK (base.apk SHA-256 '
+            '16c7b2fc6ea88505f2cecea6dc6feb59af929fbd5d686b72e1221625697d3a43) decompiled with jadx 1.5.6'
+            ' (--no-res); the classes are obfuscated, in defpackage unless named in full. Reads the '
+            'ChatContent table of each conversation database under databases/<account id>/ of '
+            'com.zing.zalo: <peer id>.db for a one to one conversation and group_<group id>.db for a '
+            'group. A write-ahead log beside a database is applied; a database with no log beside it is '
+            'read alone. Every storage spelling of one app data folder (data/data and data/user/0) is '
+            "read as one folder. Account ID is the account folder's name, the same id Zalo stores as "
+            'currentUserUid in its zalo database. Conversation Key is the Android user, the account and '
+            'the conversation (group_<id> for a group) joined by slashes; it is what the conversation '
+            'view groups by, so two accounts that talk to the same person keep separate conversations. '
+            'Direction is derived, not stored: Outgoing when SenderId equals Account ID, otherwise '
+            'Incoming. Timestamp is TimeStamp read as Unix milliseconds; a value too large for a date is '
+            'left blank. In the decompiled Zalo code a message the app builds without a time takes it '
+            'from vtg.c() (sv3.java:68-71, vv3.java:13077), which starts from z5q.a(), '
+            'SystemClock.elapsedRealtime() less one stored value plus another (z5q.java:40), and when '
+            'that is not above the highest time already held uses that time plus one (vtg.java:40-48). It'
+            " is not a direct reading of the device clock. How a received message's time is set was not "
+            "traced. Message Type is MsgType as stored and Type Name is the raw type name the app's "
+            'MessageTypeMapper gives it (r9g.java:9): 0 and 20 are both webchat, 20 being a webchat '
+            'message whose layoutType is 1 (q9g.java:19-20), and a type the mapper does not list has no '
+            'Type Name. Status, TTL and Reply To Client ID (RefCliMsgId) are as stored; what each Status '
+            "value means is not established. Media is the file the row's LocalPath names. An absolute "
+            '/storage/emulated/<n>/Android/data/com.zing.zalo/ path is looked up below that folder for '
+            'Android user <n>. A relative path starting zalo/picture/, zalo/voice/, zalo/paint, zalo/bg, '
+            'zalo/data/, zalo/download, zalo/zinstant/chat or zalo/semicache, which the app resolves '
+            'against one storage root (v9g.java:302, with zalo/semicache from ji7.java:22), is looked up '
+            "below Android/data/com.zing.zalo/files/ for the database's Android user. The app falls back "
+            'to another folder when its external files folder is not writable; that case is not looked '
+            'up. Other relative prefixes and absolute paths outside that folder are not looked up, and '
+            'those rows have a blank Media and a blank Media Format. A path that is looked up and matches'
+            " no file shows File not in extraction in Media Format. Media Format is read from the file's "
+            'first bytes, not its name; a JPEG XL file is checked in as media but shows in the report '
+            'only where the browser supports JPEG XL. Zalo - Media Files lists the files of the media '
+            'folders, including those no message names. Sender Name and Conversation come from the zalo '
+            'database: the alias stored for the user under the account (alias_friend), else the display '
+            "name in the account's contact_profile_friend_<account id> table, else contact_profile_5; a "
+            "group's name is from group_info_v6. Hidden Chat is Yes when uid_hidden_chat_table holds the "
+            "conversation's id, or group_<id> for a group, for the account; the group case was not "
+            'exercised, and a blank does not show that a chat is not hidden. Message is MsgContent as '
+            'stored. The BinNet blob and the E2EE, SeqId and FLStatus columns are not read, so a row with'
+            ' no MsgContent and no LocalPath has no Message and no Media. Not reported: zalo_search.db (a'
+            ' search index that repeats message text), zalo_x_1.db (message id and seen-status '
+            'bookkeeping), call_data (call background image addresses, not call records), '
+            'table_pin_board, poll_info, conversation_common_info2, phone_contacts_v2 (a copy of the '
+            "device's contacts) and the app's settings and analytics stores.")),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*',
@@ -116,19 +118,23 @@ __artifacts_v2__ = {
         "requirements": "none",
         "category": "Messaging",
         "notes": (
-            "Rows of each contact_profile_friend_<account id> table, one per account, and of "
-            "contact_profile_5, which carries no account and has a blank Account ID. Stored Time is "
-            "the row's timestamp. For a contact_profile_friend table the decompiled Zalo 26.11.01 "
-            "code sets it to System.currentTimeMillis() once per batch of rows written (class lw6), "
-            "so every row of a batch shares it. For contact_profile_5 it is the time held by the "
-            "profile object when the row is written (class pw6), which the app sets when it builds "
-            "the profile from JSON. Neither is an action of the person. Display Name is dpn, which "
-            "the app's ContactProfile class reads from the JSON key dpn. Alias is aliasName from "
-            "alias_friend for that account and user; it is blank for contact_profile_5 rows, which "
-            "carry no account. usr, Phone, Zalo Friend, ged and Date of Birth are usr, phone, "
-            "isZaloFriend, ged and dob as stored; what usr and ged hold is not established, and dob "
-            "holds the value of the JSON key sdob (ContactProfile, lw6). The stt, avt, cover, "
-            "username and other profile columns are not reported."),
+            (
+            'Class and line references are to the Zalo 26.11.01 APK (base.apk SHA-256 '
+            '16c7b2fc6ea88505f2cecea6dc6feb59af929fbd5d686b72e1221625697d3a43) decompiled with jadx 1.5.6'
+            ' (--no-res); the classes are obfuscated, in defpackage unless named in full. Rows of each '
+            'contact_profile_friend_<account id> table, one per account, and of contact_profile_5, which '
+            "carries no account and has a blank Account ID. Stored Time is the row's timestamp. For a "
+            'contact_profile_friend table the app sets it to System.currentTimeMillis() once per batch of'
+            ' rows written (lw6.java:139 and 158), so every row of a batch shares it. For '
+            'contact_profile_5 it is the time held by the profile object when the row is written '
+            '(pw6.java:1926), which the app sets when it builds the profile from JSON '
+            '(com/zing/zalo/control/ContactProfile.java:303). Neither is an action of the person. Display'
+            ' Name is dpn, which ContactProfile reads from the JSON key dpn (ContactProfile.java:280). '
+            'Alias is aliasName from alias_friend for that account and user; it is blank for '
+            'contact_profile_5 rows, which carry no account. usr, Phone, Zalo Friend, ged and Date of '
+            'Birth are usr, phone, isZaloFriend, ged and dob as stored; what usr and ged hold is not '
+            'established, and dob holds the value of the JSON key sdob (ContactProfile.java:285, '
+            'lw6.java:166). The stt, avt, cover, username and other profile columns are not reported.')),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*'),
