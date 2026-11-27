@@ -168,24 +168,38 @@ def _row_zero_names(candidates):
     """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, at
     most MAX_READINGS: no more are ever tried. When there are more, the earliest is kept, then the
     names that form a sequence (a later 'Row: 1' line with the same first column), then the rest,
-    so leading lines cannot crowd out the name of the real rows."""
-    first_line, names = {}, []
-    for index, number, rest in candidates:
-        name = FIRST_NAME.match(rest) if number == 0 else None
-        if name and name.group(1) not in first_line:
-            first_line[name.group(1)] = index
-            names.append(name.group(1))
-    if len(names) <= MAX_READINGS:
-        return names
-    in_sequence = set()
+    so leading lines cannot crowd out the name of the real rows.
+
+    Only those choices are kept while the lines are scanned, not every distinct name: the
+    position of the last 'Row: 1' line of each name is found first, then the 'Row: 0' lines are
+    read in order. A name left out at its first 'Row: 0' line stays out: its list was full,
+    and a later line of a sequence name past its last 'Row: 1' line could only make it a
+    fallback, which is not used when the sequence names fill the shortlist."""
+    last_row_one = {}
     for index, number, rest in candidates:
         name = FIRST_NAME.match(rest) if number == 1 else None
-        if name and first_line.get(name.group(1), index) < index:
-            in_sequence.add(name.group(1))
-    ranked = names[:1] + [name for name in names[1:] if name in in_sequence]
-    ranked += [name for name in names[1:] if name not in in_sequence]
-    kept = set(ranked[:MAX_READINGS])
-    return [name for name in names if name in kept]
+        if name:
+            last_row_one[name.group(1)] = index
+    earliest, in_sequence, others = None, [], []
+    for index, number, rest in candidates:
+        name = FIRST_NAME.match(rest) if number == 0 else None
+        if not name:
+            continue
+        name = name.group(1)
+        if earliest is None:
+            earliest = (index, name)
+            continue
+        if name == earliest[1] or any(name == kept for _index, kept in in_sequence + others):
+            continue
+        if last_row_one.get(name, index) > index:
+            if len(in_sequence) < MAX_READINGS - 1:
+                in_sequence.append((index, name))
+        elif len(others) < MAX_READINGS - 1:
+            others.append((index, name))
+    if earliest is None:
+        return []
+    kept = [earliest] + (in_sequence + others)[:MAX_READINGS - 1]
+    return [name for _index, name in sorted(kept)]
 
 
 def _row_starts(candidates, first=None):

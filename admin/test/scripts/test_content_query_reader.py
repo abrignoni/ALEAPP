@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 import tempfile
+import tracemalloc
 import unittest
 from datetime import datetime, timezone
 
@@ -109,6 +110,21 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(len(reader._row_zero_names(reader._candidates(reader._lines(text)))), reader.MAX_READINGS)  # pylint: disable=protected-access
         dump = reader.parse_text(text)
         self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+
+    def test_choosing_row_zero_names_keeps_only_the_shortlist(self):
+        # Only the shortlist choices are kept while the names are ranked, not every distinct
+        # 'Row: 0' name (#2172): memory allocated by the call must not grow with their number.
+        candidates = reader._candidates(reader._lines(  # pylint: disable=protected-access
+            'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
+            + 'Row: 1 _id=2, body=y\n'))
+        tracemalloc.start()
+        try:
+            names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
+            _current, peak = tracemalloc.get_traced_memory()
+        finally:
+            tracemalloc.stop()
+        self.assertEqual(names, ['_id', 'n0', 'n1', 'n2'])
+        self.assertLess(peak, 64 * 1024)
 
     def test_row_zero_name_forming_a_sequence_is_tried_after_many_leading_lines(self):
         # More leading 'Row: 0' lines with distinct first columns than MAX_READINGS: the name
