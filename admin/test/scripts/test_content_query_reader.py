@@ -173,6 +173,29 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(names, ['_id', 'a0', 'a1', 'a2'])
         self.assertLess(peak, 64 * 1024)
 
+    def test_sequence_index_rounds_resume_where_they_stopped(self):
+        # A long prefix of a few repeated names, then many distinct names on both sides, so
+        # both sides go over several caps: each side reads the candidates once in all, not
+        # once per round (#2172 review). With the first and last scans of _row_zero_names,
+        # that is at most four reads per candidate.
+        class CountingList(list):
+            reads = 0
+
+            def __iter__(self):
+                for row in list.__iter__(self):
+                    CountingList.reads += 1
+                    yield row
+
+        distinct = reader.SEQUENCE_INDEX_CAP * 20
+        text = ('Row: 0 _id=1, body=x\n' + ''.join(f'Row: {i % 2} a{i % 4}=x\n' for i in range(40000))
+                + ''.join(f'Row: 0 z{i}=x\nRow: 1 m{i}=x\n' for i in range(distinct))
+                + 'Row: 1 _id=2, body=y\n')
+        candidates = CountingList(reader._candidates(reader._lines(text)))  # pylint: disable=protected-access
+        names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
+        self.assertEqual(names, ['_id', 'a0', 'a2', 'z0'])
+        self.assertLessEqual(CountingList.reads, 4 * len(candidates) + 20)
+        self.assertEqual(names, reader._row_zero_names(list(candidates)))  # pylint: disable=protected-access
+
     def test_row_zero_name_forming_a_sequence_is_tried_after_many_leading_lines(self):
         # More leading 'Row: 0' lines with distinct first columns than MAX_READINGS: the name
         # that forms a 'Row: 0'/'Row: 1' sequence must still be tried (#2130).

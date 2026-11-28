@@ -174,48 +174,77 @@ def _sequence_test(candidates):
     'Row: 0' and 'Row: 1' name counts: the last 'Row: 1' line of each name, or the first
     'Row: 0' line of each name. Which side that is is not known in advance, so each side is
     tried in turn with a cap on its distinct names, SEQUENCE_INDEX_CAP at first and four
-    times larger on each round, until one fits."""
+    times larger on each round, until one fits. Each side keeps its partial index and
+    resumes at the candidate where it stopped, so each reads the candidates at most once."""
+    row_one, row_zero = _LastRowOne(candidates), _RowZeroInSequence(candidates)
     cap = SEQUENCE_INDEX_CAP
     while True:
-        last_row_one = _last_row_one(candidates, cap)
-        if last_row_one is not None:
+        if row_one.scan(cap):
+            last_row_one = row_one.last
             return lambda name, index: last_row_one.get(name, index) > index
-        in_sequence = _row_zero_names_in_sequence(candidates, cap)
-        if in_sequence is not None:
+        if row_zero.scan(cap):
+            in_sequence = row_zero.in_sequence
             return lambda name, _index: name in in_sequence
         cap *= 4
 
 
-def _last_row_one(candidates, cap):
-    """{name: index of its last 'Row: 1' line}, or None when there are more than ``cap`` names."""
-    last_row_one = {}
-    for index, number, rest in candidates:
-        match = FIRST_NAME.match(rest) if number == 1 else None
-        if match:
+def _resumed(stopped_at, rows):
+    """The candidate a scan stopped at, if any, then the rest of ``rows``."""
+    if stopped_at is not None:
+        yield stopped_at
+    yield from rows
+
+
+class _LastRowOne:
+    """{name: index of its last 'Row: 1' line} over ``candidates``, built up to a cap on names."""
+
+    def __init__(self, candidates):
+        self.rows, self.stopped_at, self.last = iter(candidates), None, {}
+
+    def scan(self, cap):
+        """Read on from the candidate where the last scan stopped; False when a name past
+        ``cap`` is reached."""
+        last = self.last
+        rows = _resumed(self.stopped_at, self.rows)
+        for row in rows:
+            index, number, rest = row
+            match = FIRST_NAME.match(rest) if number == 1 else None
+            if match:
+                name = match.group(1)
+                if name not in last and len(last) == cap:
+                    self.stopped_at = row
+                    return False
+                last[name] = index
+        return True
+
+
+class _RowZeroInSequence:
+    """The 'Row: 0' names of ``candidates`` with a 'Row: 1' line after their first 'Row: 0'
+    line, built up to a cap on 'Row: 0' names."""
+
+    def __init__(self, candidates):
+        self.rows, self.stopped_at, self.first, self.in_sequence = iter(candidates), None, {}, set()
+
+    def scan(self, cap):
+        """Read on from the candidate where the last scan stopped; False when a name past
+        ``cap`` is reached."""
+        first, in_sequence = self.first, self.in_sequence
+        rows = _resumed(self.stopped_at, self.rows)
+        for row in rows:
+            index, number, rest = row
+            match = FIRST_NAME.match(rest) if number in (0, 1) else None
+            if not match:
+                continue
             name = match.group(1)
-            if name not in last_row_one and len(last_row_one) == cap:
-                return None
-            last_row_one[name] = index
-    return last_row_one
-
-
-def _row_zero_names_in_sequence(candidates, cap):
-    """The 'Row: 0' names with a 'Row: 1' line after their first 'Row: 0' line, or None when
-    there are more than ``cap`` 'Row: 0' names."""
-    first_row_zero, in_sequence = {}, set()
-    for index, number, rest in candidates:
-        match = FIRST_NAME.match(rest) if number in (0, 1) else None
-        if not match:
-            continue
-        name = match.group(1)
-        if number == 1:
-            if first_row_zero.get(name, index) < index:
-                in_sequence.add(name)
-        elif name not in first_row_zero:
-            if len(first_row_zero) == cap:
-                return None
-            first_row_zero[name] = index
-    return in_sequence
+            if number == 1:
+                if first.get(name, index) < index:
+                    in_sequence.add(name)
+            elif name not in first:
+                if len(first) == cap:
+                    self.stopped_at = row
+                    return False
+                first[name] = index
+        return True
 
 
 def _row_zero_names(candidates):
