@@ -44,12 +44,14 @@ __artifacts_v2__ = {
             "later updates set it by other paths (qq0.java:319, w6.java:542). The attachments, "
             "message_local_flags, contacts and contact_local_flags tables are not read; they had no "
             "rows in the test data. folder_local_flags (a last refresh time per folder) is not read "
-            "either. A database copy under another storage spelling is read when it differs, and a row "
+            "either. Each database copy is read on its own, with its own lookup rows, and the copies "
+            "are then joined: a copy under another storage spelling is read when it differs, and a row "
             "both hold appears once. A rollback snapshot that differs from the live copy is read "
             "separately, so a row both hold appears twice. Neither case was present in the test data. "
             "Android User is read from the database's path; a path that names no user shows 0."),
         "paths": ('*/de.freenet.mail/databases/emaildb.db*',),
         "output_types": "standard",
+        "multiline_columns": ["To", "Cc", "Bcc", "Body Text"],
         "artifact_icon": "mail",
     },
     "freenet_mail_legacy_messages": {
@@ -89,13 +91,15 @@ __artifacts_v2__ = {
             "the store column; the meaning of its values is not established, and MAIL_AD was not found "
             "in that build's decompiled code. The email_account and customer tables are not read. The "
             "contact, contact_email, mail_tracking, pending_mail_action and unseen_push_mail tables are "
-            "not read either; they had no rows in the test data. A database copy under another storage "
+            "not read either; they had no rows in the test data. Each database copy is read on its own, "
+            "with its own lookup rows, and the copies are then joined: a copy under another storage "
             "spelling is read when it differs, and a row both hold appears once. A rollback snapshot "
             "that differs from the live copy is read separately, so a row both hold appears twice. "
             "Neither case was present in the test data. Android User is read from the database's path; "
             "a path that names no user shows 0."),
         "paths": ('*/de.freenet.mail/databases/mail.db*',),
         "output_types": "standard",
+        "multiline_columns": ["From", "To", "Cc", "Bcc", "Reply To", "Body Text"],
         "artifact_icon": "mail",
     },
     "freenet_mail_legacy_attachments": {
@@ -126,7 +130,8 @@ __artifacts_v2__ = {
             "first bytes, and File not in extraction marks a URI for which no file was found at that "
             "path in the extraction (not present in the test data). That file can have been changed or "
             "replaced after the app saved it; nothing ties its bytes to the mail. Mail Received "
-            "(received_date) is read as in freenet Mail - Messages (mail.db). A database copy under "
+            "(received_date) is read as in freenet Mail - Messages (mail.db). Each database copy is "
+            "read on its own, with its own lookup rows, and the copies are then joined: a copy under "
             "another storage spelling is read when it differs, and a row both hold appears once. A "
             "rollback snapshot that differs from the live copy is read separately, so a row both hold "
             "appears twice. Neither case was present in the test data. Android User is read from the "
@@ -330,27 +335,34 @@ def freenet_mail_messages(context):
     sources = []
     for (_key, user), paths in _databases(context, 'emaildb.db').items():
         sources.extend(paths)
-        folders = {fid: (name, ftype) for fid, name, ftype in _union(
-            context, paths, 'SELECT folder_id, display_name, type FROM folders')}
-        accounts = {aid: email for aid, email in _union(
-            context, paths, 'SELECT account_id, email FROM accounts')}
-        for row in _union(context, paths, '''
-                SELECT date, message_folder_id, message_folder_account_id, from_name, from_email,
-                       "to", cc, bcc, subject, preview, body, is_html, is_seen, has_attachments,
-                       is_answered, is_forwarded, status, message_type, message_uid
-                FROM message ORDER BY date'''):
-            (date, folder_id, account_id, from_name, from_email, to, cc, bcc, subject, preview,
-             body, is_html, seen, has_att, answered, forwarded, status, mtype, uid) = row
-            folder, ftype = folders.get(folder_id, ('', ''))
-            text = _html_text(body) if is_html else _blank(body)
-            data_list.append((
-                _to_utc(date, True), folder, ftype, accounts.get(account_id, ''),
-                _blank(from_name), _blank(from_email), _addresses(to), _addresses(cc),
-                _addresses(bcc), _blank(subject), _blank(preview), text,
-                'HTML' if is_html else 'Plain' if is_html is not None else '',
-                _yes_no(seen), _yes_no(has_att), _yes_no(answered), _yes_no(forwarded),
-                _blank(status), _blank(mtype), user,
-                _blank(uid), _blank(folder_id)))
+        # Rows are completed inside each copy, then the copies are joined.
+        per_copy = []
+        for path in paths:
+            rows = []
+            one_copy = [path]
+            folders = {fid: (name, ftype) for fid, name, ftype in _union(
+                context, one_copy, 'SELECT folder_id, display_name, type FROM folders')}
+            accounts = {aid: email for aid, email in _union(
+                context, one_copy, 'SELECT account_id, email FROM accounts')}
+            for row in _union(context, one_copy, '''
+                    SELECT date, message_folder_id, message_folder_account_id, from_name, from_email,
+                           "to", cc, bcc, subject, preview, body, is_html, is_seen, has_attachments,
+                           is_answered, is_forwarded, status, message_type, message_uid
+                    FROM message ORDER BY date'''):
+                (date, folder_id, account_id, from_name, from_email, to, cc, bcc, subject, preview,
+                 body, is_html, seen, has_att, answered, forwarded, status, mtype, uid) = row
+                folder, ftype = folders.get(folder_id, ('', ''))
+                text = _html_text(body) if is_html else _blank(body)
+                rows.append((
+                    _to_utc(date, True), folder, ftype, accounts.get(account_id, ''),
+                    _blank(from_name), _blank(from_email), _addresses(to), _addresses(cc),
+                    _addresses(bcc), _blank(subject), _blank(preview), text,
+                    'HTML' if is_html else 'Plain' if is_html is not None else '',
+                    _yes_no(seen), _yes_no(has_att), _yes_no(answered), _yes_no(forwarded),
+                    _blank(status), _blank(mtype), user,
+                    _blank(uid), _blank(folder_id)))
+            per_copy.append((path, rows))
+        data_list.extend(union_view_rows(context, per_copy))
     data_headers = (
         ('Date', 'datetime'), 'Folder', 'Folder Type', 'Account Email', 'From Name', 'From Email',
         'To', 'Cc', 'Bcc', 'Subject', 'Preview', 'Body Text', 'Body Format', 'Seen',
@@ -373,47 +385,54 @@ def freenet_mail_legacy_messages(context):
     cache = {}
     for (_key, user), paths in _databases(context, 'mail.db').items():
         sources.extend(paths)
-        folders = {(email, fid): title for email, fid, title in _union(
-            context, paths, 'SELECT email, folder_id, title FROM folder')}
-        bodies = {}
-        for mail_id, html, plain in _union(
-                context, paths, 'SELECT mail_hash_id, html, plain FROM mail_body ORDER BY _id'):
-            bodies.setdefault(mail_id, []).append((html, plain))
-        media_by_mail = {}
-        count_by_mail = {}
-        for mail_id, _att, name, _type, _size, _inline, _done, uri in \
-                _legacy_attachments(context, paths):
-            count_by_mail[mail_id] = count_by_mail.get(mail_id, 0) + 1
-            copies, _named = _saved_file(context, uri)
-            if copies and mail_id not in media_by_mail:
-                sources.append(copies[0])
-                media_by_mail[mail_id] = _media(cache, copies[0], name or os.path.basename(copies[0]))[0]
-        mail_ids = set()
-        for row in _union(context, paths, '''
-                SELECT received_date, send_date, email, folder_id, "from", "to", cc, bcc, replyto,
-                       subject, unseen, answered, deleted, has_attachment, store, size, _id
-                FROM mail ORDER BY received_date'''):
-            (received, sent, email, folder_id, sender, to, cc, bcc, reply_to, subject, unseen,
-             answered, deleted, has_att, store, size, mail_id) = row
-            mail_ids.add(mail_id)
-            texts = bodies.get(mail_id) or [(None, None)]
-            for html, plain in texts:
-                text = plain if plain else _html_text(html)
-                data_list.append((
-                    _to_utc(received, False), _to_utc(sent, False), folders.get((email, folder_id), ''),
-                    _blank(email), _addresses(sender), _addresses(to), _addresses(cc), _addresses(bcc),
-                    _addresses(reply_to), _blank(subject), _blank(text),
-                    media_by_mail.get(mail_id, ''), count_by_mail.get(mail_id, 0),
-                    _yes_no(unseen), _yes_no(answered), _yes_no(deleted), _yes_no(has_att),
-                    _blank(store), _blank(size), 'Yes', user, _blank(mail_id)))
-        for mail_id, texts in bodies.items():
-            if mail_id in mail_ids:
-                continue
-            for html, plain in texts:
-                text = plain if plain else _html_text(html)
-                data_list.append((
-                    '', '', '', '', '', '', '', '', '', '', _blank(text), '', '', '', '', '', '', '',
-                    '', 'No', user, _blank(mail_id)))
+        # Rows are completed inside each copy, then the copies are joined.
+        per_copy = []
+        for path in paths:
+            rows = []
+            one_copy = [path]
+            folders = {(email, fid): title for email, fid, title in _union(
+                context, one_copy, 'SELECT email, folder_id, title FROM folder')}
+            bodies = {}
+            for mail_id, html, plain in _union(
+                    context, one_copy, 'SELECT mail_hash_id, html, plain FROM mail_body ORDER BY _id'):
+                bodies.setdefault(mail_id, []).append((html, plain))
+            media_by_mail = {}
+            count_by_mail = {}
+            for mail_id, _att, name, _type, _size, _inline, _done, uri in \
+                    _legacy_attachments(context, one_copy):
+                count_by_mail[mail_id] = count_by_mail.get(mail_id, 0) + 1
+                copies, _named = _saved_file(context, uri)
+                if copies and mail_id not in media_by_mail:
+                    sources.append(copies[0])
+                    media_by_mail[mail_id] = _media(cache, copies[0], name or os.path.basename(copies[0]))[0]
+            mail_ids = set()
+            for row in _union(context, one_copy, '''
+                    SELECT received_date, send_date, email, folder_id, "from", "to", cc, bcc, replyto,
+                           subject, unseen, answered, deleted, has_attachment, store, size, _id
+                    FROM mail ORDER BY received_date'''):
+                (received, sent, email, folder_id, sender, to, cc, bcc, reply_to, subject, unseen,
+                 answered, deleted, has_att, store, size, mail_id) = row
+                mail_ids.add(mail_id)
+                texts = bodies.get(mail_id) or [(None, None)]
+                for html, plain in texts:
+                    text = plain if plain else _html_text(html)
+                    rows.append((
+                        _to_utc(received, False), _to_utc(sent, False), folders.get((email, folder_id), ''),
+                        _blank(email), _addresses(sender), _addresses(to), _addresses(cc), _addresses(bcc),
+                        _addresses(reply_to), _blank(subject), _blank(text),
+                        media_by_mail.get(mail_id, ''), count_by_mail.get(mail_id, 0),
+                        _yes_no(unseen), _yes_no(answered), _yes_no(deleted), _yes_no(has_att),
+                        _blank(store), _blank(size), 'Yes', user, _blank(mail_id)))
+            for mail_id, texts in bodies.items():
+                if mail_id in mail_ids:
+                    continue
+                for html, plain in texts:
+                    text = plain if plain else _html_text(html)
+                    rows.append((
+                        '', '', '', '', '', '', '', '', '', '', _blank(text), '', '', '', '', '', '', '',
+                        '', 'No', user, _blank(mail_id)))
+            per_copy.append((path, rows))
+        data_list.extend(union_view_rows(context, per_copy))
     data_headers = (
         ('Received (received_date)', 'datetime'), ('Sent (send_date)', 'datetime'), 'Folder',
         'Account Email', 'From', 'To', 'Cc', 'Bcc', 'Reply To', 'Subject', 'Body Text',
@@ -430,28 +449,35 @@ def freenet_mail_legacy_attachments(context):
     cache = {}
     for (_key, user), paths in _databases(context, 'mail.db').items():
         sources.extend(paths)
-        mails = {mail_id: (received, subject) for mail_id, received, subject in _union(
-            context, paths, 'SELECT _id, received_date, subject FROM mail')}
-        for mail_id, att_id, name, ctype, size, inline, done, uri in \
-                _legacy_attachments(context, paths):
-            received, subject = mails.get(mail_id, (None, ''))
-            copies, named = _saved_file(context, uri)
-            for copy in copies or [None]:
-                if copy:
-                    sources.append(copy)
-                    media, media_format = _media(cache, copy, name or os.path.basename(copy))
-                    try:
-                        file_size = os.path.getsize(copy)
-                    except OSError:
-                        file_size = ''
-                else:
-                    media, file_size = '', ''
-                    media_format = 'File not in extraction' if named else ''
-                data_list.append((
-                    _to_utc(received, False), media, media_format, _blank(name), _blank(ctype),
-                    _blank(size), file_size, _yes_no(inline), _yes_no(done),
-                    urllib.parse.unquote(str(uri)) if uri else '', _blank(subject),
-                    'Yes' if mail_id in mails else 'No', user, _blank(mail_id), _blank(att_id)))
+        # Rows are completed inside each copy, then the copies are joined.
+        per_copy = []
+        for path in paths:
+            rows = []
+            one_copy = [path]
+            mails = {mail_id: (received, subject) for mail_id, received, subject in _union(
+                context, one_copy, 'SELECT _id, received_date, subject FROM mail')}
+            for mail_id, att_id, name, ctype, size, inline, done, uri in \
+                    _legacy_attachments(context, one_copy):
+                received, subject = mails.get(mail_id, (None, ''))
+                copies, named = _saved_file(context, uri)
+                for copy in copies or [None]:
+                    if copy:
+                        sources.append(copy)
+                        media, media_format = _media(cache, copy, name or os.path.basename(copy))
+                        try:
+                            file_size = os.path.getsize(copy)
+                        except OSError:
+                            file_size = ''
+                    else:
+                        media, file_size = '', ''
+                        media_format = 'File not in extraction' if named else ''
+                    rows.append((
+                        _to_utc(received, False), media, media_format, _blank(name), _blank(ctype),
+                        _blank(size), file_size, _yes_no(inline), _yes_no(done),
+                        urllib.parse.unquote(str(uri)) if uri else '', _blank(subject),
+                        'Yes' if mail_id in mails else 'No', user, _blank(mail_id), _blank(att_id)))
+            per_copy.append((path, rows))
+        data_list.extend(union_view_rows(context, per_copy))
     data_headers = (
         ('Mail Received (received_date)', 'datetime'), ('Media', 'media'), 'Media Format', 'Name',
         'Content Type', 'Size (as stored)', 'File Size (bytes)', 'Inline',

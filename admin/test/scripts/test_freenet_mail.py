@@ -32,7 +32,7 @@ class EvidenceContext:
 
     def get_files_found(self):
         return [str(path) for path in sorted(self.root.rglob('*'))
-                if path.is_file() and '/databases/' in str(path)]
+                if path.is_file() and 'databases' in path.parts]
 
     def get_relative_path(self, path):
         return str(Path(path).relative_to(self.root)).replace('\\', '/')
@@ -160,6 +160,18 @@ class FreenetMailTest(unittest.TestCase):
         self.assertEqual((rows['a2']['Media'], rows['a2']['Media Format']), ('', 'File not in extraction'))
         self.assertEqual((rows['a3']['Media Format'], rows['a3']['Mail in mail Table']), ('', 'No'))
 
+
+    def test_copies_are_joined_within_each_copy(self):
+        second = self.root / 'data' / 'user' / '0' / PKG / 'databases' / 'mail.db'
+        mail_db(second)
+        db = sqlite3.connect(second)
+        db.execute("UPDATE mail SET subject = 'Changed' WHERE _id = 'm1'")
+        db.execute("UPDATE mail_body SET plain = 'changed text' WHERE mail_hash_id = 'm1'")
+        db.commit()
+        db.close()
+        rows = [row for row in self.run_artifact(fm.freenet_mail_legacy_messages) if row['Mail ID'] == 'm1']
+        self.assertEqual(sorted((row['Subject'], row['Body Text']) for row in rows),
+                         [('Changed', 'changed text'), ('Legacy', 'plain text')])
 
 if __name__ == '__main__':
     unittest.main()
