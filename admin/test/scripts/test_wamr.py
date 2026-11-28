@@ -251,5 +251,22 @@ class WamrTests(unittest.TestCase):
         rows = self.run_artifact(wamr.wamr_media)
         self.assertEqual(sorted(row['File Name'] for row in rows), ['IMG-2.jpg', 'IMG-2.jpg', 'IMG-3.jpg'])
 
+    def test_a_damaged_copy_does_not_hide_the_readable_one(self):
+        notifs_db(self.app('data/data') / 'notifs.db', {
+            'org.example.chat': [('Alice', None, 'readable', '2026-01-02 03:04:05_000')]})
+        damaged = self.app('data/user/0')
+        damaged.mkdir(parents=True)
+        (damaged / 'notifs.db').write_bytes(b'SQLite format 3\x00' + b'\xff' * 4000)
+        rows = self.run_artifact(wamr.wamr_notifications)
+        self.assertEqual([row['Content'] for row in rows], ['readable'])
+        apps = self.run_artifact(wamr.wamr_monitored_apps)
+        self.assertEqual([row['App'] for row in apps], ['org.example.chat'])
+
+    def test_a_single_media_copy_is_not_hashed(self):
+        self.write('data/media/0/Android/data/com.drilens.wamr/files/WAMR/Images/IMG-4.jpg', JPEG)
+        with patch.object(wamr, '_digest', side_effect=AssertionError('hashed')):
+            rows = self.run_artifact(wamr.wamr_media)
+        self.assertEqual([row['File Name'] for row in rows], ['IMG-4.jpg'])
+
 if __name__ == '__main__':
     unittest.main()
