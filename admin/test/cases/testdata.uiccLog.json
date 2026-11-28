@@ -1,0 +1,248 @@
+{
+  "casesynthetic_uicc_two_sims": {
+    "description": "Synthetic uicc_log.db (every line format seen, a SIM swap on phone index 0, a subscription id with no siminfo row, an unknown line, a backwards stored time) and a telephony.db with a full siminfo table, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_uicc_two_sims.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:03.809901",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:03.501908",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_uicc_log": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_uicc_sim_history": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*",
+          "*/com.android.providers.telephony/databases/telephony.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_uicc_old_siminfo": {
+    "description": "Synthetic uicc_log.db and a telephony.db whose siminfo table lacks imsi, carrier_id, is_embedded and port columns; the missing columns must read as blank, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_uicc_old_siminfo.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:04.930440",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:04.625393",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_uicc_log": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_uicc_sim_history": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*",
+          "*/com.android.providers.telephony/databases/telephony.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_uicc_no_telephony_db": {
+    "description": "Synthetic uicc_log.db with no telephony.db: the log artifact is complete and the SIM details are blank, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_uicc_no_telephony_db.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:05.996877",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:05.709518",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_uicc_log": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_uicc_sim_history": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*",
+          "*/com.android.providers.telephony/databases/telephony.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_uicc_empty": {
+    "description": "Synthetic uicc_log.db with an empty uicclog table and a telephony.db; no rows expected; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_uicc_empty.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:07.104517",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:06.837730",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_uicc_log": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_uicc_sim_history": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*",
+          "*/com.android.providers.telephony/databases/telephony.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_uicc_users": {
+    "description": "Synthetic uicc_log.db for Android user 0 plus a second storage view of user 0 (data_mirror) and a smaller copy for user 150, with a telephony.db for user 0 only, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_uicc_users.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:08.236379",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:07.938846",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_uicc_log": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*"
+        ],
+        "file_count": 3,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_uicc_sim_history": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*",
+          "*/com.android.providers.telephony/databases/telephony.db*"
+        ],
+        "file_count": 5,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  },
+  "casesynthetic_uicc_data_data": {
+    "description": "Synthetic uicc_log.db and telephony.db under data/data, the layout the storage-views run restages to check that a second storage view of one file is read once and a second Android user is read as well, invented values; contains no real evidence.",
+    "maker": "synthetic",
+    "make_data": {
+      "input_data_path": "synthetic_uicc_data_data.zip",
+      "os": "Windows-10-10.0.19045-SP0",
+      "timestamp": "2026-10-25T16:17:09.347604",
+      "last_commit": {
+        "hash": "Uncommitted",
+        "author_name": "N/A",
+        "author_email": "N/A",
+        "date": "2026-10-25T16:17:09.076094",
+        "message": "File not yet committed to git"
+      }
+    },
+    "artifacts": {
+      "get_uicc_log": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*"
+        ],
+        "file_count": 1,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      },
+      "get_uicc_sim_history": {
+        "search_patterns": [
+          "*/com.android.phone/databases/uicc_log.db*",
+          "*/com.android.providers.telephony/databases/telephony.db*"
+        ],
+        "file_count": 2,
+        "expected_output": {
+          "headers": [],
+          "data": []
+        }
+      }
+    },
+    "os_name": "Android",
+    "os_version": "16"
+  }
+}
