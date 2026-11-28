@@ -17,10 +17,22 @@ __artifacts_v2__ = {
             "app_<package> table of notifs.db (l91.java:41 and 45). A write-ahead log beside the "
             "database is applied; a database with no log beside it is read alone. The test data had "
             "no write-ahead log. When one database is present under more than one storage path "
-            "(data/data and data/user/0) and the copies read differently, the rows of every copy "
-            "are reported, a row the copies share once. Android User is read from the path, "
-            "including a rollback snapshot under misc_ce/<n>/rollback, and a path that "
-            "names no user is read as user 0. Captured is the time column, which WAMR sets to the device clock "
+            "(data/data and data/user/0), a copy is also read when its database file, or the content "
+            "of its -wal or -journal, differs from a copy already read. A row equal in every "
+            "reported column across the copies is reported once; a row that differs in any reported "
+            "column is reported once per version, with no column naming the copy. Values are "
+            "compared as shown here, so two stored values that both show as blank count as equal. "
+            "When a copy cannot be read as a SQLite database, the failed read is logged, it gives no "
+            "rows, and the other copies are still reported; a zero-byte copy gives no rows and no "
+            "log line, and an unreadable copy stays in the source file list. A rollback snapshot "
+            "that differs from the live database is read separately: all of its rows are reported, "
+            "so a row the live database also holds appears twice, and no column names the snapshot. "
+            "Android User is read from the path, including a rollback snapshot under "
+            "data/misc_ce/<n>/rollback or data/misc_de/<n>/rollback, and a path that names no user "
+            "is read as user 0. This copy handling was run only on made-up databases in the "
+            "module's tests, not on a real image; the test data had one copy of each WAMR database "
+            "and no rollback snapshot. WAMR - WhatsApp Chats and WAMR - Media Copies join their "
+            "database copies the same way. Captured is the time column, which WAMR sets to the device clock "
             "when it handles the notification, not a time the notification carries "
             "(com/drilens/wamr/NotificationListener.java:155 and 200), written as "
             "yyyy-MM-dd HH:mm:ss_SSS in UTC (l91.java:27-29); a value that does not parse is left "
@@ -114,7 +126,10 @@ __artifacts_v2__ = {
             "3 Video, 4 Audio, 5 Documents, 6 Animated Gifs, 7 Stickers, 8 Video Notes. Only 1 and 2 "
             "were seen in the test data. The file is looked up in that folder for the database's "
             "Android user. Copies "
-            "of one file under more than one storage path are each listed when their bytes differ. "
+            "of one file under more than one storage path are each listed when their bytes differ; "
+            "their rows can differ in Media, Media Format and Size (bytes), and no column shows the "
+            "storage path of each copy. Copies of media.db are joined as in WAMR - Captured "
+            "Notifications. "
             "Media Format is read from the file's first bytes, and File not in "
             "extraction means no file was found. When it marks a voice note deleted, WAMR renames "
             "its .opus file to .mp3 without converting it (c82.java:88-99; ik0.java:69-75 does the "
@@ -147,7 +162,10 @@ __artifacts_v2__ = {
             "app to the list (l91.java:44-53), and no code removes a table, so an app with a table "
             "and No was in the list earlier. When settings.db holds no monitored_apps value, every "
             "app reads No, and WAMR itself then rebuilds the list from the tables of installed apps "
-            "(l91.java:103-139). Captured Notifications is that table's row count. WhatsApp's chats "
+            "(l91.java:103-139). Captured Notifications is the number of rows WAMR - Captured "
+            "Notifications reports for that table. With several copies of settings.db, an app is "
+            "Yes when any copy lists it, and with several copies of notifs.db the count includes "
+            "each version of a row that differs between copies. WhatsApp's chats "
             "are counted in WAMR - WhatsApp Chats, not here."),
         "paths": ('*/com.drilens.wamr/databases/settings.db*',
                   '*/com.drilens.wamr/databases/notifs.db*'),
@@ -159,12 +177,13 @@ __artifacts_v2__ = {
 import hashlib
 import os
 import re
+import sqlite3
 from datetime import datetime, timezone
 
 from scripts.artifacts.storagePathViews import (android_user, canonical_path, union_view_rows,
                                                 unique_files)
 from scripts.ilapfuncs import (artifact_processor, check_in_media, get_sqlite_db_records,
-                               is_sqlite_sidecar)
+                               is_sqlite_sidecar, logfunc)
 
 PACKAGE = 'com.drilens.wamr'
 DATABASES = ('notifs.db', 'textmess.db', 'media.db', 'settings.db')
@@ -260,13 +279,24 @@ def _stores(context):
 
 
 def _tables(path, prefix):
-    rows = get_sqlite_db_records(
+    rows = _rows(
         path, "SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")
     return [row[0] for row in rows if row[0].startswith(prefix) and row[0] != prefix]
 
 
 def _quote(name):
     return '"' + name.replace('"', '""') + '"'
+
+
+def _rows(path, query):
+    """The rows of a query, or [] with a log line when the database cannot be read.
+
+    A query that fails on a damaged copy gives no rows, and the other copies are still reported."""
+    try:
+        return list(get_sqlite_db_records(path, query))
+    except sqlite3.DatabaseError as error:
+        logfunc(f'WAMR: could not read {path}: {error}')
+        return []
 
 
 def _notification_rows(context, entry):
@@ -279,7 +309,7 @@ def _notification_rows(context, entry):
         rows = []
         for table in _tables(path, 'app_'):
             tables.add(table[len('app_'):])
-            for row_id, app, title, subtext, content, stamp in get_sqlite_db_records(
+            for row_id, app, title, subtext, content, stamp in _rows(
                     path, f'SELECT _id, app, title, subtext, content, time FROM {_quote(table)}'):
                 rows.append((
                     _parse_utc(stamp), app or table[len('app_'):], _not_null_word(title),
@@ -312,7 +342,7 @@ def wamr_whatsapp_chats(context):
             sources.append(path)
             rows = []
             for table in _tables(path, 'chat_'):
-                for row_id, author, content, stamp, deleted in get_sqlite_db_records(
+                for row_id, author, content, stamp, deleted in _rows(
                         path, f'SELECT _id, author, content, received_at, deleted FROM {_quote(table)}'):
                     rows.append((
                         _parse_utc(stamp), author or '', content or '',
@@ -354,15 +384,34 @@ def _media_files(context):
         user = head.rstrip('/').split('/')[-1]
         index.setdefault((_evidence_root(relative.lstrip('/')), user if user.isdigit() else '0',
                           parts[0], parts[1]), []).append(path)
-    for key, paths in index.items():
-        distinct = {}
-        for path in paths:
+    return {key: _distinct(paths) for key, paths in index.items()}
+
+
+def _distinct(paths):
+    """The paths with byte-identical copies dropped, first copy kept, order kept.
+
+    A file with no second copy is not read; copies are hashed only when their sizes match."""
+    if len(paths) < 2:
+        return list(paths)
+    sizes = {}
+    for path in paths:
+        try:
+            sizes.setdefault(os.path.getsize(path), []).append(path)
+        except OSError:
+            sizes.setdefault(('unreadable', path), []).append(path)
+    kept = set()
+    for size, group in sizes.items():
+        if len(group) < 2 or isinstance(size, tuple):
+            kept.update(group)
+            continue
+        seen = {}
+        for path in group:
             try:
-                distinct.setdefault((os.path.getsize(path), _digest(path)), path)
+                seen.setdefault(_digest(path), path)
             except OSError:
-                distinct.setdefault(('unreadable', path), path)
-        index[key] = list(distinct.values())
-    return index
+                seen.setdefault(('unreadable', path), path)
+        kept.update(seen.values())
+    return [path for path in paths if path in kept]
 
 
 def _sniff(path):
@@ -407,9 +456,9 @@ def wamr_media(context):
         file_rows = []
         for path in entry.get('media.db', []):
             sources.append(path)
-            file_rows.append((path, list(get_sqlite_db_records(
+            file_rows.append((path, _rows(
                 path, 'SELECT _id, file_name, media_type, download_at, deleted '
-                      'FROM MediaMessages'))))
+                      'FROM MediaMessages')))
         for row_id, name, media_type, stamp, deleted in union_view_rows(context, file_rows):
             folder = MEDIA_TYPES.get(media_type, '')
             key = (entry['root'], entry['user'], folder, name)
@@ -450,7 +499,7 @@ def wamr_monitored_apps(context):
         listed = set()
         for settings in entry.get('settings.db', []):
             sources.append(settings)
-            for (value,) in get_sqlite_db_records(
+            for (value,) in _rows(
                     settings, "SELECT value FROM Settings WHERE key_name = 'monitored_apps'"):
                 if value and value != 'NULL':
                     listed.update(item for item in value.split(';') if item)
