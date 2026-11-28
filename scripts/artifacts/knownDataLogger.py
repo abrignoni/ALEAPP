@@ -27,7 +27,7 @@ __artifacts_v2__ = {
                   "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/docs/DATABASE.md?plain=1#L56-L57 and unaccept, "
                   "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L337-L339); the undo case was not run on data. Detail "
                   "says which rule, or which notification category, inferred it "
-                  "(https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L273 and https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L341). Time is the device clock when the "
+                  "(https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L271-L274 and https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L339-L342). Time is the device clock when the "
                   "entry was stamped, stored in Unix milliseconds (utc_ms, known-data-logger v0.3.0, "
                   "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/docs/SPEC.md?plain=1#L48); Time Quality says how that stamp relates to the act (exact, after, before or "
                   "approximate). A tester can change the clock as a test step, so the app orders entries by "
@@ -85,14 +85,14 @@ __artifacts_v2__ = {
         },
         "notes": ("Log entries of kind auto_event: the raw events KDL's accessibility service recorded. By "
                   "default that is the apps under test (KDL Setup lists them) plus System UI and Settings "
-                  "(known-data-logger v0.3.0, https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L46). With the app's capture_all_apps setting on, it "
+                  "(known-data-logger v0.3.0, https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L111-L112 and https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L46). With the app's capture_all_apps setting on, it "
                   "is every app except KDL itself (https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L163); that setting was not run on data. Read from the "
                   "same store as KDL Known Data, with the same rule for the current version. Event is the stored action, for example screen, "
                   "tap, typed_text, notification, field_cleared or mark. Text is the stored content: a screen "
                   "title, a tap label, a notification's text, a field's typed value, which the app records "
                   "as the field's final value stamped at the last keystroke (known-data-logger v0.3.0, "
                   "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/README.md?plain=1#L49-L50), or the text a field held when it was "
-                  "cleared (https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L208). "
+                  "cleared (https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/CaptureService.kt#L204-L208). "
                   "On a phone where KDL ran, this table can hold what was typed and shown in the captured apps. "
                   "Detail is as stored, for example the view id or class the service reported. A MARK row "
                   "carries the screenshot taken when it was pressed, checked against the SHA-256 the app stored "
@@ -126,13 +126,13 @@ __artifacts_v2__ = {
         "notes": ("Every stored version of each KDL log entry that has more than one version or was removed, in "
                   "the order the entries were first written. An edit in the app writes a new row with a higher "
                   "revision_n, and removing an entry writes a tombstone row, reported here as Change removed "
-                  "(known-data-logger v0.3.0, https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/docs/DATABASE.md?plain=1#L62-L63). Edited is when that version was written "
+                  "(known-data-logger v0.3.0, https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L313-L320 and https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L341-L342). Edited is when that version was written "
                   "(edited_utc_ms). On an original row the app writes the entry's own stamp there "
                   "(https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L277-L284), so Edited equals Action Time; it is an edit time only on edited "
                   "and removed rows. Accepting an inferred action is an edit: on emu_a15_kdl_v1 both edited "
                   "entries were messages the app inferred, one from a notification and one from a rule on a "
                   "cleared text field (google_messages_send, known-data-logger v0.3.0, "
-                  "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/assets/rules/default.json#L5), "
+                  "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/assets/rules/default.json#L5-L7), "
                   "Reviewed went from No to Yes, and Action Time stayed the same in both versions. Tested on "
                   "emu_a15_kdl_v1 (KDL 0.3.0): 4 rows, 2 entries with an original and an edited version. In "
                   "that sample App, Source, Kind and Android User each held one value on all 4 rows. A removed "
@@ -164,8 +164,9 @@ __artifacts_v2__ = {
                   "are checked in KDL Exports), which store the log tables were read from, and, from kl.db, "
                   "the settings rows, the apps KDL was set to capture and its device snapshots. The chain is "
                   "checked with the app's own rule "
-                  "(chain_canonical, known-data-logger v0.3.0, "
-                  "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/tools/make_documentation.py#L52): a SHA-256 over "
+                  "(Chain, known-data-logger v0.3.0, "
+                  "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Model.kt#L434-L469 as "
+                  "https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/tools/make_documentation.py#L44-L72 rebuilds it): a SHA-256 over "
                   "each row's fields and the previous row's hash, in seq order. BROKEN names the first row "
                   "whose hash or link does not match. A row changed, inserted or removed before the last row "
                   "breaks the chain at or after that point. Rows removed from the end are not detected here: "
@@ -180,7 +181,8 @@ __artifacts_v2__ = {
                   "the chains of kl.db and actions-live.jsonl were intact over 68 rows, and a test tree with "
                   "one row added by hand reported BROKEN at that row. Settings are listed as stored; "
                   "capture_session_active 1 means a capture session was started and not stopped "
-                  "(known-data-logger v0.3.0, https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L81-L95). App to capture rows give the version the app read when the app "
+                  "(known-data-logger v0.3.0, https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L41 with https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L108-L109 "
+                  "and https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Repo.kt#L82-L95). App to capture rows give the version the app read when the app "
                   "was added. Profile notes and carrier are typed by the tester. Time is filled only on rows "
                   "that carry a time (session_start, apps, device snapshots): 4 of 13 rows on emu_a15_kdl_v1, "
                   "where Android User held 0 on all 13 rows."),
@@ -241,8 +243,8 @@ EXPORT_FORMAT = 'known-data-logger'
 
 # The fields the app hashes for each row, in the order of chain_canonical in the
 # known-data-logger repository (Chain.canonical computes the same text), at v0.3.0:
-# https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/tools/make_documentation.py#L52
-# https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Model.kt#L460
+# https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/tools/make_documentation.py#L44-L57
+# https://github.com/abrignoni/known-data-logger/blob/c68ac9217ccc8b202b313003626c8dc467eb9c42/app/src/main/java/com/abrignoni/knowndatalogger/Model.kt#L447-L467
 CHAIN_FIELDS = (
     'account', 'action', 'app_package', 'app_version', 'boot_count', 'content', 'conversation_id',
     'counterpart', 'detail', 'device_label', 'direction', 'edited_utc_ms', 'elapsed_ms', 'entry_id',
