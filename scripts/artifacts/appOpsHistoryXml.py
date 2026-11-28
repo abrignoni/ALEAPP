@@ -15,7 +15,7 @@ __artifacts_v2__ = {
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#821-836) "
             "are the same at the android11 to android15 release branches and in "
             "LegacyHistoricalRegistry at android16-release "
-            "(https://android.googlesource.com/platform/frameworks/base/+/99b01a65cc4c104933788b3143285ab6bae65827/services/core/java/com/android/server/appop/LegacyHistoricalRegistry.java). "
+            "(https://android.googlesource.com/platform/frameworks/base/+/99b01a65cc4c104933788b3143285ab6bae65827/services/core/java/com/android/server/appop/LegacyHistoricalRegistry.java#838-853). "
             "On all 17 tested images, Samsung ones included, every element and attribute was one "
             "that writer writes. Not tested below Android 11. This is a different store from "
             "appOpsHistoryDb.py (the Android 16 app_op_history database), discreteNative.py "
@@ -54,17 +54,19 @@ __artifacts_v2__ = {
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/core/java/android/app/AppOpsManager.java#1348 "
             "at android13) and the table holds it. The table has no name for 96 and ends at 155, so "
             "codes 156 to 162 on Android 16 are unnamed. The release comes from ro.build.version.sdk "
-            "in system/build.prop, or else from the Android release in the usagestats version file "
+            "in system/build.prop or from the Android release in the usagestats version file "
             "(UsageStatsDatabase.getBuildFingerprint, "
-            "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/usage/java/com/android/server/usage/UsageStatsDatabase.java#421-425); "
-            "with neither, or with a release older than Android 11, codes from 100 are left unnamed. "
-            "All 17 tested images gave a release. Codes left unnamed: 100 on cookbook_a11 (Samsung, "
-            "Android 11, 129 rows), 139 on russell_a14 (Pixel, Android 14, 48 rows), and six codes "
-            "from 10008 to 10044 on kevin_pocox7_a15 (Xiaomi, 5,036 rows); the Op Code is "
-            "shown.\nInterval Start and Interval End are computed by this artifact from the stored "
-            "offsets and one file time. Each ops element stores beg and end as millisecond offsets. "
-            "As the platform's reader does, the artifact adds the ov values of the shorter-named "
-            "files "
+            "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/usage/java/com/android/server/usage/UsageStatsDatabase.java#421-425), "
+            "whichever sits nearest to the history folder in the input, so each extraction in a "
+            "combined input uses its own; a test tree holding an Android 11 and an Android 16 "
+            "extraction named codes for each by its own release. With neither, or with a release "
+            "older than Android 11, codes from 100 are left unnamed. All 17 tested images gave a "
+            "release. Codes left unnamed: 100 on cookbook_a11 (Samsung, Android 11, 129 rows), 139 "
+            "on russell_a14 (Pixel, Android 14, 48 rows), and six codes from 10008 to 10044 on "
+            "kevin_pocox7_a15 (Xiaomi, 5,036 rows); the Op Code is shown.\nInterval Start and "
+            "Interval End are computed by this artifact from the stored offsets and one file time. "
+            "Each ops element stores beg and end as millisecond offsets. As the platform's reader "
+            "does, the artifact adds the ov values of the shorter-named files "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1266 "
             "and #1288, #1312-1315) and the interval ends of the levels before the file, which sum "
             "to the file name minus the base "
@@ -85,23 +87,29 @@ __artifacts_v2__ = {
             "time in a zip) the interval times and Reference Time are left blank and the reading is "
             "shown in Reference Time (no zone, as stored), which was blank on every tested public "
             "image; when the file names do not form one series (not seen on the tested images), no "
-            "times or offsets are computed. On 15 of the 16 tested zips the smallest stored offset "
-            "was under 8 seconds; on samsungs20_a13 it was about 37 minutes.\nChecked against the "
-            "separately kept discrete op records, which carry their own times, on 14 zips. In "
-            "900000.xml 1,263 of 1,275 records fell in an interval that counts an access to the same "
-            "UID, package and op (99.1%); with the times moved 15 minutes earlier 79.2% did, and 15 "
-            "minutes later 88.6%. In 9900000.xml 10,233 of 10,948 did (93.5%), and more did with the "
-            "times moved later (96.3% at 150 minutes), so the placement of that file's intervals is "
-            "not confirmed to better than one of its intervals; why was not established. In "
-            "99900000.xml 39,072 of 40,044 did (97.6%) and shifts up to 150 minutes did not change "
-            "that, so it does not test the placement. Longer files held 12 records or none. Over all "
-            "files 50,580 of 53,117 did (95.2%, 62.5% to 99.4% per image). On samsungs20_a13 125 of "
-            "286 did: its 900000.xml agreed on 38 of 40 as placed, and its 9900000.xml on 87 of 245 "
-            "as placed and 235 of 285 with the times moved 150 minutes later. An interval is the "
-            "platform's bucket for counts, not the time of any one access.\nAn op element with no st "
-            "child gives no row. A Source Folder column is added when more than one history folder "
-            "is read; a test tree with two copies of one image's folder gave each copy its rows "
-            "under its folder."),
+            "times or offsets are computed. A file the series skips adds no ov, as the platform's "
+            "reader keeps going past it "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1229-1236), "
+            "as on samsunga53_a14, which has no 9900000.xml. When a file cannot be read, or an ov is "
+            "not a number, the files after it in the series get no offsets or times, and an interval "
+            "without a numeric beg or end gets none; their counts are still reported. A test tree "
+            "with one unreadable file gave the rows of the files after it blank offsets and times. "
+            "On 15 of the 16 tested zips the smallest stored offset was under 8 seconds; on "
+            "samsungs20_a13 it was about 37 minutes.\nChecked against the separately kept discrete op "
+            "records, which carry their own times, on 14 zips. In 900000.xml 1,263 of 1,275 records "
+            "fell in an interval that counts an access to the same UID, package and op (99.1%); with "
+            "the times moved 15 minutes earlier 79.2% did, and 15 minutes later 88.6%. In "
+            "9900000.xml 10,233 of 10,948 did (93.5%), and more did with the times moved later "
+            "(96.3% at 150 minutes), so the placement of that file's intervals is not confirmed to "
+            "better than one of its intervals; why was not established. In 99900000.xml 39,072 of "
+            "40,044 did (97.6%) and shifts up to 150 minutes did not change that, so it does not "
+            "test the placement. Longer files held 12 records or none. Over all files 50,580 of "
+            "53,117 did (95.2%, 62.5% to 99.4% per image). On samsungs20_a13 125 of 286 did: its "
+            "900000.xml agreed on 38 of 40 as placed, and its 9900000.xml on 87 of 245 as placed and "
+            "235 of 285 with the times moved 150 minutes later. An interval is the platform's bucket "
+            "for counts, not the time of any one access.\nAn op element with no st child gives no "
+            "row. A Source Folder column is added when more than one history folder is read; a test "
+            "tree with two copies of one image's folder gave each copy its rows under its folder."),
         "paths": ('*/system/appops/history/*.xml', '*/system/build.prop',
                   '*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         "output_types": "standard",
@@ -269,20 +277,34 @@ def _folder_rows(seeker, files, num_ops):
     reference_ms = reference * 1000 if reference is not None else None
     rows = []
     overflow = 0
+    # Offsets need every earlier file's ov: once a file in the series cannot be read, the
+    # files after it get no offsets or times. A file the series skips is not read by the
+    # platform either, which adds no ov for it (HistoricalRegistry.java#1229-1236 at android13-release).
+    chain = depths is not None
     for name, path in sorted(files, key=lambda item: (depths or {}).get(item[0], item[0])):
         try:
             root = _root(path)
         except Exception as error:  # pylint: disable=broad-except
+            root = None
             logfunc(f'App Ops History: could not read {os.path.basename(path)}: {error}')
-            continue
         if root is None or root.tag != 'history':
+            if chain:
+                logfunc(f'App Ops History: {os.path.basename(path)} was not read, so the longer '
+                        f'interval files after it get no offsets or times')
+            chain = False
             continue
-        shift = overflow + (name - base if depths is not None else 0)
+        shift = overflow + (name - base) if chain else None
         for ops in root.findall('ops'):
-            begin = _int(ops.get('beg'), 0) + shift
-            end = _int(ops.get('end'), 0) + shift
-            start_time = _ms_to_utc(reference_ms - end) if reference_ms is not None else ''
-            end_time = _ms_to_utc(reference_ms - begin) if reference_ms is not None else ''
+            stored_begin, stored_end = _int(ops.get('beg')), _int(ops.get('end'))
+            if shift is None or stored_begin is None or stored_end is None:
+                if shift is not None:
+                    logfunc(f'App Ops History: an interval in {os.path.basename(path)} has no usable '
+                            f'beg or end, so its offsets and times are left blank')
+                begin = end = None
+            else:
+                begin, end = stored_begin + shift, stored_end + shift
+            start_time = _ms_to_utc(reference_ms - end) if reference_ms is not None and end is not None else ''
+            end_time = _ms_to_utc(reference_ms - begin) if reference_ms is not None and begin is not None else ''
             for uid in ops.findall('uid'):
                 for package in uid.findall('pkg'):
                     for attribution in package.findall('ftr'):
@@ -301,10 +323,17 @@ def _folder_rows(seeker, files, num_ops):
                                     op_name, code, attribution.get('na', ''),
                                     app_state, flags,
                                     state.get('ac', ''), state.get('rc', ''), state.get('du', ''),
-                                    end if depths is not None else '',
-                                    begin if depths is not None else '',
+                                    end if end is not None else '',
+                                    begin if begin is not None else '',
                                 ))
-        overflow += _int(root.get('ov'), 0)
+        stored_overflow = _int(root.get('ov')) if root.get('ov') is not None else 0
+        if stored_overflow is None:
+            if chain:
+                logfunc(f'App Ops History: {os.path.basename(path)} has an unusable ov, so the '
+                        f'longer interval files after it get no offsets or times')
+            chain = False
+        else:
+            overflow += stored_overflow
     return rows
 
 
@@ -323,6 +352,43 @@ def _release(paths):
             if major is not None:
                 return major
     return None
+
+
+def _nearest(paths, folder):
+    """paths ordered by how much of folder's path they share, longest first, so a version
+    file from the same extraction as a history folder is read before one from another."""
+    def shared(path):
+        try:
+            return len(os.path.commonpath([path, folder]))
+        except ValueError:
+            return 0
+    return sorted(paths, key=lambda path: (-shared(path), os.path.basename(path) != 'build.prop', path))
+
+
+def _num_ops(folder, props, versions):
+    """The op count below which codes are named for one history folder, and a log line saying
+    where it came from. The build.prop or usagestats version file nearest to the folder that
+    gives a version is used; at an equal distance build.prop is read first."""
+    newest = max(NUM_OPS_BY_SDK.values())
+    candidates = [(path, 'prop') for path in props] + [(path, 'version') for path in versions]
+    ordered = _nearest([path for path, _kind in candidates], folder)
+    kinds = dict(candidates)
+    num_ops, basis = NUM_OPS_UNKNOWN, 'no Android version found'
+    for path in ordered:
+        if kinds[path] == 'prop':
+            sdk = _sdk_level([path])
+            if sdk is not None:
+                num_ops = NUM_OPS_BY_SDK.get(sdk, newest if sdk > 36 else NUM_OPS_UNKNOWN)
+                basis = f'SDK level {sdk} from build.prop'
+                break
+        else:
+            release = _release([path])
+            if release is not None:
+                num_ops = NUM_OPS_BY_RELEASE.get(release, newest if release > 16 else NUM_OPS_UNKNOWN)
+                basis = f'Android {release} from the usagestats version file'
+                break
+    logfunc(f'App Ops History: {basis}; op codes below {num_ops} are named')
+    return num_ops
 
 
 @artifact_processor
@@ -348,22 +414,8 @@ def app_ops_history_xml(context):
     seeker = context.get_seeker()
     found = [str(path) for path in unique_files(context, keep_differing_views=True)]
     props = [path for path in found if os.path.basename(path) == 'build.prop' and not os.path.isdir(path)]
-    sdk = _sdk_level(props)
-    newest = max(NUM_OPS_BY_SDK.values())
-    if sdk is not None:
-        num_ops = NUM_OPS_BY_SDK.get(sdk, newest if sdk > 36 else NUM_OPS_UNKNOWN)
-        basis = f'SDK level {sdk} from build.prop'
-    else:
-        versions = [path for path in found if os.path.basename(path) == 'version'
-                    and '/usagestats' in path.replace('\\', '/') and not os.path.isdir(path)]
-        release = _release(versions)
-        if release is not None:
-            num_ops = NUM_OPS_BY_RELEASE.get(release, newest if release > 16 else NUM_OPS_UNKNOWN)
-            basis = f'Android {release} from the usagestats version file'
-        else:
-            num_ops = NUM_OPS_UNKNOWN
-            basis = 'no Android version found'
-    logfunc(f'App Ops History: {basis}; op codes below {num_ops} are named')
+    versions = [path for path in found if os.path.basename(path) == 'version'
+                and '/usagestats' in path.replace('\\', '/') and not os.path.isdir(path)]
     folders = {}
     for path in found:
         if os.path.isdir(path) or not path.endswith('.xml') or '/appops/history/' not in path.replace('\\', '/'):
@@ -376,7 +428,7 @@ def app_ops_history_xml(context):
     sources = []
     for folder in sorted(folders):
         files = folders[folder]
-        rows = _folder_rows(seeker, files, num_ops)
+        rows = _folder_rows(seeker, files, _num_ops(folder, props, versions))
         relative = context.get_relative_path(min(files)[1])
         if len(folders) > 1:
             rows = [row + (os.path.dirname(relative),) for row in rows]
