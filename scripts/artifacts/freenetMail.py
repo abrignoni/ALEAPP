@@ -160,7 +160,7 @@ PACKAGE = 'de.freenet.mail'
 _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 _ROLLBACK = re.compile(r'(^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/')
 _STORAGE = re.compile(r'^/storage/emulated/(\d+)/(.+)$')
-_BLOCKS = {'br', 'p', 'div', 'tr', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 'blockquote'}
+_BLOCKS = {'br', 'p', 'div', 'tr', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 'blockquote'}
 
 
 def _to_utc(value, unit_ms):
