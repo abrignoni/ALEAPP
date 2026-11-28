@@ -57,7 +57,9 @@ __artifacts_v2__ = {
             "Battery Capacity (mAh) is battery_capacity, in mAh "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/core/java/android/os/BatteryUsageStats.java#230), "
             "as the reader returns it. UIDs Recorded counts the uid elements, which are the rows of "
-            "Battery Usage Stats by App for the session.\nNot shown: the per-component power "
+            "Battery Usage Stats by App for the session. The columns from Session Duration to UIDs "
+            "Recorded are typed as numbers, so LAVA sorts them as numbers and shows a whole value "
+            "written with a trailing .0 without it.\nNot shown: the per-component power "
             "breakdowns, the all-apps scope aggregate (scope 1), the per-user consumers (none was "
             "present in the 44 tested files), and the battery and charge time remaining estimates. A "
             "Source File column is added when files are read from more than one folder. A test tree "
@@ -139,7 +141,10 @@ __artifacts_v2__ = {
             "The android16 writer writes none of the three time attributes "
             "(https://android.googlesource.com/platform/frameworks/base/+/99b01a65cc4c104933788b3143285ab6bae65827/core/java/android/os/UidBatteryConsumer.java#201), "
             "so all three columns would be blank there. Neither release was exercised, and Time in "
-            "Foreground Service was blank on every tested row.\nHighest Drain Process is "
+            "Foreground Service was blank on every tested row. The three time columns are typed as "
+            "numbers. LAVA sorts Time in Foreground and Time in Background as numbers; Time in "
+            "Foreground Service held no value on any tested row, so its sorting was not "
+            "exercised.\nHighest Drain Process is "
             "highest_drain_package. Despite the name, at android12 to 14 CpuPowerCalculator fills it "
             "with the name of the UID's process with the highest sum of user CPU time, system CPU "
             "time and foreground time, preferring a name that does not begin with * "
@@ -237,14 +242,14 @@ def battery_usage_stats_snapshots(context):
     data_headers = (
         ('Session Start', 'datetime'),
         ('Session End', 'datetime'),
-        'Session Duration (ms)',
-        'Discharge (%)',
-        'Discharged Lower Bound (mAh)',
-        'Discharged Upper Bound (mAh)',
-        'Discharge Duration (ms)',
-        'Device Consumed Power (mAh)',
-        'Battery Capacity (mAh)',
-        'UIDs Recorded',
+        ('Session Duration (ms)', 'number'),
+        ('Discharge (%)', 'number'),
+        ('Discharged Lower Bound (mAh)', 'number'),
+        ('Discharged Upper Bound (mAh)', 'number'),
+        ('Discharge Duration (ms)', 'number'),
+        ('Device Consumed Power (mAh)', 'number'),
+        ('Battery Capacity (mAh)', 'number'),
+        ('UIDs Recorded', 'number'),
     )
     found = _bus_files(context)
     file_rows = []
@@ -278,9 +283,9 @@ def battery_usage_stats_apps(context):
         'UID',
         'Android User',
         'Highest Drain Process',
-        'Time in Foreground (ms)',
-        'Time in Background (ms)',
-        'Time in Foreground Service (ms)',
+        ('Time in Foreground (ms)', 'number'),
+        ('Time in Background (ms)', 'number'),
+        ('Time in Foreground Service (ms)', 'number'),
     )
     found = _bus_files(context)
     file_rows = []
