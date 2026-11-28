@@ -465,6 +465,7 @@ TRIAGE_OWN_FILES = ('content_providers_list.txt',)
 ALEX_FOLDER_PREFIX = 'content_provider_'
 ALEX_PRFS_FOLDER = ('extra', 'content_provider')
 STATUS_SUFFIX = '.status.json'
+STATUS_FILE_LIMIT = 1 << 20  # bytes; ALEX writes a status file of a few dozen bytes
 # What ALEX's status says, as the reader's statuses it stands for.
 TOOL_STATUSES = {
     'rows': (ROWS,),
@@ -545,18 +546,37 @@ def _writable(text):
     return True
 
 
+def _status_value(data, key):
+    """(value, problem) of one value of an ALEX .status.json, the only check those values get.
+
+    ('', '') when the key is absent; (text, '') for text that can be written as UTF-8 and is not
+    only white space; (None, problem) for any other value: a number, true or false, null, a list or
+    object, empty or blank text, or text with a lone surrogate (json.loads keeps an escaped \\ud800)."""
+    if key not in data:
+        return '', ''
+    value = data[key]
+    if isinstance(value, str) and value.strip() and _writable(value):
+        return value, ''
+    return None, f'status file holds a {key} that is not valid text'
+
+
 def read_tool_status(path):
     """(status, uri, problem) of an ALEX .status.json.
 
     status is the status as written, '' when there is none to show; uri is the URI the file
     names, '' when the file has no uri key, None when the key holds no URI that can be read (a
-    status that cannot be tied to a query); problem says why either is missing, or ''."""
+    status that cannot be tied to a query); problem says why either is missing, or ''.
+
+    Reads at most STATUS_FILE_LIMIT + 1 bytes and parses only a file within the limit, so time and
+    memory are bounded by STATUS_FILE_LIMIT whatever the size of the file."""
     try:
         with open(path, 'rb') as handle:
-            raw = handle.read()
+            raw = handle.read(STATUS_FILE_LIMIT + 1)
     except OSError as error:
         return '', '', 'status file not readable: ' + type(error).__name__ + (
             f' ({error.strerror})' if error.strerror else '')
+    if len(raw) > STATUS_FILE_LIMIT:
+        return '', '', f'status file is larger than {STATUS_FILE_LIMIT} bytes, not read'
     try:
         data = json.loads(raw.decode('utf-8-sig'))
     except (UnicodeDecodeError, ValueError, RecursionError) as error:
@@ -564,21 +584,11 @@ def read_tool_status(path):
         return '', '', f'status file is not JSON: {type(error).__name__}'
     if not isinstance(data, dict):
         return '', '', 'status file holds no status text'
-    uri, problems = data.get('uri', ''), []
-    if 'uri' not in data:
-        pass
-    elif not isinstance(uri, str) or not uri.strip():
-        uri = None
-        problems.append('status file holds a URI that is not text')
-    elif not _writable(uri):
-        uri = None
-        problems.append('status file holds a URI that is not valid text (a lone surrogate)')
-    status = data.get('status')
-    if not isinstance(status, str) or not status.strip():
-        return '', uri, '; '.join(['status file holds no status text'] + problems)
-    if not _writable(status):
-        return '', uri, '; '.join(['status file holds a status that is not valid text (a lone surrogate)'] + problems)
-    return status, uri, '; '.join(problems)
+    status, status_problem = _status_value(data, 'status')
+    uri, uri_problem = _status_value(data, 'uri')
+    if status == '':
+        status_problem = 'status file holds no status text'
+    return status or '', uri, '; '.join(filter(None, [status_problem, uri_problem]))
 
 
 def tool_status_disagrees(tool_status, status):

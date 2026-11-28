@@ -288,19 +288,26 @@ class LayoutTest(unittest.TestCase):
             self.assertIn('not JSON', status_of(b'not json')[2])
             self.assertEqual(status_of(b'{"uri": "content://sms"}'), ('', 'content://sms', no_status))
             self.assertEqual(status_of(b'["rows"]'), ('', '', no_status))
-            # A status with nothing but white space is no status.
-            self.assertEqual(status_of(b'{"status": ""}'), ('', '', no_status))
-            self.assertEqual(status_of(b'{"status": " \\t\\n"}'), ('', '', no_status))
-            # An escaped lone surrogate cannot be written as UTF-8 by the report: it is not passed on.
-            self.assertEqual(status_of(b'{"status": "\\ud800"}'),
-                             ('', '', 'status file holds a status that is not valid text (a lone surrogate)'))
-            self.assertEqual(status_of(b'{"uri": "content://\\udfff", "status": "rows"}'),
-                             ('rows', None, 'status file holds a URI that is not valid text (a lone surrogate)'))
-            # A uri key that holds no text gives None, unlike a missing key: the status cannot be tied to a query.
-            not_text = 'status file holds a URI that is not text'
-            for value in (b'7', b'null', b'""', b'" "', b'["content://sms"]'):
-                self.assertEqual(status_of(b'{"uri": ' + value + b', "status": "rows"}'), ('rows', None, not_text))
-            self.assertEqual(status_of(b'{"uri": 7}'), ('', None, no_status + '; ' + not_text))
+            # Every value of the file goes through one check: anything but text that can be written as
+            # UTF-8 and is not only white space is not valid. An invalid uri gives None, unlike a missing
+            # key: the status cannot be tied to a query.
+            bad_values = {'number': b'7', 'true': b'true', 'null': b'null', 'list': b'["rows"]',
+                          'object': b'{"status": "rows"}', 'nested': b'[' * 50 + b']' * 50, 'empty': b'""',
+                          'white space': b'" \\t\\n"', 'lone surrogate': b'"\\ud800"',
+                          'surrogate in text': b'"content://\\udfff"'}
+            for label, value in bad_values.items():
+                with self.subTest(value=label):
+                    self.assertEqual(status_of(b'{"uri": "content://sms", "status": ' + value + b'}'),
+                                     ('', 'content://sms', 'status file holds a status that is not valid text'))
+                    self.assertEqual(status_of(b'{"uri": ' + value + b', "status": "rows"}'),
+                                     ('rows', None, 'status file holds a uri that is not valid text'))
+                    self.assertEqual(status_of(b'{"uri": ' + value + b'}'),
+                                     ('', None, no_status + '; status file holds a uri that is not valid text'))
+            # A file over the limit is not read, whatever it holds.
+            with mock.patch.object(reader, 'STATUS_FILE_LIMIT', 20):
+                self.assertEqual(status_of(b'{"status": "rows"}'), ('rows', '', ''))
+                self.assertEqual(status_of(b'{"status": "rows", "x": 1}'),
+                                 ('', '', 'status file is larger than 20 bytes, not read'))
             # Deep nesting: json.loads raises RecursionError up to Python 3.13 and reads the array from
             # 3.14 on. Either way the file gets a problem text and no status.
             self.assertIn(status_of(b'[' * 100000 + b']' * 100000),

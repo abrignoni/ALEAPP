@@ -54,7 +54,7 @@ __artifacts_v2__ = {
                  "beside it. URI is the one the file name stands for; for a file no artifact reads, it is the URI "
                  "the status file names, and Detail says so; a status file naming another URI than the file name "
                  "is flagged in Detail, and its status is not compared with the text, nor is the status of a "
-                 "status file whose URI is not text. The <name>.json ALEX writes "
+                 "status file whose URI is not valid text. The <name>.json ALEX writes "
                  "with JSON output on is not read. A row of a folder "
                  "can say 'not queried by this tool' when the layout has no file for "
                  "that URI (android_triage does not query SMS, MMS or the call log; ALEX does not query "
@@ -644,8 +644,7 @@ NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder
 NOTE_ADDRESSES_ABSENT = ('addresses unknown: no mms/mms_addr.txt in this folder of the extraction (ALEX writes one '
                          'into its PRFS zip for every query it runs)')
 NOTE_URI_FROM_STATUS = 'URI as the status file names it'
-NOTE_STATUS_NOT_COMPARED = ('the status was not compared with the text: the status file names no URI that can '
-                            'be read')
+NOTE_STATUS_NOT_COMPARED = 'the status was not compared with the text'
 NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
 NOTE_ADDRESSES_INCOMPLETE = ('addresses unknown: no FROM, TO, CC or BCC row for this message was read, and '
                              'mms_addr.txt is incomplete ({reason})')
