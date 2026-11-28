@@ -73,6 +73,7 @@ def database(path):
     db.close()
 
 
+@unittest.skipIf(sys.platform == 'win32', 'the fixture uses the app\'s mail:: folder names, which Windows refuses')
 class TelekomMailTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -123,11 +124,35 @@ class TelekomMailTest(unittest.TestCase):
         self.assertEqual((unnamed[0]['Copy'], unnamed[0]['Mail Folder Path'], unnamed[0]['Attachment Index'],
                           unnamed[0]['Media Format']), ('Preview', 'INBOX/Sent', '3', 'PNG'))
 
+    def test_rollback_copy_resolves_files_held_under_the_live_folder(self):
+        snapshot = self.root / 'data' / 'misc_ce' / '0' / 'rollback' / '7' / PKG / 'databases' / 'telekom-database'
+        database(snapshot)
+        db = sqlite3.connect(snapshot)
+        db.execute("UPDATE Mail SET subject = 'Older'")
+        db.commit()
+        db.close()
+        rows = [row for row in self.run_artifact(tk.telekom_mail_messages) if row['Subject'] == 'Older']
+        self.assertEqual([row['Attachment'] for row in rows], ['media:logo'])
+
+    def test_copies_are_joined_within_each_copy(self):
+        second = self.root / 'data' / 'user' / '0' / PKG / 'databases' / 'telekom-database'
+        database(second)
+        db = sqlite3.connect(second)
+        db.execute("UPDATE Mail SET subject = 'Changed'")
+        db.execute("UPDATE Folder SET name = 'Renamed'")
+        db.commit()
+        db.close()
+        rows = self.run_artifact(tk.telekom_mail_messages)
+        self.assertEqual(sorted((row['Subject'], row['Folder Name']) for row in rows),
+                         [('Changed', 'Renamed'), ('Hi', 'Posteingang')])
+
     def test_provider_uri_outside_its_roots_is_not_followed(self):
         self.assertIsNone(tk._provider_tail(  # pylint: disable=protected-access
             'content://de.telekom.mail.fileprovider/external_files/Download/x'))
         self.assertIsNone(tk._provider_tail(  # pylint: disable=protected-access
             'content://de.telekom.mail.fileprovider/internal_files/../databases/x'))
+        self.assertIsNone(tk._provider_tail(  # pylint: disable=protected-access
+            'content://de.telekom.mail.fileprovider/cache/x'))
 
 
 if __name__ == '__main__':
