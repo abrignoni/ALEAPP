@@ -18,12 +18,18 @@ __artifacts_v2__ = {
             'com.zing.zalo: <peer id>.db for a one to one conversation and group_<group id>.db for a '
             'group. A write-ahead log beside a database is applied; a database with no log beside it is '
             'read alone. Every storage spelling of one app data folder (data/data and data/user/0) is '
-            "read as one folder. When one database is present under more than one of those spellings "
-            "and the copies are not byte identical (the database or its -wal or -journal), every copy "
-            "is read. A row equal in every reported column across the copies is reported once; a "
-            "message whose stored values differ between copies is reported once per version, and "
-            "Conversation Database names the copy. A copy that cannot be read as SQLite is skipped "
-            "with a line in the run log, and the readable copies are still reported. Where copies of the zalo database hold different "
+            "read as one folder. When one database is present under more than one of those spellings, "
+            "a copy is also read when its database file, or the content of its -wal or -journal, "
+            "matches no copy already read. A row equal in every reported column other than "
+            "Conversation Database is reported once; a message that differs in any other reported "
+            "column is reported once per version, and Conversation Database names the copy. Values "
+            "are compared as read, after the conversions described here: in Message, a stored NULL "
+            "and an empty string count as different, and so do a number and the same digits stored "
+            "as text, though each pair looks the same in the report. When a copy cannot be read as a "
+            "SQLite database, the failed read is logged, it gives no rows, and the other copies are "
+            "still reported. A zero-byte copy gives no rows: for a conversation or _ext database the "
+            "run log gets a no such table error, and for the zalo database nothing is logged. "
+            "Where copies of the zalo database hold different "
             "names for Sender Name and Conversation, the name from the data/data copy is used, then "
             "data/user/<n>, then data_mirror. A rollback snapshot that is not byte identical to the "
             "live database is read as its own copy: its rows are reported in addition to the live "
@@ -116,7 +122,8 @@ __artifacts_v2__ = {
             "it was not traced. The fuid column is not reported because its meaning is not "
             "established. Account ID, Conversation, Conversation Key and Reactor Name are resolved as "
             "in Zalo - Messages. Copies of one database under more than one storage path are read as "
-            "in Zalo - Messages; a reaction whose stored values differ between copies is listed once "
+            "in Zalo - Messages; a reaction that differs in any reported column other than Database "
+            "is listed once "
             "per version, and Database names the copy. With several copies of a conversation "
             "database, Message and Message Timestamp come from the first copy that holds the "
             "message."),
@@ -154,7 +161,7 @@ __artifacts_v2__ = {
             'established, and dob holds the value of the JSON key sdob (ContactProfile.java:285, '
             'lw6.java:166). The stt, avt, cover, username and other profile columns are not reported. '
             'Copies of the zalo database under more than one storage path are read as in Zalo - '
-            'Messages; a contact whose stored values or alias differ between copies is listed once '
+            'Messages; a contact that differs in any reported column, alias included, is listed once '
             'per version, with no column naming the copy. Alias is taken from the same copy as the '
             'row.')),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
@@ -178,8 +185,8 @@ __artifacts_v2__ = {
             "is totalMem and Member IDs is member_uids, as stored. ts is the stored value, not "
             "converted, because what it records was not traced in the app code. The admin_uids, "
             "settingJson, avatar_new and other columns are not reported. Copies of the zalo database "
-            "under more than one storage path are read as in Zalo - Messages; a group whose stored "
-            "values differ between copies is listed once per version, with no column naming the "
+            "under more than one storage path are read as in Zalo - Messages; a group that differs in "
+            "any reported column is listed once per version, with no column naming the "
             "copy."),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
