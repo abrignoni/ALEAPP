@@ -4,21 +4,21 @@
     "artifact_name": "Content Query Files",
     "function_name": "content_query_files",
     "case_number": "casesynthetic_triage",
-    "number_of_columns": 9,
+    "number_of_columns": 10,
     "number_of_rows": 12,
     "total_data_size_bytes": 2289,
     "media_checkins": 0,
     "media_embedded_checkins": 0,
-    "input_zip_path": "admin/test/cases/data/contentQuery/testdata.contentQuery.content_query_files.casesynthetic_triage.zip",
-    "start_time": "2026-11-25T21:50:28.165205+00:00",
-    "end_time": "2026-11-25T21:50:28.239210+00:00",
-    "run_time_seconds": 0.0037186145782470703,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_files.casesynthetic_triage.zip",
+    "start_time": "2026-11-27T15:19:09.459416+00:00",
+    "end_time": "2026-11-27T15:19:09.501333+00:00",
+    "run_time_seconds": 0.001432657241821289,
     "last_commit": {
-      "hash": "9b6ac5ad209440b52a1ae251f797daf2a8eb6874",
-      "author_name": "Maximiliano Telmo",
-      "author_email": "50964800+Maxitelmo@users.noreply.github.com",
-      "date": "2026-11-25T18:31:16-03:00",
-      "message": "Read MMS addresses from content://mms/addr"
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
     }
   },
   "headers": [
@@ -27,6 +27,7 @@
     "URI",
     "File",
     "Status",
+    "Tool Status",
     "Rows",
     "Detail",
     "Columns",
@@ -42,6 +43,7 @@
       "",
       "",
       "",
+      "",
       "SMS (content query)"
     ],
     [
@@ -50,6 +52,7 @@
       "content://mms",
       "",
       "not queried by this tool",
+      "",
       "",
       "",
       "",
@@ -64,6 +67,7 @@
       "",
       "",
       "",
+      "",
       "MMS Parts (content query)"
     ],
     [
@@ -72,6 +76,7 @@
       "content://mms/addr",
       "",
       "not queried by this tool",
+      "",
       "",
       "",
       "",
@@ -86,6 +91,7 @@
       "",
       "",
       "",
+      "",
       "Call Log (content query)"
     ],
     [
@@ -97,6 +103,7 @@
       "",
       "",
       "",
+      "",
       "Contacts (content query)"
     ],
     [
@@ -105,6 +112,7 @@
       "content://com.android.contacts/data/phones",
       "contacts_data_phones.txt",
       "rows",
+      "",
       2,
       "",
       "_id, contact_id, raw_contact_id, display_name, data1, data2, data3, data4, data15, account_type, account_name, contact_last_updated_timestamp, hash_id",
@@ -116,6 +124,7 @@
       "content://com.android.calendar/events",
       "calendar_events.txt",
       "rows",
+      "",
       3,
       "",
       "_id, calendar_id, title, description, eventLocation, dtstart, dtend, eventTimezone, duration, allDay, rrule, organizer, deleted",
@@ -130,6 +139,7 @@
       "",
       "",
       "",
+      "",
       "Calendar Event Entities (content query)"
     ],
     [
@@ -138,6 +148,7 @@
       "content://com.android.calendar/calendars",
       "calendar_calendars.txt",
       "rows",
+      "",
       2,
       "",
       "_id, account_name, account_type, calendar_displayName, ownerAccount, visible, sync_events, deleted",
@@ -149,6 +160,7 @@
       "content://media/external/file",
       "media_external_file.txt",
       "rows",
+      "",
       3,
       "",
       "_id, _data, _display_name, relative_path, volume_name, mime_type, _size, date_added, date_modified, datetaken, owner_package_name, bucket_display_name, is_trashed, is_pending",
@@ -160,6 +172,7 @@
       "",
       "settings_secure.txt",
       "rows",
+      "",
       1,
       "",
       "_id, name, value",

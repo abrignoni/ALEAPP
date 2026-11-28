@@ -4,6 +4,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from datetime import datetime, timezone
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -254,6 +255,76 @@ class LayoutTest(unittest.TestCase):
         self.assertIsNone(reader.uri_of(reader.ALEX, f'{self.ALEX}/sms/sms_inbox.txt'))
         self.assertIsNone(reader.layout_of(f'{self.ALEX}/sms/other.txt'))
         self.assertIsNone(reader.layout_of('root/x/other/sms/sms.txt'))
+
+    def test_alex_prfs_files(self):
+        prfs = 'root/extra/content_provider'
+        path = f'{prfs}/com.android.contacts/com.android.contacts_data_phones.txt'
+        self.assertEqual(reader.layout_of(path), (reader.ALEX_PRFS, prfs))
+        self.assertEqual(reader.uri_of(reader.ALEX_PRFS, path).key, 'contact_phones')
+        self.assertEqual(reader.layout_of(f'{prfs}/sms/sms.txt'), (reader.ALEX_PRFS, prfs))
+        self.assertIsNone(reader.uri_of(reader.ALEX_PRFS, f'{prfs}/sms/sms_inbox.txt'))
+        self.assertIsNone(reader.layout_of(f'{prfs}/sms/other.txt'))
+        self.assertIsNone(reader.layout_of('root/extra/other/sms/sms.txt'))
+        self.assertIsNone(reader.layout_of(f'{prfs}/sms/sms.json'))
+        self.assertEqual(reader.status_file_of(f'{prfs}/sms/sms.status.json'),
+                         (reader.ALEX_PRFS, prfs, f'{prfs}/sms/sms.txt'))
+        self.assertIsNone(reader.status_file_of('root/x/content_provider_SYNTH0001/sms/sms.status.json'))
+        self.assertIsNone(reader.status_file_of(f'{prfs}/sms/sms.json'))
+        self.assertIn('not in this extraction', reader.missing_file_detail(reader.ALEX_PRFS))
+        self.assertTrue(reader.missing_file_detail(reader.ALEX).startswith('unknown'))
+
+    def test_tool_status(self):
+        with tempfile.TemporaryDirectory() as folder:
+            def status_of(raw):
+                path = os.path.join(folder, 'x.status.json')
+                with open(path, 'wb') as handle:
+                    handle.write(raw)
+                return reader.read_tool_status(path)
+            no_status = 'status file holds no status text'
+            self.assertEqual(status_of(b'{"uri": "content://sms", "status": "rows"}'), ('rows', 'content://sms', ''))
+            self.assertEqual(status_of(b'\xef\xbb\xbf{"status": "empty"}'), ('empty', '', ''))
+            self.assertEqual(status_of(b'{"status": "pending"}'), ('pending', '', ''))
+            self.assertEqual(status_of(b'not json')[:2], ('', ''))
+            self.assertIn('not JSON', status_of(b'not json')[2])
+            self.assertEqual(status_of(b'{"uri": "content://sms"}'), ('', 'content://sms', no_status))
+            self.assertEqual(status_of(b'["rows"]'), ('', '', no_status))
+            # Every value of the file goes through one check: anything but text that can be written as
+            # UTF-8 and is not only white space is not valid. An invalid uri gives None, unlike a missing
+            # key: the status cannot be tied to a query.
+            bad_values = {'number': b'7', 'true': b'true', 'null': b'null', 'list': b'["rows"]',
+                          'object': b'{"status": "rows"}', 'nested': b'[' * 50 + b']' * 50, 'empty': b'""',
+                          'white space': b'" \\t\\n"', 'lone surrogate': b'"\\ud800"',
+                          'surrogate in text': b'"content://\\udfff"'}
+            for label, value in bad_values.items():
+                with self.subTest(value=label):
+                    self.assertEqual(status_of(b'{"uri": "content://sms", "status": ' + value + b'}'),
+                                     ('', 'content://sms', 'status file holds a status that is not valid text'))
+                    self.assertEqual(status_of(b'{"uri": ' + value + b', "status": "rows"}'),
+                                     ('rows', None, 'status file holds a uri that is not valid text'))
+                    self.assertEqual(status_of(b'{"uri": ' + value + b'}'),
+                                     ('', None, no_status + '; status file holds a uri that is not valid text'))
+            # A file over the limit is not read, whatever it holds.
+            with mock.patch.object(reader, 'STATUS_FILE_LIMIT', 20):
+                self.assertEqual(status_of(b'{"status": "rows"}'), ('rows', '', ''))
+                self.assertEqual(status_of(b'{"status": "rows", "x": 1}'),
+                                 ('', '', 'status file is larger than 20 bytes, not read'))
+            # Deep nesting: json.loads raises RecursionError up to Python 3.13 and reads the array from
+            # 3.14 on. Either way the file gets a problem text and no status.
+            self.assertIn(status_of(b'[' * 100000 + b']' * 100000),
+                          (('', '', 'status file is not JSON: RecursionError'), ('', '', no_status)))
+            # The RecursionError path itself, on every Python version.
+            with mock.patch.object(reader.json, 'loads', side_effect=RecursionError):
+                self.assertEqual(status_of(b'{"status": "rows"}'), ('', '', 'status file is not JSON: RecursionError'))
+            self.assertIn('not readable', reader.read_tool_status(os.path.join(folder, 'missing.status.json'))[2])
+        self.assertFalse(reader.tool_status_disagrees('rows', reader.ROWS))
+        self.assertFalse(reader.tool_status_disagrees('empty', reader.NO_RESULT))
+        self.assertFalse(reader.tool_status_disagrees('empty', reader.EMPTY_FILE))
+        self.assertFalse(reader.tool_status_disagrees('error', reader.UNRECOGNISED))
+        self.assertTrue(reader.tool_status_disagrees('error', reader.ROWS))
+        self.assertTrue(reader.tool_status_disagrees('rows', reader.NO_RESULT))
+        # A status ALEX does not write is shown as written, not compared.
+        self.assertFalse(reader.tool_status_disagrees('pending', reader.ROWS))
+        self.assertFalse(reader.tool_status_disagrees('', reader.ROWS))
 
     def test_windows_separators(self):
         path = '\\\\?\\C:\\case\\a1b2c3d4e5f60718\\20261125_10_15_30_contentprovider\\media_external_file.txt'

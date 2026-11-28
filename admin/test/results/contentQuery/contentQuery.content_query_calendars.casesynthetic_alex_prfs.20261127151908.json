@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Calendars (content query)",
+    "function_name": "content_query_calendars",
+    "case_number": "casesynthetic_alex_prfs",
+    "number_of_columns": 11,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 344,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_calendars.casesynthetic_alex_prfs.zip",
+    "start_time": "2026-11-27T15:19:08.702399+00:00",
+    "end_time": "2026-11-27T15:19:08.741204+00:00",
+    "run_time_seconds": 0.000518798828125,
+    "last_commit": {
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+    }
+  },
+  "headers": [
+    "Display Name",
+    "Account Name",
+    "Account Type",
+    "Owner Account",
+    "Visible",
+    "Sync Events",
+    "Deleted",
+    "Calendar ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      "Test User",
+      "test.user@example.com",
+      "com.example.account",
+      "test.user@example.com",
+      "1",
+      "1",
+      "0",
+      "1",
+      "",
+      1,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/com.android.calendar/com.android.calendar_calendars.txt"
+    ],
+    [
+      "Holidays",
+      "test.user@example.com",
+      "com.example.account",
+      "holidays@example.com",
+      "0",
+      "1",
+      "0",
+      "2",
+      "",
+      2,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/com.android.calendar/com.android.calendar_calendars.txt"
+    ]
+  ]
+}

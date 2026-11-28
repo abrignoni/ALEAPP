@@ -26,6 +26,14 @@ write. These cases are built:
 * ``alex_reader_edges`` (#2093): an ALEX folder with SMS rows whose body holds four
   'Row: <n> example=' lines, whose body starts with ', seen=', and whose date has 5,000
   digits; and an ALEX folder whose mms_addr.txt prints no msg_id column;
+* ``alex_prfs`` (#2102): the extra/content_provider folder of an ALEX PRFS zip, at the
+  zip under one folder (as the alex_live_data cases do), with LF line endings and a <name>.status.json beside
+  most files: rows that ALEX also marks rows, 'No result found.' and an empty file marked
+  empty, a SecurityException marked error, an MMS file whose first row-like line is
+  'Row: 1' (ALEX's own parser then finds no row and marks it error, while the reader finds
+  the rows), a file with no status file beside it, a status file with no text file (the
+  MediaStore query), a view ALEX also queries (sms_inbox, not read) and the <name>.json
+  that ALEX writes with JSON output on (not read);
 * ``triage``: an android_triage folder with LF line endings, 'No result found.', an empty
   file (a failed query, whose error went to the terminal), multi-line values, a contacts
   data dump whose hash_id ends with a line break on every row, the tool's own log and
@@ -271,6 +279,14 @@ SMS_ERROR_TEXT_IN_BODY = rows([('_id', '41'), ('address', '+15550100010'), ('dat
                                ('read', '1')])
 
 
+PRFS_ROOT = 'ALEX_PRFS_SYNTH0006/extra/content_provider'
+
+
+def status(uri, value):
+    """The <name>.status.json ALEX writes beside each output in its PRFS zip (json.dumps of a dict)."""
+    return f'{{"uri": "content://{uri}", "status": "{value}"}}'
+
+
 CASES = {
     'alex': {
         f'{ALEX_ROOT}/sms/sms.txt': crlf(SMS),
@@ -316,6 +332,32 @@ CASES = {
         'ALEX_SYNTH0004/content_provider_SYNTH0004/sms/sms.txt': SMS_READER_EDGES,
         'ALEX_SYNTH0005/content_provider_SYNTH0005/mms/mms.txt': MMS,
         'ALEX_SYNTH0005/content_provider_SYNTH0005/mms/mms_addr.txt': MMS_ADDR_NO_MSG_ID,
+    },
+    'alex_prfs': {
+        f'{PRFS_ROOT}/sms/sms.txt': SMS,
+        f'{PRFS_ROOT}/sms/sms.status.json': status('sms', 'rows'),
+        f'{PRFS_ROOT}/sms/sms.json': '[]',
+        f'{PRFS_ROOT}/sms/sms_inbox.txt': SMS,
+        f'{PRFS_ROOT}/sms/sms_inbox.status.json': status('sms/inbox', 'rows'),
+        f'{PRFS_ROOT}/mms/mms.txt': 'Row: 1 note=pasted before the rows\n' + MMS,
+        f'{PRFS_ROOT}/mms/mms.status.json': status('mms', 'error'),
+        f'{PRFS_ROOT}/mms/mms_part.txt': MMS_PART,
+        f'{PRFS_ROOT}/mms/mms_part.status.json': status('mms/part', 'rows'),
+        f'{PRFS_ROOT}/mms/mms_addr.txt': MMS_ADDR,
+        f'{PRFS_ROOT}/mms/mms_addr.status.json': status('mms/addr', 'rows'),
+        f'{PRFS_ROOT}/call_log/call_log_calls.txt': 'No result found.\n',
+        f'{PRFS_ROOT}/call_log/call_log_calls.status.json': status('call_log/calls', 'empty'),
+        f'{PRFS_ROOT}/com.android.contacts/com.android.contacts_contacts.txt': SECURITY_ERROR,
+        f'{PRFS_ROOT}/com.android.contacts/com.android.contacts_contacts.status.json':
+            status('com.android.contacts/contacts', 'error'),
+        f'{PRFS_ROOT}/com.android.contacts/com.android.contacts_data_phones.txt': PHONES,
+        f'{PRFS_ROOT}/com.android.contacts/com.android.contacts_data_phones.status.json':
+            status('com.android.contacts/data/phones', 'rows'),
+        f'{PRFS_ROOT}/com.android.calendar/com.android.calendar_event_entities.txt': '',
+        f'{PRFS_ROOT}/com.android.calendar/com.android.calendar_event_entities.status.json':
+            status('com.android.calendar/event_entities', 'empty'),
+        f'{PRFS_ROOT}/com.android.calendar/com.android.calendar_calendars.txt': CALENDARS,
+        f'{PRFS_ROOT}/media/media_external_file.status.json': status('media/external/file', 'error'),
     },
     'triage_stderr': {
         f'{TRIAGE_ROOT}/contacts_contacts.txt': SECURITY_ERROR,

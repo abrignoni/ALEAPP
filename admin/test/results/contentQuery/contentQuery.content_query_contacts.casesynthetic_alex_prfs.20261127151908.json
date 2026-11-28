@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Contacts (content query)",
+    "function_name": "content_query_contacts",
+    "case_number": "casesynthetic_alex_prfs",
+    "number_of_columns": 9,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_contacts.casesynthetic_alex_prfs.zip",
+    "start_time": "2026-11-27T15:19:08.589265+00:00",
+    "end_time": "2026-11-27T15:19:08.626795+00:00",
+    "run_time_seconds": 0.00038170814514160156,
+    "last_commit": {
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+    }
+  },
+  "headers": [
+    "Last Updated (UTC)",
+    "Display Name",
+    "Has Phone Number",
+    "Starred",
+    "Lookup Key",
+    "Contact ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}

@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Contact Phone Numbers (content query)",
+    "function_name": "content_query_contact_phones",
+    "case_number": "casesynthetic_alex_prfs",
+    "number_of_columns": 14,
+    "number_of_rows": 2,
+    "total_data_size_bytes": 375,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_contact_phones.casesynthetic_alex_prfs.zip",
+    "start_time": "2026-11-27T15:19:08.627498+00:00",
+    "end_time": "2026-11-27T15:19:08.664742+00:00",
+    "run_time_seconds": 0.0005958080291748047,
+    "last_commit": {
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+    }
+  },
+  "headers": [
+    "Contact Last Updated (UTC)",
+    "Display Name",
+    "Number",
+    "Phone Type",
+    "Label",
+    "Normalized Number",
+    "Account Type",
+    "Account Name",
+    "Contact ID",
+    "Raw Contact ID",
+    "Data ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": [
+    [
+      1767200000,
+      "Test Contact",
+      "+1 555-010-0001",
+      "2",
+      "NULL",
+      "+15550100001",
+      "com.example.account",
+      "test.user@example.com",
+      "1",
+      "1",
+      "10",
+      "",
+      1,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/com.android.contacts/com.android.contacts_data_phones.txt"
+    ],
+    [
+      1767200100,
+      "Second, Example",
+      "+1 555-010-0002",
+      "0",
+      "Work, desk",
+      "+15550100002",
+      "NULL",
+      "NULL",
+      "2",
+      "2",
+      "11",
+      "",
+      3,
+      "ALEX_PRFS_SYNTH0006/extra/content_provider/com.android.contacts/com.android.contacts_data_phones.txt"
+    ]
+  ]
+}

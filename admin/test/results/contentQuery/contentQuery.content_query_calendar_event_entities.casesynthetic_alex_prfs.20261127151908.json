@@ -1,0 +1,42 @@
+{
+  "metadata": {
+    "module_name": "contentQuery",
+    "artifact_name": "Calendar Event Entities (content query)",
+    "function_name": "content_query_calendar_event_entities",
+    "case_number": "casesynthetic_alex_prfs",
+    "number_of_columns": 15,
+    "number_of_rows": 0,
+    "total_data_size_bytes": 0,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin\\test\\cases\\data\\contentQuery\\testdata.contentQuery.content_query_calendar_event_entities.casesynthetic_alex_prfs.zip",
+    "start_time": "2026-11-27T15:19:08.741922+00:00",
+    "end_time": "2026-11-27T15:19:08.781608+00:00",
+    "run_time_seconds": 0.0005409717559814453,
+    "last_commit": {
+      "hash": "1935e2e683b64de1149bfd075fd3a5cc0445821f",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-26T16:57:47-05:00",
+      "message": "Content query notes: say what file not readable covers and drop the projection cause"
+    }
+  },
+  "headers": [
+    "Start (UTC)",
+    "End (UTC)",
+    "Time Zone",
+    "All Day",
+    "Title",
+    "Description",
+    "Location",
+    "Organizer",
+    "Recurrence Rule",
+    "Deleted",
+    "Calendar ID",
+    "Event ID",
+    "Parse Note",
+    "Source Line",
+    "Source File"
+  ],
+  "data": []
+}
