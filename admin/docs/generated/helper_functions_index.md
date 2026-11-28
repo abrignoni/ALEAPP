@@ -97,7 +97,7 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 | 63 | `canonical_path` | `canonical_path(relative_path)` | (key, rank) for a path under an app data directory, else (path, 0). |
 | 27 | `android_user` | `android_user(relative_path)` | The Android user whose storage holds a path under an app data directory. |
 | 13 | `user_files` | `user_files(context, name, files=None, keep_differing_views=False)` | [(path, Android user)] of the files called name, one per user and storage class. |
-| 9 | `union_view_rows` | `union_view_rows(context, file_rows, ignore=())` | Rows read from every kept copy of each store, with the rows the copies share once. |
+| 10 | `union_view_rows` | `union_view_rows(context, file_rows, ignore=())` | Rows read from every kept copy of each store, with the rows the copies share once. |
 | 4 | `without_snapshot_repeats` | `without_snapshot_repeats(rows, source_index=-1)` | rows without the ones from a rollback snapshot that repeat a row the live copy gave. |
 | 2 | `snapshot_key` | `snapshot_key(relative_path)` | The canonical_path key of the live file a rollback snapshot copies, or None. |
 
