@@ -1,9 +1,10 @@
 """Unit tests for scripts/content_query_reader.py, on invented content query text."""
+import json
 import os
 import pathlib
+import subprocess
 import sys
 import tempfile
-import tracemalloc
 import unittest
 from unittest import mock
 from datetime import datetime, timezone
@@ -23,6 +24,32 @@ SMS = ('Row: 0 _id=12, address=+15550100001, body=See you at 8, date=17672256000
 
 def values(dump):
     return [dict(record.pairs) for record in dump.records]
+
+
+# Ranks the 'Row: 0' names of the text on stdin with its own tracemalloc session, so a trace
+# already running in the test process (PYTHONTRACEMALLOC=1) is neither counted nor stopped.
+RANKING_PEAK = """
+import json, sys, tracemalloc
+sys.path.insert(0, sys.argv[1])
+from scripts import content_query_reader as reader
+candidates = reader._candidates(reader._lines(sys.stdin.buffer.read().decode('utf-8')))
+if tracemalloc.is_tracing():
+    sys.exit('tracemalloc was already tracing')
+tracemalloc.start()
+names = reader._row_zero_names(candidates)
+_current, peak = tracemalloc.get_traced_memory()
+tracemalloc.stop()
+print(json.dumps({'names': names, 'peak': peak}))
+"""
+
+
+def ranking_peak(text):
+    """(names, peak bytes allocated while ranking) of ``text``, measured in a child process."""
+    env = {key: value for key, value in os.environ.items() if key != 'PYTHONTRACEMALLOC'}
+    done = subprocess.run([sys.executable, '-I', '-c', RANKING_PEAK, str(REPO_ROOT)], input=text.encode('utf-8'),
+                          capture_output=True, env=env, check=True, timeout=120)
+    result = json.loads(done.stdout)
+    return result['names'], result['peak']
 
 
 class ParseRowsTest(unittest.TestCase):
@@ -115,29 +142,17 @@ class ParseRowsTest(unittest.TestCase):
     def test_choosing_row_zero_names_keeps_only_the_shortlist(self):
         # Only the shortlist choices are kept while the names are ranked, not every distinct
         # 'Row: 0' name (#2172): memory allocated by the call must not grow with their number.
-        candidates = reader._candidates(reader._lines(  # pylint: disable=protected-access
+        names, peak = ranking_peak(
             'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
-            + 'Row: 1 _id=2, body=y\n'))
-        tracemalloc.start()
-        try:
-            names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
-            _current, peak = tracemalloc.get_traced_memory()
-        finally:
-            tracemalloc.stop()
+            + 'Row: 1 _id=2, body=y\n')
         self.assertEqual(names, ['_id', 'n0', 'n1', 'n2'])
         self.assertLess(peak, 64 * 1024)
 
     def test_row_zero_names_that_fit_are_returned_without_reading_row_one_names(self):
         # One 'Row: 0' name and many distinct 'Row: 1' names: the 'Row: 0' names fit in the
         # shortlist, so the 'Row: 1' names are not indexed (#2172 review).
-        candidates = reader._candidates(reader._lines(  # pylint: disable=protected-access
-            'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 1 n{i}=x\n' for i in range(40000))))
-        tracemalloc.start()
-        try:
-            names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
-            _current, peak = tracemalloc.get_traced_memory()
-        finally:
-            tracemalloc.stop()
+        names, peak = ranking_peak(
+            'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 1 n{i}=x\n' for i in range(40000)))
         self.assertEqual(names, ['_id'])
         self.assertLess(peak, 64 * 1024)
 
@@ -145,15 +160,9 @@ class ParseRowsTest(unittest.TestCase):
         # MAX_READINGS + 1 'Row: 0' names and many unrelated 'Row: 1' names: the 'Row: 0' side
         # is the smaller one, so the 'Row: 1' names are not all kept (#2172 review).
         lead = ''.join(f'Row: 0 a{i}=x\n' for i in range(reader.MAX_READINGS))
-        candidates = reader._candidates(reader._lines(  # pylint: disable=protected-access
+        names, peak = ranking_peak(
             'Row: 0 _id=1, body=x\n' + lead + ''.join(f'Row: 1 m{i}=x\n' for i in range(40000))
-            + 'Row: 1 _id=2, body=y\n'))
-        tracemalloc.start()
-        try:
-            names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
-            _current, peak = tracemalloc.get_traced_memory()
-        finally:
-            tracemalloc.stop()
+            + 'Row: 1 _id=2, body=y\n')
         self.assertEqual(names, ['_id', 'a0', 'a1', 'a2'])
         self.assertLess(peak, 64 * 1024)
 
@@ -162,15 +171,9 @@ class ParseRowsTest(unittest.TestCase):
         # 'Row: 1' names: the side with fewer distinct names is indexed, not the one with fewer
         # lines (#2172 review).
         lead = ''.join(f'Row: 0 a{i % reader.MAX_READINGS}=x\n' for i in range(40004))
-        candidates = reader._candidates(reader._lines(  # pylint: disable=protected-access
+        names, peak = ranking_peak(
             'Row: 0 _id=1, body=x\n' + lead + ''.join(f'Row: 1 m{i}=x\n' for i in range(40000))
-            + 'Row: 1 _id=2, body=y\n'))
-        tracemalloc.start()
-        try:
-            names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
-            _current, peak = tracemalloc.get_traced_memory()
-        finally:
-            tracemalloc.stop()
+            + 'Row: 1 _id=2, body=y\n')
         self.assertEqual(names, ['_id', 'a0', 'a1', 'a2'])
         self.assertLess(peak, 64 * 1024)
 
