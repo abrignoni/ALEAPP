@@ -158,6 +158,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | swissmeteo |
 | tasksOrg |
 | telegramAndroid |
+| telekomMail |
 | telephonyAnalytics |
 | thunderbird |
 | tiktokPlayRecords |
