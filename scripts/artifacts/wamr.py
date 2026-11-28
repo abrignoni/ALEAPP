@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-27",
         "last_update_date": "2026-11-27",
         "requirements": "none",
-        "category": "Notifications",
+        "category": "Messaging",
         "notes": (
             "WAMR (com.drilens.wamr) is a third-party app that keeps what other apps' notifications "
             "showed. These rows are WAMR's copies, not the other app's own records. Class and line "
@@ -50,7 +50,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-27",
         "last_update_date": "2026-11-27",
         "requirements": "none",
-        "category": "Notifications",
+        "category": "Messaging",
         "notes": (
             "Rows are WAMR's copies of what WhatsApp or GBWhatsApp notifications showed, not "
             "WhatsApp's own records. Class and line references are as in WAMR - Captured "
@@ -91,7 +91,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-27",
         "last_update_date": "2026-11-27",
         "requirements": "none",
-        "category": "Notifications",
+        "category": "Messaging",
         "notes": (
             "Class and line references are as in WAMR - Captured Notifications. WAMR copies WhatsApp "
             "media files to Android/data/com.drilens.wamr/files/WAMR/<folder>/ and records the copy "
@@ -135,7 +135,7 @@ __artifacts_v2__ = {
         "creation_date": "2026-11-27",
         "last_update_date": "2026-11-27",
         "requirements": "none",
-        "category": "Notifications",
+        "category": "Messaging",
         "notes": (
             "Class and line references are as in WAMR - Captured Notifications. In Monitored List is "
             "Yes when the package is in the monitored_apps value of the Settings table of settings.db, "
