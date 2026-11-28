@@ -163,6 +163,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | untappd |
 | userDict |
 | vivaVideo |
+| wamr |
 | waze |
 | weibo |
 | wikipedia |
