@@ -20,7 +20,7 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
 | 623 | `artifact_processor` | `artifact_processor(func)` | (no docstring) |
-| 389 | `logfunc` | `logfunc(message='')` | (no docstring) |
+| 390 | `logfunc` | `logfunc(message='')` | (no docstring) |
 | 258 | `open_sqlite_db_readonly` | `open_sqlite_db_readonly(path)` | Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact) |
 | 163 | `get_sqlite_db_records` | `get_sqlite_db_records(path, query, attach_query=None)` | Run a query and return its rows as a SqliteRecords, or [] when it fails. |
 | 134 | `convert_unix_ts_to_utc` | `convert_unix_ts_to_utc(ts)` | (no docstring) |
