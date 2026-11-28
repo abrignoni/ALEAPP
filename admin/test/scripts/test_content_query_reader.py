@@ -1,9 +1,12 @@
 """Unit tests for scripts/content_query_reader.py, on invented content query text."""
+import json
 import os
 import pathlib
+import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from datetime import datetime, timezone
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -21,6 +24,32 @@ SMS = ('Row: 0 _id=12, address=+15550100001, body=See you at 8, date=17672256000
 
 def values(dump):
     return [dict(record.pairs) for record in dump.records]
+
+
+# Ranks the 'Row: 0' names of the text on stdin with its own tracemalloc session, so a trace
+# already running in the test process (PYTHONTRACEMALLOC=1) is neither counted nor stopped.
+RANKING_PEAK = """
+import json, sys, tracemalloc
+sys.path.insert(0, sys.argv[1])
+from scripts import content_query_reader as reader
+candidates = reader._candidates(reader._lines(sys.stdin.buffer.read().decode('utf-8')))
+if tracemalloc.is_tracing():
+    sys.exit('tracemalloc was already tracing')
+tracemalloc.start()
+names = reader._row_zero_names(candidates)
+_current, peak = tracemalloc.get_traced_memory()
+tracemalloc.stop()
+print(json.dumps({'names': names, 'peak': peak}))
+"""
+
+
+def ranking_peak(text):
+    """(names, peak bytes allocated while ranking) of ``text``, measured in a child process."""
+    env = {key: value for key, value in os.environ.items() if key != 'PYTHONTRACEMALLOC'}
+    done = subprocess.run([sys.executable, '-I', '-c', RANKING_PEAK, str(REPO_ROOT)], input=text.encode('utf-8'),
+                          capture_output=True, env=env, check=True, timeout=120)
+    result = json.loads(done.stdout)
+    return result['names'], result['peak']
 
 
 class ParseRowsTest(unittest.TestCase):
@@ -109,6 +138,135 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(len(reader._row_zero_names(reader._candidates(reader._lines(text)))), reader.MAX_READINGS)  # pylint: disable=protected-access
         dump = reader.parse_text(text)
         self.assertEqual([row['_id'] for row in values(dump)], ['1', '2'])
+
+    def test_choosing_row_zero_names_keeps_only_the_shortlist(self):
+        # Only the shortlist choices are kept while the names are ranked, not every distinct
+        # 'Row: 0' name (#2172): memory allocated by the call must not grow with their number.
+        names, peak = ranking_peak(
+            'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 0 n{i}=x\n' for i in range(40000))
+            + 'Row: 1 _id=2, body=y\n')
+        self.assertEqual(names, ['_id', 'n0', 'n1', 'n2'])
+        self.assertLess(peak, 64 * 1024)
+
+    def test_row_zero_names_that_fit_are_returned_without_reading_row_one_names(self):
+        # One 'Row: 0' name and many distinct 'Row: 1' names: the 'Row: 0' names fit in the
+        # shortlist, so the 'Row: 1' names are not indexed (#2172 review).
+        names, peak = ranking_peak(
+            'Row: 0 _id=1, body=x\n' + ''.join(f'Row: 1 n{i}=x\n' for i in range(40000)))
+        self.assertEqual(names, ['_id'])
+        self.assertLess(peak, 64 * 1024)
+
+    def test_few_row_zero_names_over_the_shortlist_do_not_index_many_row_one_names(self):
+        # MAX_READINGS + 1 'Row: 0' names and many unrelated 'Row: 1' names: the 'Row: 0' side
+        # is the smaller one, so the 'Row: 1' names are not all kept (#2172 review).
+        lead = ''.join(f'Row: 0 a{i}=x\n' for i in range(reader.MAX_READINGS))
+        names, peak = ranking_peak(
+            'Row: 0 _id=1, body=x\n' + lead + ''.join(f'Row: 1 m{i}=x\n' for i in range(40000))
+            + 'Row: 1 _id=2, body=y\n')
+        self.assertEqual(names, ['_id', 'a0', 'a1', 'a2'])
+        self.assertLess(peak, 64 * 1024)
+
+    def test_repeated_row_zero_names_do_not_index_many_row_one_names(self):
+        # The same MAX_READINGS + 1 'Row: 0' names repeated until they outnumber many unrelated
+        # 'Row: 1' names: the side with fewer distinct names is indexed, not the one with fewer
+        # lines (#2172 review).
+        lead = ''.join(f'Row: 0 a{i % reader.MAX_READINGS}=x\n' for i in range(40004))
+        names, peak = ranking_peak(
+            'Row: 0 _id=1, body=x\n' + lead + ''.join(f'Row: 1 m{i}=x\n' for i in range(40000))
+            + 'Row: 1 _id=2, body=y\n')
+        self.assertEqual(names, ['_id', 'a0', 'a1', 'a2'])
+        self.assertLess(peak, 64 * 1024)
+
+    def test_sequence_index_rounds_resume_where_they_stopped(self):
+        # A long prefix of a few repeated names, then many distinct names on both sides, so
+        # both sides go over several caps: each side reads the candidates once in all, not
+        # once per round (#2172 review). With the first and last scans of _row_zero_names,
+        # that is at most four reads per candidate.
+        class CountingList(list):
+            reads = 0
+
+            def __iter__(self):
+                for row in list.__iter__(self):
+                    CountingList.reads += 1
+                    yield row
+
+        distinct = reader.SEQUENCE_INDEX_CAP * 20
+        text = ('Row: 0 _id=1, body=x\n' + ''.join(f'Row: {i % 2} a{i % 4}=x\n' for i in range(40000))
+                + ''.join(f'Row: 0 z{i}=x\nRow: 1 m{i}=x\n' for i in range(distinct))
+                + 'Row: 1 _id=2, body=y\n')
+        candidates = CountingList(reader._candidates(reader._lines(text)))  # pylint: disable=protected-access
+        names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
+        self.assertEqual(names, ['_id', 'a0', 'a2', 'z0'])
+        self.assertLessEqual(CountingList.reads, 4 * len(candidates) + 20)
+        self.assertEqual(names, reader._row_zero_names(list(candidates)))  # pylint: disable=protected-access
+
+    def test_ranking_cost_is_linear_and_bounded_by_distinct_row_zero_names(self):
+        # The cost written in _sequence_test, on every shape the reviews of #2172 raised, with a
+        # small cap so that several rounds run: names held by the two sides at most
+        # D0 + max(cap, 4 * D0), and at most four reads per candidate (plus one per round).
+        cap = 4
+
+        def row_zero(names, repeat=1):
+            return ''.join(f'Row: 0 {name}=x\n' for name in names for _ in range(repeat))
+
+        def row_one(names):
+            return ''.join(f'Row: 1 {name}=x\n' for name in names)
+
+        def distinct(prefix, count):
+            return [f'{prefix}{i}' for i in range(count)]
+
+        shapes = {
+            'few Row: 0, many unrelated Row: 1': row_zero(distinct('a', 4)) + row_one(distinct('m', 2000)),
+            'many Row: 0, one Row: 1': row_zero(distinct('a', 2000)),
+            'many on both sides': row_zero(distinct('a', 2000)) + row_one(distinct('m', 2000)),
+            'few Row: 0 repeated past many Row: 1': row_zero(distinct('a', 4), 600) + row_one(distinct('m', 2000)),
+            'Row: 0 just past a cap, Row: 1 far past it': row_zero(distinct('a', 4 ** 4)) + row_one(distinct('m', 4 ** 5 + 1)),
+            'repeated prefix, then many on both sides': ''.join(f'Row: {i % 2} p{i % 4}=x\n' for i in range(4000))
+                                                        + row_zero(distinct('a', 600)) + row_one(distinct('m', 600)),
+        }
+        held = []
+
+        class LastRowOne(reader._LastRowOne):  # pylint: disable=protected-access
+            def scan(self, cap):
+                done = super().scan(cap)
+                held.append(('one', len(self.last)))
+                return done
+
+        class RowZeroInSequence(reader._RowZeroInSequence):  # pylint: disable=protected-access
+            def scan(self, cap):
+                done = super().scan(cap)
+                held.append(('zero', len(self.first)))
+                return done
+
+        class CountingList(list):
+            reads = 0
+
+            def __iter__(self):
+                for row in list.__iter__(self):
+                    CountingList.reads += 1
+                    yield row
+
+        for shape, body in shapes.items():
+            with self.subTest(shape=shape):
+                text = 'Row: 0 _id=1, body=x\n' + body + 'Row: 1 _id=2, body=y\n'
+                candidates = CountingList(reader._candidates(reader._lines(text)))  # pylint: disable=protected-access
+                row_zero_names = {rest.split('=', 1)[0] for _index, number, rest in candidates if number == 0}
+                del held[:]
+                CountingList.reads = 0
+                with mock.patch.object(reader, 'SEQUENCE_INDEX_CAP', cap), \
+                        mock.patch.object(reader, '_LastRowOne', LastRowOne), \
+                        mock.patch.object(reader, '_RowZeroInSequence', RowZeroInSequence):
+                    names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
+                reads = CountingList.reads
+                self.assertEqual(names, reader._row_zero_names(list(candidates)))  # pylint: disable=protected-access
+                latest, most = {}, 0
+                for side, count in held:
+                    latest[side] = count
+                    most = max(most, sum(latest.values()))
+                d0 = len(row_zero_names)
+                self.assertTrue(held)
+                self.assertLessEqual(most, d0 + max(cap, 4 * d0))
+                self.assertLessEqual(reads, 4 * len(candidates) + len(held))
 
     def test_row_zero_name_forming_a_sequence_is_tried_after_many_leading_lines(self):
         # More leading 'Row: 0' lines with distinct first columns than MAX_READINGS: the name

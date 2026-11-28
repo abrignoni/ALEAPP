@@ -71,6 +71,8 @@ DETAIL_CHARS = 400
 CACHE_SIZE = 8
 # 'Row: 0' readings tried when several 'Row: 0' lines name different first columns.
 MAX_READINGS = 4
+# Distinct names indexed at first when finding the 'Row: 0' names that form a sequence.
+SEQUENCE_INDEX_CAP = 256
 EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 # What a file holds, as reported by the Content Query Files artifact.
@@ -164,28 +166,142 @@ def _candidates(lines):
     return candidates
 
 
+def _sequence_test(candidates):
+    """A test ``(name, index)``: whether the 'Row: 0' line ``index``, the first that names
+    ``name``, has a later 'Row: 1' line with the same first column.
+
+    It indexes the side with fewer distinct names, so its memory grows with the smaller of the
+    'Row: 0' and 'Row: 1' name counts: the last 'Row: 1' line of each name, or the first
+    'Row: 0' line of each name. Which side that is is not known in advance, so each side is
+    tried in turn with a cap on its distinct names, SEQUENCE_INDEX_CAP at first and four
+    times larger on each round, until one fits. Each side keeps its partial index and
+    resumes at the candidate where it stopped, so each reads the candidates at most once.
+
+    Cost, with D0 the distinct 'Row: 0' names: time linear in the number of candidates (each
+    side reads every candidate once, plus one more read of the candidate it stopped at per
+    round); memory of at most D0 + max(SEQUENCE_INDEX_CAP, 4 * D0) names in all. The 'Row: 0'
+    side never holds more than D0. The 'Row: 1' side holds at most the current cap, and the
+    last round's cap is SEQUENCE_INDEX_CAP or under four times the smaller name count, since
+    both sides went past the cap of the round before."""
+    row_one, row_zero = _LastRowOne(candidates), _RowZeroInSequence(candidates)
+    cap = SEQUENCE_INDEX_CAP
+    while True:
+        if row_one.scan(cap):
+            last_row_one = row_one.last
+            return lambda name, index: last_row_one.get(name, index) > index
+        if row_zero.scan(cap):
+            in_sequence = row_zero.in_sequence
+            return lambda name, _index: name in in_sequence
+        cap *= 4
+
+
+def _resumed(stopped_at, rows):
+    """The candidate a scan stopped at, if any, then the rest of ``rows``."""
+    if stopped_at is not None:
+        yield stopped_at
+    yield from rows
+
+
+class _LastRowOne:
+    """{name: index of its last 'Row: 1' line} over ``candidates``, built up to a cap on names."""
+
+    def __init__(self, candidates):
+        self.rows, self.stopped_at, self.last = iter(candidates), None, {}
+
+    def scan(self, cap):
+        """Read on from the candidate where the last scan stopped; False when a name past
+        ``cap`` is reached."""
+        last = self.last
+        rows = _resumed(self.stopped_at, self.rows)
+        for row in rows:
+            index, number, rest = row
+            match = FIRST_NAME.match(rest) if number == 1 else None
+            if match:
+                name = match.group(1)
+                if name not in last and len(last) == cap:
+                    self.stopped_at = row
+                    return False
+                last[name] = index
+        return True
+
+
+class _RowZeroInSequence:
+    """The 'Row: 0' names of ``candidates`` with a 'Row: 1' line after their first 'Row: 0'
+    line, built up to a cap on 'Row: 0' names."""
+
+    def __init__(self, candidates):
+        self.rows, self.stopped_at, self.first, self.in_sequence = iter(candidates), None, {}, set()
+
+    def scan(self, cap):
+        """Read on from the candidate where the last scan stopped; False when a name past
+        ``cap`` is reached."""
+        first, in_sequence = self.first, self.in_sequence
+        rows = _resumed(self.stopped_at, self.rows)
+        for row in rows:
+            index, number, rest = row
+            match = FIRST_NAME.match(rest) if number in (0, 1) else None
+            if not match:
+                continue
+            name = match.group(1)
+            if number == 1:
+                if first.get(name, index) < index:
+                    in_sequence.add(name)
+            elif name not in first:
+                if len(first) == cap:
+                    self.stopped_at = row
+                    return False
+                first[name] = index
+        return True
+
+
 def _row_zero_names(candidates):
     """The first-column names of the 'Row: 0' lines among ``candidates``, in order, each once, at
     most MAX_READINGS: no more are ever tried. When there are more, the earliest is kept, then the
     names that form a sequence (a later 'Row: 1' line with the same first column), then the rest,
-    so leading lines cannot crowd out the name of the real rows."""
-    first_line, names = {}, []
+    so leading lines cannot crowd out the name of the real rows.
+
+    Only those choices are kept while the lines are scanned, not every distinct name. When the
+    'Row: 0' names fit in the shortlist they are returned without looking at the 'Row: 1'
+    lines. Otherwise which names form a sequence is found first (see _sequence_test), then the
+    'Row: 0' lines are read in order. A name left out at its first 'Row: 0' line stays out:
+    its list was full, and a later line of a sequence name past its last 'Row: 1' line could
+    only make it a fallback, which is not used when the sequence names fill the shortlist.
+
+    Cost: time linear in the number of candidates; memory bounded by the distinct 'Row: 0'
+    names (see _sequence_test), whatever the 'Row: 1' lines hold."""
+    names = []
+    for _index, number, rest in candidates:
+        name = FIRST_NAME.match(rest) if number == 0 else None
+        if name and name.group(1) not in names:
+            names.append(name.group(1))
+            if len(names) > MAX_READINGS:
+                break
+    else:
+        return names
+    forms_sequence = _sequence_test(candidates)
+    earliest, in_sequence, others, placed = None, [], [], set()
     for index, number, rest in candidates:
         name = FIRST_NAME.match(rest) if number == 0 else None
-        if name and name.group(1) not in first_line:
-            first_line[name.group(1)] = index
-            names.append(name.group(1))
-    if len(names) <= MAX_READINGS:
-        return names
-    in_sequence = set()
-    for index, number, rest in candidates:
-        name = FIRST_NAME.match(rest) if number == 1 else None
-        if name and first_line.get(name.group(1), index) < index:
-            in_sequence.add(name.group(1))
-    ranked = names[:1] + [name for name in names[1:] if name in in_sequence]
-    ranked += [name for name in names[1:] if name not in in_sequence]
-    kept = set(ranked[:MAX_READINGS])
-    return [name for name in names if name in kept]
+        if not name:
+            continue
+        name = name.group(1)
+        if earliest is None:
+            earliest = (index, name)
+            placed.add(name)
+            continue
+        if name in placed:
+            continue
+        if forms_sequence(name, index):
+            if len(in_sequence) < MAX_READINGS - 1:
+                in_sequence.append((index, name))
+                placed.add(name)
+        elif len(others) < MAX_READINGS - 1:
+            others.append((index, name))
+            placed.add(name)
+    if earliest is None:
+        return []
+    kept = [earliest] + (in_sequence + others)[:MAX_READINGS - 1]
+    return [name for _index, name in sorted(kept)]
 
 
 def _row_starts(candidates, first=None):
