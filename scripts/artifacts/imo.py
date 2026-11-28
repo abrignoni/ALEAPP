@@ -4,11 +4,12 @@ __artifacts_v2__ = {
         "description": "Parses the local IMO account (account ID and name) from the IMO accountdb.db.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "",
-        "paths": ('*/com.imo.android.imous/databases/accountdb.db*',),
+        "notes": "Database names the accountdb.db each row came from.",
+        "paths": ('*/com.imo.android.imous/databases/accountdb.db*',
+                  '*/com.imo.android.imoim/databases/accountdb.db*'),
         "output_types": ['html', 'tsv', 'lava'],
         "artifact_icon": "user",
         "sample_data": {
@@ -17,10 +18,10 @@ __artifacts_v2__ = {
     },
     "get_imo_messages": {
         "name": "IMO - Messages",
-        "description": "Parses IMO messages (timestamp, direction, chat partner, message, sender and recipient IDs, read status and attachment path) from the messages table of imofriends.db. Rows are read from the messages table alone, and the timestamp column is read as nanoseconds since 1970.",
+        "description": "Parses IMO messages (timestamp, direction, chat partner, message, From ID and To ID (the buid value, placed by direction), read status and attachment path) from the messages table of imofriends.db or imofriends_<number>.db. Rows are read from the messages table alone, and the timestamp column is read as nanoseconds since 1970.",
         "author": "@markmckinnon",
         "creation_date": "2021-03-11",
-        "last_update_date": "2026-10-04",
+        "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
         "notes": ("Direction is decoded from the messages table 'message_type' column. "
@@ -31,20 +32,33 @@ __artifacts_v2__ = {
                   "In the conversation view only rows labelled Outgoing are attributed to the "
                   "device owner; a row whose direction value is blank or unrecognized is not "
                   "attributed to the owner.\n"
-                  "From ID and To ID are filled only when the direction is recognized; the other "
-                  "party is reported in Chat Partner regardless.\n"
+                  "From ID and To ID are filled only when the direction is recognized, and both "
+                  "repeat the buid; Chat Partner holds the buid on every row. The messages table "
+                  "also has an author column, which this artifact does not read; in test data from "
+                  "a com.imo.android.imoim install it differed from buid on 9 of 31 rows labelled "
+                  "Incoming.\n"
                   "On pixel7a_a14 (22 rows) and pixel3_a12 (14 rows) message_type held only 0 and 1 "
                   "(11 and 11, 8 and 6), so the rows holding 0 show 0 in Direction and no row was "
                   "labelled Outgoing; what 0 means is not established.\n"
                   "No source for the unit of the timestamp column was found. Read as nanoseconds "
                   "since 1970 its values fall on 2024-04-21 to 2024-04-22 on pixel7a_a14 and on "
                   "2021-11-23 to 2021-11-24 on pixel3_a12, and every stored value on both was a "
-                  "whole number of milliseconds. The Timestamp column is cut to whole seconds, and "
+                  "whole number of milliseconds; in test data from a com.imo.android.imoim install "
+                  "18 of 50 values were not. The Timestamp column is cut to whole seconds, and "
                   "is blank when the stored value is empty.\n"
                   "Rows are read from the messages table alone, so a message whose buid has no row "
-                  "in the friends table is still reported; neither tested image held such a "
-                  "message. A query error is written to the run log."),
-        "paths": ('*/com.imo.android.imous/databases/imofriends.db*',),
+                  "in the friends table is still reported. pixel7a_a14 and pixel3_a12 held no such "
+                  "message; test data from a com.imo.android.imoim install held 2, and both were "
+                  "reported. A query error is written to the run log.\n"
+                  "Read from the com.imo.android.imous and com.imo.android.imoim packages, and from "
+                  "imofriends.db or imofriends_<number>.db. In test data from a com.imo.android.imoim "
+                  "install the messages table held the six columns this artifact reads, and the file "
+                  "was named imofriends_<number>.db. With several such files the rows of each are "
+                  "reported, and Database names the file each row came from. Conversation Key joins the "
+                  "Database and the buid, so the conversation view keeps the same buid in two "
+                  "databases apart."),
+        "paths": ('*/com.imo.android.imous/databases/imofriends*.db*',
+                  '*/com.imo.android.imoim/databases/imofriends*.db*'),
         "output_types": "standard",
         "artifact_icon": "message",
         "sample_data": {
@@ -53,7 +67,8 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Chat Partner",
+                "conversationDiscriminatorColumn": "Conversation Key",
+                "conversationLabelColumn": "Chat Partner",
                 "textColumn": "Last Message",
                 "directionColumn": "Direction",
                 "directionSentValue": "Outgoing",
@@ -67,21 +82,27 @@ __artifacts_v2__ = {
 
 import datetime
 import json
+import os
+import re
 import sqlite3
 
 from scripts.ilapfuncs import artifact_processor, logfunc, open_sqlite_db_readonly
 from scripts.artifacts.storagePathViews import unique_files
+
+# imofriends.db (seen under com.imo.android.imous) or imofriends_<number>.db (seen under
+# com.imo.android.imoim).
+_IMOFRIENDS = re.compile(r'imofriends(?:_\d+)?\.db')
 
 
 @artifact_processor
 def get_imo_account(context):
     files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    sources = []
     for file_found in files_found:
         file_name = str(file_found)
-        if file_name.endswith('accountdb.db'):
-            source_path = file_name
+        if os.path.basename(file_name) == 'accountdb.db':
+            sources.append(file_name)
             db = open_sqlite_db_readonly(file_name)
             cursor = db.cursor()
             try:
@@ -94,22 +115,22 @@ def get_imo_account(context):
                 all_rows = []
 
             for row in all_rows:
-                data_list.append((row[0], row[1]))
+                data_list.append((row[0], row[1], context.get_relative_path(file_name)))
             db.close()
 
-    data_headers = ('Account ID', 'Name')
-    return data_headers, data_list, source_path
+    data_headers = ('Account ID', 'Name', 'Database')
+    return data_headers, data_list, '\n'.join(sources)
 
 
 @artifact_processor
 def get_imo_messages(context):
     files_found = unique_files(context)
     data_list = []
-    source_path = ''
+    sources = []
     for file_found in files_found:
         file_name = str(file_found)
-        if file_name.endswith('imofriends.db'):
-            source_path = file_name
+        if _IMOFRIENDS.fullmatch(os.path.basename(file_name)):
+            sources.append(file_name)
             db = open_sqlite_db_readonly(file_name)
             cursor = db.cursor()
             try:
@@ -145,7 +166,9 @@ def get_imo_messages(context):
                 timestamp = ''
                 if row[3] is not None:
                     timestamp = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
-                data_list.append((timestamp, row[4], row[0], row[2], from_id, to_id, row[5], attachmentPath))
+                database = context.get_relative_path(file_name)
+                data_list.append((timestamp, row[4], row[0], row[2], from_id, to_id, row[5],
+                                  attachmentPath, f'{database}/{row[0]}', database))
             db.close()
 
     data_headers = (
@@ -157,5 +180,7 @@ def get_imo_messages(context):
         'To ID',
         'Message Read',
         'Attachment',
+        'Conversation Key',
+        'Database',
     )
-    return data_headers, data_list, source_path
+    return data_headers, data_list, '\n'.join(sources)
