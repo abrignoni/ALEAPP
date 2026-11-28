@@ -102,5 +102,16 @@ class OkTamTamTest(unittest.TestCase):
         self.assertEqual(rows[9]['Names'], '')
 
 
+    def test_a_field_of_the_wrong_wire_type_does_not_stop_the_artifacts(self):
+        db = sqlite3.connect(self.path)
+        db.execute("INSERT INTO chats VALUES (3, 902, X'2A020A00')")
+        db.execute("INSERT INTO chats VALUES (4, 903, ?)", (field(1, 903) + field(7, 5) + field(2, b'x'),))
+        db.commit()
+        db.close()
+        chats = {row['Row ID']: row for row in self.run_artifact(ok.ok_tamtam_chats)}
+        self.assertEqual(len(chats), 4)
+        self.assertEqual((chats[4]['Title'], chats[4]['Type']), ('', 'DIALOG'))
+        self.assertEqual(len(self.run_artifact(ok.ok_tamtam_messages)), 2)
+
 if __name__ == '__main__':
     unittest.main()

@@ -205,6 +205,10 @@ def _fields(data):
 
 
 def _decode(blob, label, path):
+    """The fields of a nested message, or {} when the value is not a length-delimited field."""
+    if blob is not None and not isinstance(blob, (bytes, bytearray, memoryview)):
+        logfunc(f'OK tamtam_messages: a {label} in {path} is not a message field')
+        return {}
     try:
         return _fields(blob)
     except _ProtoError as error:
@@ -213,13 +217,19 @@ def _decode(blob, label, path):
 
 
 def _first(fields, number, default=None):
-    values = fields.get(number)
-    return values[0] if values else default
+    """The first value of a varint field, or default when absent or of another wire type."""
+    for value in fields.get(number, []):
+        if isinstance(value, int):
+            return value
+    return default
 
 
 def _text(fields, number):
-    value = _first(fields, number, b'')
-    return value.decode('utf-8', 'replace') if isinstance(value, bytes) else ''
+    """The first value of a length-delimited field as UTF-8 text, or ''."""
+    for value in fields.get(number, []):
+        if isinstance(value, bytes):
+            return value.decode('utf-8', 'replace')
+    return ''
 
 
 def _signed(value):
