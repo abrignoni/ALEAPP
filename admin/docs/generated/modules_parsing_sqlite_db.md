@@ -67,6 +67,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | fossifyGallery |
 | fossifyKeyboard |
 | fossifyNotes |
+| freenetMail |
 | frosting |
 | galleryVault |
 | gettr |
