@@ -173,5 +173,9 @@ class FreenetMailTest(unittest.TestCase):
         self.assertEqual(sorted((row['Subject'], row['Body Text']) for row in rows),
                          [('Changed', 'changed text'), ('Legacy', 'plain text')])
 
+    def test_table_cells_stay_apart_in_body_text(self):
+        self.assertEqual(fm._html_text(  # pylint: disable=protected-access
+            '<table><tr><td>Account</td><td>123</td></tr></table>'), 'Account\n123')
+
 if __name__ == '__main__':
     unittest.main()
