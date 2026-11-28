@@ -18,7 +18,21 @@ __artifacts_v2__ = {
             'com.zing.zalo: <peer id>.db for a one to one conversation and group_<group id>.db for a '
             'group. A write-ahead log beside a database is applied; a database with no log beside it is '
             'read alone. Every storage spelling of one app data folder (data/data and data/user/0) is '
-            "read as one folder. Account ID is the account folder's name, the same id Zalo stores as "
+            "read as one folder. When one database is present under more than one of those spellings "
+            "and the copies are not byte identical (the database or its -wal or -journal), every copy "
+            "is read. A row equal in every reported column across the copies is reported once; a "
+            "message whose stored values differ between copies is reported once per version, and "
+            "Conversation Database names the copy. A copy that cannot be read as SQLite is skipped "
+            "with a line in the run log, and the readable copies are still reported. Where copies of the zalo database hold different "
+            "names for Sender Name and Conversation, the name from the data/data copy is used, then "
+            "data/user/<n>, then data_mirror. A rollback snapshot that is not byte identical to the "
+            "live database is read as its own copy: its rows are reported in addition to the live "
+            "rows, under the same Conversation Key. The Android user is read from the path, "
+            "including a rollback snapshot under data/misc_ce/<n>/rollback or "
+            "data/misc_de/<n>/rollback; a path that names no user is read as user 0. This copy "
+            "handling is shown with synthetic stores only; no real image in the corpus has a second "
+            "copy of a Zalo database. Account ID is "
+            "the account folder's name, the same id Zalo stores as "
             'currentUserUid in its zalo database. Conversation Key is the Android user, the account and '
             'the conversation (group_<id> for a group) joined by slashes; it is what the conversation '
             'view groups by, so two accounts that talk to the same person keep separate conversations. '
@@ -101,7 +115,11 @@ __artifacts_v2__ = {
             "read as Unix milliseconds, which the stored 13-digit values fit; the app code that sets "
             "it was not traced. The fuid column is not reported because its meaning is not "
             "established. Account ID, Conversation, Conversation Key and Reactor Name are resolved as "
-            "in Zalo - Messages."),
+            "in Zalo - Messages. Copies of one database under more than one storage path are read as "
+            "in Zalo - Messages; a reaction whose stored values differ between copies is listed once "
+            "per version, and Database names the copy. With several copies of a conversation "
+            "database, Message and Message Timestamp come from the first copy that holds the "
+            "message."),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*'),
@@ -134,7 +152,11 @@ __artifacts_v2__ = {
             'contact_profile_5 rows, which carry no account. usr, Phone, Zalo Friend, ged and Date of '
             'Birth are usr, phone, isZaloFriend, ged and dob as stored; what usr and ged hold is not '
             'established, and dob holds the value of the JSON key sdob (ContactProfile.java:285, '
-            'lw6.java:166). The stt, avt, cover, username and other profile columns are not reported.')),
+            'lw6.java:166). The stt, avt, cover, username and other profile columns are not reported. '
+            'Copies of the zalo database under more than one storage path are read as in Zalo - '
+            'Messages; a contact whose stored values or alias differ between copies is listed once '
+            'per version, with no column naming the copy. Alias is taken from the same copy as the '
+            'row.')),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*'),
@@ -155,7 +177,10 @@ __artifacts_v2__ = {
             "file name. Creator Name is resolved as Sender Name is in Zalo - Messages. Member Count "
             "is totalMem and Member IDs is member_uids, as stored. ts is the stored value, not "
             "converted, because what it records was not traced in the app code. The admin_uids, "
-            "settingJson, avatar_new and other columns are not reported."),
+            "settingJson, avatar_new and other columns are not reported. Copies of the zalo database "
+            "under more than one storage path are read as in Zalo - Messages; a group whose stored "
+            "values differ between copies is listed once per version, with no column naming the "
+            "copy."),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*'),
@@ -178,8 +203,12 @@ __artifacts_v2__ = {
             "folders message LocalPath values pointed into; the app's caches beside them (semicache, "
             "sticker, zinstant, call_asr) are not listed. Named by a Message is Yes when a message's "
             "LocalPath resolves to the file as in Zalo - Messages, and Conversation Keys lists those "
-            "conversations; No marks a file no message in the extraction names. Media Format is read "
-            "from the file's first bytes. File times are not reported."),
+            "conversations; No marks a file no message in the extraction names. Copies of one file "
+            "under more than one storage path are each listed when their bytes differ. Their rows "
+            "differ only in Media and, where the sizes differ, Size (bytes); the storage path of "
+            "each copy is not shown. The message row in Zalo - Messages shows one of them, the first "
+            "the file search returned; which storage path that is was not established. Media Format is read from the file's first "
+            "bytes. File times are not reported."),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*',
@@ -194,11 +223,14 @@ __artifacts_v2__ = {
     },
 }
 
+import hashlib
 import os
 import re
+import sqlite3
 from datetime import datetime, timedelta, timezone
 
-from scripts.artifacts.storagePathViews import android_user, canonical_path, unique_files
+from scripts.artifacts.storagePathViews import (android_user, canonical_path, union_view_rows,
+                                                unique_files)
 from scripts.ilapfuncs import (artifact_processor, check_in_media, does_table_exist_in_db,
                                get_sqlite_db_records, is_sqlite_sidecar, logfunc)
 
@@ -256,7 +288,9 @@ def _container(path):
     return None
 
 
-_ROOT_STOP = ('data', 'data_mirror', 'media', 'storage', 'sdcard', 'userdata', 'user', 'user_de')
+_ROOT_STOP = ('data', 'data_mirror', 'media', 'mnt', 'storage', 'sdcard', 'userdata', 'user',
+              'user_de')
+_ROLLBACK = re.compile(r'(^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/')
 
 
 def _evidence_root(relative_path):
@@ -271,17 +305,26 @@ def _evidence_root(relative_path):
 
 
 def _android_user(context, path):
-    """The Android user whose storage holds a path, 0 when the path names none."""
-    return android_user(context.get_relative_path(path)) or '0'
+    """The Android user whose storage holds a path, read from a rollback snapshot path too.
+
+    A path under no app data folder and no rollback snapshot is read as user 0."""
+    relative = context.get_relative_path(path)
+    user = android_user(relative)
+    if user:
+        return user
+    match = _ROLLBACK.search(str(relative).replace('\\', '/'))
+    return match.group(2) if match else '0'
 
 
 def _stores(context):
     """Per app data folder: the zalo database and the conversation databases per account.
 
-    Duplicate storage views of one file (data/data and data/user/0) are read once, and every
-    spelling of one app data folder is grouped under one key."""
+    Every spelling of one app data folder is grouped under one key. A copy of a database under
+    another storage spelling (data/data and data/user/0) is kept when it is not byte identical,
+    so 'mains' and 'conversations' can hold several copies of one file; the four database
+    artifacts join the rows read from them with union_view_rows."""
     stores = {}
-    for file_found in unique_files(context):
+    for file_found in unique_files(context, keep_differing_views=True):
         path = str(file_found)
         if os.path.isdir(path) or is_sqlite_sidecar(path):
             continue
@@ -292,11 +335,11 @@ def _stores(context):
         if len(rel) < 2 or rel[0] != 'databases':
             continue
         key = canonical_path(context.get_relative_path(container))[0]
-        entry = stores.setdefault(key, {'main': None, 'conversations': [],
+        entry = stores.setdefault(key, {'mains': [], 'conversations': [],
                                         'user': _android_user(context, path),
                                         'root': _evidence_root(context.get_relative_path(path))})
         if len(rel) == 2 and rel[1] == 'zalo':
-            entry['main'] = path
+            entry['mains'].append(path)
         elif len(rel) == 3 and rel[1].isdigit() and rel[2].endswith('.db'):
             name = rel[2][:-3]
             is_ext = name.endswith('_ext')
@@ -320,14 +363,28 @@ def _conversation_key(entry, item):
 
 
 def _rows(path, query):
-    return list(get_sqlite_db_records(path, query))
+    """The rows of a query, or [] with a log line when the database cannot be read.
+
+    A damaged copy of a store is then skipped and the readable copies are still reported."""
+    try:
+        return list(get_sqlite_db_records(path, query))
+    except sqlite3.DatabaseError as error:
+        logfunc(f'Zalo: could not read {path}: {error}')
+        return []
 
 
-def _names(main):
-    """Lookups from the zalo database: aliases, profile names, group names, hidden chats."""
+def _names(mains):
+    """Lookups from the zalo database copies: aliases, profile names, group names, hidden chats.
+
+    Where copies hold different non-empty names, the first copy's name is used (the order
+    unique_files ranks them: data/data, then data/user/<n>, then data_mirror)."""
     names = {'alias': {}, 'profile': {}, 'shared_profile': {}, 'group': {}, 'hidden': set()}
-    if not main:
-        return names
+    for main in reversed(mains):
+        _add_names(names, main)
+    return names
+
+
+def _add_names(names, main):
     if does_table_exist_in_db(main, 'alias_friend'):
         for account, uid, alias in _rows(main, 'SELECT currentUserUid, uIdTo, aliasName FROM alias_friend'):
             if alias:
@@ -346,11 +403,11 @@ def _names(main):
                 names['shared_profile'][str(uid)] = display
     if does_table_exist_in_db(main, 'group_info_v6'):
         for account, group_id, name in _rows(main, 'SELECT currentUserUid, id, name FROM group_info_v6'):
-            names['group'][(str(account), str(group_id))] = name
+            if name:
+                names['group'][(str(account), str(group_id))] = name
     if does_table_exist_in_db(main, 'uid_hidden_chat_table'):
         for account, uid in _rows(main, 'SELECT currentUserUid, uid FROM uid_hidden_chat_table'):
             names['hidden'].add((str(account), str(uid)))
-    return names
 
 
 def _person(names, account, uid):
@@ -411,8 +468,31 @@ def _media_user_and_tail(relative_path):
     return (user if user.isdigit() else '0'), tail
 
 
+def _digest(path):
+    sha = hashlib.sha256()
+    with open(path, 'rb') as handle:
+        for block in iter(lambda: handle.read(1 << 20), b''):
+            sha.update(block)
+    return sha.hexdigest()
+
+
+def _distinct(paths):
+    """The paths with byte-identical copies dropped, first copy kept, order kept."""
+    if len(paths) < 2:
+        return list(paths)
+    kept = {}
+    for path in paths:
+        try:
+            kept.setdefault((os.path.getsize(path), _digest(path)), path)
+        except OSError:
+            kept.setdefault(('unreadable', path), path)
+    return list(kept.values())
+
+
 def _media_index(context):
-    """{(evidence root, Android user, tail): staged path} for the media folder files, built once."""
+    """{(evidence root, Android user, tail): [staged paths]} for the media folder files.
+
+    Copies of one file under several storage spellings are kept when their bytes differ."""
     index = {}
     for file_found in unique_files(context):
         path = str(file_found)
@@ -422,8 +502,8 @@ def _media_index(context):
         user, tail = _media_user_and_tail(relative)
         parts = tail.split('/') if tail else []
         if len(parts) >= 4 and parts[0] == 'files' and parts[1] == 'zalo' and parts[2] in MEDIA_FOLDERS:
-            index.setdefault((_evidence_root(relative), user, tail), path)
-    return index
+            index.setdefault((_evidence_root(relative), user, tail), []).append(path)
+    return {key: _distinct(paths) for key, paths in index.items()}
 
 
 def _media_tail(local_path):
@@ -455,7 +535,8 @@ def _media(context, seeker, index, cache, key):
     if key is None:
         return '', ''
     if key not in cache:
-        path = index.get(key)
+        copies = index.get(key)
+        path = copies[0] if copies else None
         root, user, tail = key
         if path is None and not _in_media_folder(tail):
             # A resolvable path outside the indexed folders is looked up on its own, in the
@@ -479,12 +560,14 @@ def zalo_messages(context):
     data_list = []
     sources = []
     for _container_key, entry in _stores(context).items():
-        names = _names(entry['main'])
-        if entry['main']:
-            sources.append(entry['main'])
+        names = _names(entry['mains'])
+        sources.extend(entry['mains'])
+        file_rows = []
         for item in entry['conversations']:
             if item['ext']:
                 continue
+            item_rows = []
+            file_rows.append((item['path'], item_rows))
             rows = _rows(item['path'], '''
                 SELECT TimeStamp, SenderId, MsgContent, LocalPath, MsgType, MsgStatus,
                        RefCliMsgId, CliMsgId, GlbMsgId, TTL
@@ -498,13 +581,15 @@ def zalo_messages(context):
                 outgoing = str(sender) == account
                 media, media_format = _media(context, seeker, index, media_cache,
                                              _media_key(entry, local_path))
-                data_list.append((
+                item_rows.append((
                     _ms_to_utc(stamp), 'Outgoing' if outgoing else 'Incoming',
                     _person(names, account, sender), label, content, media, account,
                     item['conversation'], conversation_key, 'Yes' if item['group'] else 'No',
                     hidden, sender, media_format, msg_type, TYPE_NAMES.get(msg_type, ''), status,
                     ref if ref is not None else '', cli, glb, ttl if ttl is not None else '',
                     local_path or '', context.get_relative_path(item['path'])))
+        # The last column, the database's path, differs between copies of one database.
+        data_list.extend(union_view_rows(context, file_rows, ignore=(21,)))
     data_headers = (
         ('Timestamp', 'datetime'), 'Direction', 'Sender Name', 'Conversation', 'Message',
         ('Media', 'media'), 'Account ID', 'Conversation ID', 'Conversation Key', 'Group Chat',
@@ -519,32 +604,37 @@ def zalo_reactions(context):
     data_list = []
     sources = []
     for _container_key, entry in _stores(context).items():
-        names = _names(entry['main'])
-        messages = {(item['account'], item['base']): item
-                    for item in entry['conversations'] if not item['ext']}
+        names = _names(entry['mains'])
+        messages = {}
+        for item in entry['conversations']:
+            if not item['ext']:
+                messages.setdefault((item['account'], item['base']), []).append(item)
+        file_rows = []
         for item in entry['conversations']:
             if not item['ext']:
                 continue
+            item_rows = []
+            file_rows.append((item['path'], item_rows))
             rows = _rows(item['path'], '''
                 SELECT timestamp, sender_id, icon, count, client_id, global_id FROM Reaction
                 ORDER BY timestamp''')
             sources.append(item['path'])
-            message_db = messages.get((item['account'], item['base']))
             targets = {}
-            if message_db:
+            for message_db in messages.get((item['account'], item['base']), []):
                 for cli, stamp, content in _rows(message_db['path'],
                                                  'SELECT CliMsgId, TimeStamp, MsgContent FROM ChatContent'):
-                    targets[cli] = (stamp, content)
+                    targets.setdefault(cli, (stamp, content))
             account = item['account']
             label = _conversation_label(names, item)
             conversation_key = _conversation_key(entry, item)
             for stamp, sender, icon, count, cli, glb in rows:
                 target_stamp, target_text = targets.get(cli, ('', ''))
-                data_list.append((
+                item_rows.append((
                     _ms_to_utc(stamp), _ms_to_utc(target_stamp), account, label,
                     item['conversation'], conversation_key, sender, _person(names, account, sender),
                     icon, count, target_text, 'Yes' if cli in targets else 'No', cli, glb,
                     context.get_relative_path(item['path'])))
+        data_list.extend(union_view_rows(context, file_rows, ignore=(14,)))
     data_headers = (
         ('Timestamp', 'datetime'), ('Message Timestamp', 'datetime'), 'Account ID', 'Conversation',
         'Conversation ID', 'Conversation Key', 'Reactor ID', 'Reactor Name', 'Reaction (as stored)',
@@ -557,26 +647,14 @@ def zalo_contacts(context):
     data_list = []
     sources = []
     for _container_key, entry in _stores(context).items():
-        main = entry['main']
-        if not main:
-            continue
-        sources.append(main)
-        names = _names(main)
-        tables = [row[0] for row in _rows(
-            main, "SELECT name FROM sqlite_master WHERE type = 'table' "
-                  "AND name LIKE 'contact_profile_friend_%' ORDER BY name")]
-        if does_table_exist_in_db(main, 'contact_profile_5'):
-            tables.append('contact_profile_5')
-        for table in tables:
-            account = table[len('contact_profile_friend_'):] if table != 'contact_profile_5' else ''
-            for stamp, uid, display, user, phone, friend, gender, dob in _rows(
-                    main, f'SELECT timestamp, uid, dpn, usr, phone, isZaloFriend, ged, dob '
-                          f'FROM "{table}" ORDER BY uid'):
-                alias = names['alias'].get((account, str(uid)), '') if account else ''
-                data_list.append((
-                    _ms_to_utc(stamp), account, uid, display or '', alias, user or '', phone or '',
-                    friend if friend is not None else '', gender if gender is not None else '',
-                    dob or '', table))
+        file_rows = []
+        for main in entry['mains']:
+            sources.append(main)
+            main_rows = []
+            file_rows.append((main, main_rows))
+            # Each copy's own aliases, so an alias that differs between copies is kept.
+            _contact_rows(main, _names([main]), main_rows)
+        data_list.extend(union_view_rows(context, file_rows))
     data_headers = (
         ('Stored Time', 'datetime'), 'Account ID', 'User ID', 'Display Name', 'Alias',
         'usr (as stored)', 'Phone (as stored)', 'Zalo Friend (as stored)',
@@ -584,24 +662,47 @@ def zalo_contacts(context):
     return data_headers, data_list, '\n'.join(sources)
 
 
+def _contact_rows(main, names, data_list):
+    """Append the contact rows of one zalo database copy to data_list."""
+    tables = [row[0] for row in _rows(
+        main, "SELECT name FROM sqlite_master WHERE type = 'table' "
+              "AND name LIKE 'contact_profile_friend_%' ORDER BY name")]
+    if does_table_exist_in_db(main, 'contact_profile_5'):
+        tables.append('contact_profile_5')
+    for table in tables:
+        account = table[len('contact_profile_friend_'):] if table != 'contact_profile_5' else ''
+        for stamp, uid, display, user, phone, friend, gender, dob in _rows(
+                main, f'SELECT timestamp, uid, dpn, usr, phone, isZaloFriend, ged, dob '
+                      f'FROM "{table}" ORDER BY uid'):
+            alias = names['alias'].get((account, str(uid)), '') if account else ''
+            data_list.append((
+                _ms_to_utc(stamp), account, uid, display or '', alias, user or '', phone or '',
+                friend if friend is not None else '', gender if gender is not None else '',
+                dob or '', table))
+
+
 @artifact_processor
 def zalo_groups(context):
     data_list = []
     sources = []
     for _container_key, entry in _stores(context).items():
-        main = entry['main']
-        if not main or not does_table_exist_in_db(main, 'group_info_v6'):
-            continue
-        sources.append(main)
-        names = _names(main)
-        for account, group_id, name, creator, total, members, stamp in _rows(
-                main, 'SELECT currentUserUid, id, name, creatorId, totalMem, member_uids, ts '
-                      'FROM group_info_v6 ORDER BY currentUserUid, id'):
-            account = str(account)
-            data_list.append((
-                account, group_id, name or '', creator, _person(names, account, creator),
-                total if total is not None else '', members or '',
-                stamp if stamp is not None else ''))
+        names = _names(entry['mains'])
+        file_rows = []
+        for main in entry['mains']:
+            if not does_table_exist_in_db(main, 'group_info_v6'):
+                continue
+            sources.append(main)
+            main_rows = []
+            file_rows.append((main, main_rows))
+            for account, group_id, name, creator, total, members, stamp in _rows(
+                    main, 'SELECT currentUserUid, id, name, creatorId, totalMem, member_uids, ts '
+                          'FROM group_info_v6 ORDER BY currentUserUid, id'):
+                account = str(account)
+                main_rows.append((
+                    account, group_id, name or '', creator, _person(names, account, creator),
+                    total if total is not None else '', members or '',
+                    stamp if stamp is not None else ''))
+        data_list.extend(union_view_rows(context, file_rows))
     if not data_list and sources:
         logfunc('Zalo - Groups: group_info_v6 holds no rows')
     data_headers = (
@@ -625,13 +726,14 @@ def zalo_media(context):
                     references.setdefault(key, set()).add(_conversation_key(entry, item))
     data_list = []
     sources = []
-    for (root, user, tail), path in sorted(index.items()):
+    for (root, user, tail), copies in sorted(index.items()):
         keys = sorted(references.get((root, user, tail), ()))
-        sources.append(path)
-        data_list.append((
-            check_in_media(path, os.path.basename(path)) or '', _sniff(path),
-            os.path.getsize(path), os.path.basename(path), tail.split('/')[2], user,
-            'Yes' if keys else 'No', '\n'.join(keys)))
+        for path in copies:
+            sources.append(path)
+            data_list.append((
+                check_in_media(path, os.path.basename(path)) or '', _sniff(path),
+                os.path.getsize(path), os.path.basename(path), tail.split('/')[2], user,
+                'Yes' if keys else 'No', '\n'.join(keys)))
     data_headers = (
         ('Media', 'media'), 'Media Format', 'Size (bytes)', 'File Name', 'Folder', 'Android User',
         'Named by a Message', 'Conversation Keys')
