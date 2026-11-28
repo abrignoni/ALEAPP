@@ -2,37 +2,39 @@ __artifacts_v2__ = {
     "get_telegramMessages": {
         "name": "Telegram - Messages",
         "description": (
-            "Parses Telegram messages from the cache4.db messages_v2 table. Message text is "
-            "decoded from the TL-serialised message blob stored in the data column; the "
-            "timestamp, direction and read state are read from the table's own columns. "
-            "System events such as calls, screenshot notifications and auto-delete timer "
-            "changes are named, with the detail they carry. Messages whose blob uses a "
-            "constructor this parser does not cover are still reported, with that "
-            "constructor named in the message column. A message whose blob cannot be "
-            "walked is still reported from the table's columns. A message whose (mid, uid) key "
-            "another readable state in the database's write-ahead log holds and the current "
-            "state does not is reported too, as a Recovered row."
+            (
+            'Parses Telegram messages from the cache4.db messages_v2 table, or the older messages table '
+            'where a database has no messages_v2, including Telegram-layout clients under other packages. '
+            'Message text is decoded from the TL-serialised message blob stored in the data column; the '
+            'timestamp, direction and read state are read from the table\'s own columns. System events '
+            'such as calls, screenshot notifications and auto-delete timer changes are named, with the '
+            'detail they carry. Messages whose blob uses a constructor this parser does not cover are '
+            'still reported, with that constructor named in the message column. A message whose blob '
+            'cannot be walked is still reported from the table\'s columns. A message whose key (mid and '
+            'uid, or mid alone in the older table) another readable state in the database\'s write-ahead '
+            'log holds and the current state does not is reported too, as a Recovered row.'
+        )
         ),
         "author": "Alexis Brignoni, John Hyla, @AlexisBrignoni, Codex",
         "creation_date": "2026-08-03",
-        "last_update_date": "2026-11-17",
+        "last_update_date": "2026-11-28",
         "requirements": "none",
         "category": "Messaging",
         "notes": (
-            'The data column holds a TL-serialised TLRPC message object. Each cache4.db matched at files/'
-            ' or at files/account1 to files/account3 of an org.telegram.messenger package is read, one '
+            (
+            'The data column holds a TL-serialised TLRPC message object. Each cache4.db matched at files/ '
+            'or at files/account1 to files/account3 of an org.telegram.messenger package is read, one '
             'copy per package, Android user and folder: the same file under data/data, data/user/<n> or '
-            'data_mirror/data_ce/<volume>/<n> is read once. When more than one database is read, a Source'
-            " File column names the database of each row, and names are resolved inside the row's own "
+            'data_mirror/data_ce/<volume>/<n> is read once. When more than one database is read, a Source '
+            'File column names the database of each row, and names are resolved inside the row\'s own '
             'database. The account folder is a location in the extraction and is not by itself proof of '
             'which account the rows belong to. Reading more than one database was checked on constructed '
             'databases and, on samsung_a166u_a16_known_20261116, on an image: four databases were read, '
             'the Source File column was present, and all 138 rows came from files/cache4.db. The client '
-            'keeps the databases of account slots 1 to 3 under '
-            "files/account1 to files/account3. Reference: Telegram-Android, 'MessagesStorage.java "
-            "(database directory per account)', "
-            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L309-L313.'
-            ' The message constructors and their field order are taken from the open-source Telegram '
+            'keeps the databases of account slots 1 to 3 under files/account1 to files/account3. '
+            'Reference: Telegram-Android, \'MessagesStorage.java (database directory per account)\', '
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/messenger/MessagesStorage.java#L309-L313. '
+            'The message constructors and their field order are taken from the open-source Telegram '
             'Android client; constructors from layer 179 onward read a second flags integer before the '
             'message id, which this parser accounts for. The constructors 0x3ae56482, 0x95ef6f2b and '
             '0x7600b9d3 can carry a sender rank string ahead of the dialog peer, and the last two a '
@@ -40,53 +42,53 @@ __artifacts_v2__ = {
             'samsung_a166u_a16_known_20261116 134 of the 138 rows are stored under 0x7600b9d3 and none '
             'was logged as a walk that could not be completed; no image listed in sample_data holds a '
             'message stored under 0x3ae56482 or 0x95ef6f2b, so those two are exercised by round-trip '
-            'tests only. Six older constructors differ in fields that sit '
-            "ahead of the text, and are read as the client's own readers read them. 0xbce383d2, "
-            '0x58ae39c9 and 0xf52e6b7f read via_bot_id as a 32-bit integer where the newer constructors '
-            'this parser covers read 64 bits. 0xf52e6b7f also reads from_id as a bare 32-bit user id and '
-            'reply_to as a bare 32-bit message id. 0x1e4c8a69 and 0xa66c7efc read from_boosts_applied '
-            'after from_id. 0xa4e97f37 is read with the layout of 0x2357bf25, the class the client maps '
-            'it to. No image listed in sample_data holds a message stored under any of those six '
-            'constructors, so these layouts are verified against the client source and by round-trip '
-            "tests, not against an image. Reference: Telegram-Android, 'TL_legacy_message.java "
-            "(TL_message_layer118 readParams)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L3091-L3104.'
-            " Reference: Telegram-Android, 'TL_legacy_message.java (via_bot_id in TL_message_layer131 and"
-            " TL_message_layer123)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2835'
-            ' and '
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2970.'
-            " Reference: Telegram-Android, 'TL_legacy_message.java (from_boosts_applied in "
-            "TL_message_layer176 and TL_message_layer175)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2080'
-            ' and '
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2243.'
-            " Reference: Telegram-Android, 'TLRPC.java (Message.fromConstructor)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L57589-L57591.'
-            " Seventeen further message classes are read from their readers in the client's TLRPC.java: "
+            'tests only. Six older constructors differ in fields that sit ahead of the text, and are read '
+            'as the client\'s own readers read them. 0xbce383d2, 0x58ae39c9 and 0xf52e6b7f read via_bot_id '
+            'as a 32-bit integer where the newer constructors this parser covers read 64 bits. 0xf52e6b7f '
+            'also reads from_id as a bare 32-bit user id and reply_to as a bare 32-bit message id. '
+            '0x1e4c8a69 and 0xa66c7efc read from_boosts_applied after from_id. 0xa4e97f37 is read with '
+            'the layout of 0x2357bf25, the class the client maps it to. No image listed in sample_data '
+            'holds a message stored under any of those six constructors, so these layouts are verified '
+            'against the client source and by round-trip tests, not against an image. Reference: '
+            'Telegram-Android, \'TL_legacy_message.java (TL_message_layer118 readParams)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L3091-L3104. '
+            'Reference: Telegram-Android, \'TL_legacy_message.java (via_bot_id in TL_message_layer131 and '
+            'TL_message_layer123)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2835 '
+            'and '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2970. '
+            'Reference: Telegram-Android, \'TL_legacy_message.java (from_boosts_applied in '
+            'TL_message_layer176 and TL_message_layer175)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2080 '
+            'and '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java#L2243. '
+            'Reference: Telegram-Android, \'TLRPC.java (Message.fromConstructor)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L57589-L57591. '
+            'Seventeen further message classes are read from their readers in the client\'s TLRPC.java: '
             'the four before layer 118 (0x452c0e65, 0x44f9b43d, 0x90dddc11, 0xc09be45f), which read the '
             'same fields ahead of the text as 0xf52e6b7f; ten older ones (0xc992e15c, 0x5ba66c13, '
             '0x2bebfa86, 0xf07814c8, 0xc3060325, 0xa7ab1991, 0x567699b3, 0x22eb6aba, 0xa367e716, '
             '0x05f46804); and the three secret chat classes (0x555555fa, 0x555555f9, 0x555555f8), which '
             'read a ttl integer after the message id. The two TL_messageEmpty constructors (0x90a6ca84, '
-            "0x83e5de54) are reported as '[Empty message record]'. On samsung_a166u_a16_known_20261116 2 "
+            '0x83e5de54) are reported as \'[Empty message record]\'. On samsung_a166u_a16_known_20261116 2 '
             'records are stored under the secret chat class 0x555555fa; each was read and carried a '
-            "service action, 0x555555f7, that this parser has no reader for, reported as '[Unrecognised "
-            "action 0x555555f7]'. No image listed in sample_data holds a record under the other eighteen "
-            'of those constructors, so they are verified against the client source and by round-trip '
-            "tests, not against an image. Where a record's media object carries "
-            'its own caption the client uses that caption as the message text; this parser does not read '
-            "media objects, so for such a record the Message column holds the record's text field only. "
-            "Reference: Telegram-Android, 'TLRPC.java (Message.fromConstructor, the classes it names)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L57517-L57616.'
-            " Reference: Telegram-Android, 'TLRPC.java (caption taken from the media, "
-            "TL_message_layer117)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L58530-L58537.'
-            ' Forward and reply headers are stepped over field by field using the same source, so '
+            'service action, 0x555555f7, that this parser has no reader for, reported as \'[Unrecognised '
+            'action 0x555555f7]\'. pixel3_a11 holds 27 records under 0x452c0e65, each walked to its text. '
+            'No image listed in sample_data holds a record under the other seventeen of those '
+            'constructors, so they are verified against the client source and by round-trip tests, not '
+            'against an image. Where a record\'s media object carries its own caption the client uses that '
+            'caption as the message text; this parser does not read media objects, so for such a record '
+            'the Message column holds the record\'s text field only. Reference: Telegram-Android, '
+            '\'TLRPC.java (Message.fromConstructor, the classes it names)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L57517-L57616. '
+            'Reference: Telegram-Android, \'TLRPC.java (caption taken from the media, '
+            'TL_message_layer117)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/tgnet/TLRPC.java#L58530-L58537. '
+            'Forward and reply headers are stepped over field by field using the same source, so '
             'forwarded messages and replies are decoded structurally. A reply that carries inline reply '
             'media, quoted entities or a poll option holds a further object tree this parser does not '
             'implement; for those, and for any header constructor not covered, the text is instead '
-            "located by searching the blob for the row's own date value, which sits immediately before "
+            'located by searching the blob for the row\'s own date value, which sits immediately before '
             'the text, and is accepted only when it is a well-formed TL string that decodes as strict '
             'UTF-8. The same fallback is used when a structural walk ends on a date that disagrees with '
             'the date column. Text that neither route recovers is reported as not recovered rather than '
@@ -94,144 +96,175 @@ __artifacts_v2__ = {
             'empty Message; the not recovered labels are used only where the walk stopped before the '
             'text. A record whose walk cannot be completed, because a field is not what the layout '
             'expects or the record ends early, is still reported: the timestamp, dialog, direction, read '
-            "state and message id are the table's own columns, the text is looked for after the row's "
-            "date value as above, and where that finds nothing the Message column reads '[Message not "
-            "decoded]'. Each such record is named in the run log. No record on the eleven images listed in "
+            'state and message id are the table\'s own columns, the text is looked for after the row\'s '
+            'date value as above, and where that finds nothing the Message column reads \'[Message not '
+            'decoded]\'. Each such record is named in the run log. No record on the images listed in '
             'sample_data ended its walk that way, so this handling is exercised by tests on constructed '
             'records, not on an image. Sender ID is the from_id read from the record, for a service '
-            'message as for a message. Every from_id on the nine images listed in sample_data before hickman_a13 was added is a user '
-            'peer; a from_id that is a chat or channel peer is reported by its bare id, without the sign '
-            'a dialog id carries, and no image exercises that. On an incoming row whose record holds no '
-            'from_id, Sender ID is the dialog id; in a group or channel dialog that is the id of the '
-            'chat. On those images each incoming row in a user dialog whose record holds a from_id holds '
-            'the dialog id there. On an incoming row where from_id was not reached (a missing record or '
-            'one under 8 bytes, an unrecognised constructor, an empty message record, a walk that could '
-            'not be completed, or a service header that ends before from_id) Sender ID is the dialog id '
-            "when the dialog id is a user id by the client's own test, a positive value with neither the "
-            'secret chat bit nor the folder bit set, and is blank otherwise. An outgoing row with no '
-            "from_id read has a blank Sender ID. Reference: Telegram-Android, 'DialogObject.java "
-            "(isUserDialog, isEncryptedDialog)', "
-            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L105-L111.'
-            ' All eight TL_messageService constructors are recognised; their header is walked the same '
-            "way, its from_id is read, and the action that follows is named from the client's own action "
+            'message as for a message. Every from_id on the nine images listed in sample_data before '
+            'hickman_a13 was added is a user peer; a from_id that is a chat or channel peer is reported '
+            'by its bare id, without the sign a dialog id carries, and no image exercises that. On an '
+            'incoming row whose record holds no from_id, Sender ID is the dialog id; in a group or '
+            'channel dialog that is the id of the chat. On those images each incoming row in a user '
+            'dialog whose record holds a from_id holds the dialog id there. On an incoming row where '
+            'from_id was not reached (a missing record or one under 8 bytes, an unrecognised constructor, '
+            'an empty message record, a walk that could not be completed, or a service header that ends '
+            'before from_id) Sender ID is the dialog id when the dialog id is a user id by the client\'s '
+            'own test, a positive value with neither the secret chat bit nor the folder bit set, and is '
+            'blank otherwise. An outgoing row with no from_id read has a blank Sender ID. Reference: '
+            'Telegram-Android, \'DialogObject.java (isUserDialog, isEncryptedDialog)\', '
+            'https://github.com/DrKLO/Telegram/blob/f2908b14133bbffbf7ab04f641ecb5bfaf533242/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L105-L111. '
+            'All eight TL_messageService constructors are recognised; their header is walked the same '
+            'way, its from_id is read, and the action that follows is named from the client\'s own action '
             'constructors, so system events such as a phone call, a screenshot notification, a cleared '
             'history or an auto-delete timer change are identified rather than reported as an unlabelled '
             'service message. Detail fields are read for the actions that carry them, including the '
             'outcome and duration of a call and the new value of an auto-delete timer; an action with no '
-            "reader implemented is reported by name alone. When the client stored the message's media at "
+            'reader implemented is reported by name alone. When the client stored the message\'s media at '
             'a known location it appends that path to the record as a trailing string, which is reported '
             'as the recorded media path; it is the path the app wrote, and the file is linked only when '
-            'it is still present in the extraction. On the nine images listed in sample_data before hickman_a13 was added Recorded '
-            "Media Path held a value on some rows and no file of the recorded name is in those images' "
-            "archives. Media File is also filled, when the recorded media path linked no file, from "
-            "file_to_path.db beside the cache4.db (files/ for the first account, files/account1 to "
-            "account3 for slots 1 to 3; no image tested holds rows under account1 to account3, so the "
-            "slot folders are taken from the client source and were not exercised). The client writes its"
-            " paths_by_dialog_id table twice for a download: the temp file and the parts file when the "
-            "download starts, and the final file when it finishes, each with the dialog id and the "
-            "message id its getId() returns, which for a message with an ephemeral anchor is the anchor's"
-            " id (no image tested was checked for that case). Reference: Telegram-Android, "
-            "'FilePathDatabase.java (saveFileDialogId)', "
-            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FilePathDatabase.java#L394-L416;"
-            " 'FileLoader.java (getFileMetadataFromParent, didFinishLoadingFile)', "
-            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java#L45-L83"
-            " and "
-            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java#L1004-L1012;"
-            " 'FileLoadOperation.java (start)', "
-            "https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java#L1208-L1211."
-            " A recorded file is linked to the row whose dialog id and message id are the same, a "
-            "recorded link and not a match on name, and is found by the device path it was given: "
-            "/storage/emulated/<user>/ is the extraction's data/media/<user>/ or "
-            "mnt/pass_through/<n>/emulated/<user>/, and /data/user/<user>/ its data/user/<user>/, or "
-            "data/data for user 0. Every recorded path on the images tested is under /storage/emulated/0 "
-            "or /storage/emulated/10 and was found under data/media; the pass_through view was checked on"
-            " a constructed copy only, and no image holds a recorded /data/user path. Only files under "
-            "the package's cache and files/Telegram folders and the public "
-            "Android/media/org.telegram.messenger/Telegram folder are looked for, so an empty cell does "
-            "not show the file is absent. Entries with message id 0, which the client writes for stories,"
-            " are not read, and a recorded file whose dialog and message id match no message row is not "
-            "reported (11 present files on dragna_pixel9a_a16). Downloaded Files on Device lists every "
-            "recorded file found in the extraction for the row: names not ending in .temp first, files "
-            "outside cache/ before those in it, then path order, with a 0-byte file marked '(0 bytes)'. "
-            "Media File shows the first listed file that is not empty and whose first bytes are an image,"
-            " a video or audio (scripts/filetype.py); the others are only listed, and a file that is none"
-            " of those is listed and not shown, as the .tgs files on 1 row of kevin_pocox7_a15 and 1 of "
-            "pixel7a_a14 are. On dragna_pixel9a_a16 the table holds 937 paths, 917 with a message id "
-            "other than 0; they name 448 dialog and message pairs, 136 of which are among the 554 message"
-            " rows, and 25 of those rows have a recorded file in the extraction: 23 show it, 2 list only "
-            "0-byte .temp files. Media File was filled on 2 rows of hc_pixel8pro_a16, 2 of "
-            "hc_pixel8pro_a17, 5 of anne_a15, 2 of pixel7a_a14, 1 of russell_a14 and 28 of "
-            "kevin_pocox7_a15, and on 1 row of kevin_pocox7_a15 and 1 of pixel7a_a14 it holds a file "
-            "whose name is not the recorded media path's. On hickman_a13 file_to_path.db has no "
-            "paths_by_dialog_id table (an older client), so nothing is linked there and the run log says "
-            "so. "
-            'Reference: Telegram-Android, '
-            "'TL_legacy_message.java (TL_message layer constructors)', "
-            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java.'
-            " Reference: Telegram-Android, 'generated TlGen_MessageReplyHeader.kt, "
+            'it is still present in the extraction. On the nine images listed in sample_data before '
+            'hickman_a13 was added Recorded Media Path held a value on some rows and no file of the '
+            'recorded name is in those images\' archives. Media File is also filled, when the recorded '
+            'media path linked no file, from file_to_path.db beside the cache4.db (files/ for the first '
+            'account, files/account1 to account3 for slots 1 to 3; no image tested holds rows under '
+            'account1 to account3, so the slot folders are taken from the client source and were not '
+            'exercised). The client writes its paths_by_dialog_id table twice for a download: the temp '
+            'file and the parts file when the download starts, and the final file when it finishes, each '
+            'with the dialog id and the message id its getId() returns, which for a message with an '
+            'ephemeral anchor is the anchor\'s id (no image tested was checked for that case). Reference: '
+            'Telegram-Android, \'FilePathDatabase.java (saveFileDialogId)\', '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FilePathDatabase.java#L394-L416; '
+            '\'FileLoader.java (getFileMetadataFromParent, didFinishLoadingFile)\', '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java#L45-L83 '
+            'and '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoader.java#L1004-L1012; '
+            '\'FileLoadOperation.java (start)\', '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/FileLoadOperation.java#L1208-L1211. '
+            'A recorded file is linked to the row whose dialog id and message id are the same, a recorded '
+            'link and not a match on name, and is found by the device path it was given: '
+            '/storage/emulated/<user>/ is the extraction\'s data/media/<user>/ or '
+            'mnt/pass_through/<n>/emulated/<user>/, and /data/user/<user>/ its data/user/<user>/, or '
+            'data/data for user 0. Every recorded path on the images tested is under /storage/emulated/0 '
+            'or /storage/emulated/10 and was found under data/media; the pass_through view was checked on '
+            'a constructed copy only, and no image holds a recorded /data/user path. Only files under the '
+            'package\'s cache and files/Telegram folders and the public '
+            'Android/media/org.telegram.messenger/Telegram folder are looked for, so an empty cell does '
+            'not show the file is absent. Entries with message id 0, which the client writes for stories, '
+            'are not read, and a recorded file whose dialog and message id match no message row is not '
+            'reported (11 present files on dragna_pixel9a_a16). Downloaded Files on Device lists every '
+            'recorded file found in the extraction for the row: names not ending in .temp first, files '
+            'outside cache/ before those in it, then path order, with a 0-byte file marked \'(0 bytes)\'. '
+            'Media File shows the first listed file that is not empty and whose first bytes are an image, '
+            'a video or audio (scripts/filetype.py); the others are only listed, and a file that is none '
+            'of those is listed and not shown, as the .tgs files on 1 row of kevin_pocox7_a15 and 1 of '
+            'pixel7a_a14 are. On dragna_pixel9a_a16 the table holds 937 paths, 917 with a message id '
+            'other than 0; they name 448 dialog and message pairs, 136 of which are among the 554 message '
+            'rows, and 25 of those rows have a recorded file in the extraction: 23 show it, 2 list only '
+            '0-byte .temp files. Media File was filled on 2 rows of hc_pixel8pro_a16, 2 of '
+            'hc_pixel8pro_a17, 5 of anne_a15, 2 of pixel7a_a14, 1 of russell_a14 and 28 of '
+            'kevin_pocox7_a15, and on 1 row of kevin_pocox7_a15 and 1 of pixel7a_a14 it holds a file '
+            'whose name is not the recorded media path\'s. On hickman_a13 file_to_path.db has no '
+            'paths_by_dialog_id table (an older client), so nothing is linked there and the run log says '
+            'so. Reference: Telegram-Android, \'TL_legacy_message.java (TL_message layer constructors)\', '
+            'https://github.com/DrKLO/Telegram/blob/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj/src/main/java/org/telegram/tgnet/tl/legacy/TL_legacy_message.java. '
+            'Reference: Telegram-Android, \'generated TlGen_MessageReplyHeader.kt, '
             'TlGen_MessageFwdHeader.kt, TlGen_Message.kt and TlGen_MessageAction.kt (header field order, '
-            "flag bits, service constructors and action constructors)', "
-            'https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated'
-            ' Record Origin. Live rows come from a normal read of messages_v2. Recovered rows do '
-            'not: their (mid, uid) key, the primary key of messages_v2, is held by another state in '
-            "the database's write-ahead log and absent from the current one. A row whose key the "
-            'current state still holds is not reported, whatever its older versions held. Recovery Method and Recovery '
+            'flag bits, service constructors and action constructors)\', '
+            'https://github.com/DrKLO/Telegram/tree/45ab8f4308496e1f01026a97fcdb0d58a5274474/TMessagesProj_AppTests/src/androidTest/kotlin/org/telegram/tgnet/model/generated '
+            'Record Origin. Live rows come from a normal read of messages_v2 or, for a database without '
+            'it, of the older messages table, whose key is mid alone. Recovered rows do not: their (mid, '
+            'uid) key, the primary key of messages_v2, is held by another state in the database\'s '
+            'write-ahead log and absent from the current one. A row whose key the current state still '
+            'holds is not reported, whatever its older versions held. Recovery Method and Recovery '
             'Location are filled in only on Recovered rows. Why a Recovered row is absent is not '
-            'established here. States are read by scripts/sqlite_wal.py: each readable earlier '
-            "committed state of the log's current generation (states the reader cannot rebuild "
-            'exactly are skipped and counted in the run log; state n is the database after the '
-            'first n committed transactions, and state 0 the database file without its log), the '
-            "previous generation's left-over frames where its checks pass, and frames after the "
-            "last commit where SQLite's quick_check passes. "
-            'A Recovered row is reported once, as the newest committed state holding its key stored '
-            "it, else the previous generation's newest left-over commit, else the frames after the "
-            'last commit, and is decoded and named the same way as a Live row, with names looked up '
-            'in the current users and chats tables. Recovery Location names the committed states '
-            'the key was read in, with their first and last numbers, and the previous log '
-            "generation with the first and last numbers of its left-over commits; for a key read "
-            "only after the last commit it names the log's frames after the last commit. Recovery "
-            'Method is WAL committed states, or WAL uncommitted frames for a key read only after the '
-            'last commit. The previous-generation and uncommitted-frame paths were not exercised on '
-            'the eleven images listed in sample_data or by the unit test. Recovered rows '
-            'were returned on kevin_pocox7_a15 (4), hc_pixel8pro_a16 (4), hc_pixel8pro_a17 (4), '
-            'hickman_a13 (2) and pixel3_a12 (2), every one from committed states of the current '
-            'generation; one on kevin_pocox7_a15 was read in state 0 only. The 4 on hickman_a13 and '
-            'pixel3_a12 have an empty Message and no Recorded Media Path, as 5 and 18 Live rows on '
-            'those images do. On the other images Record Origin held Live on every row and Recovery '
-            "Method and Recovery Location were empty on every row. On every image tested, each "
-            "database whose log held left-over frames of a previous generation had none of those "
-            'commits read; on samsung_a166u_a16_known_20261116 that database held 830 such frames, '
-            'none of its 125 commits read, and the reader reported that the database file may already '
-            'hold part of the current log.'
-            ' Chat is the name the users or chats table of the same database holds for an id '
-            'equal to the dialog id as stored; a dialog id with no equal id there, a group or '
-            'channel id among them, which is stored negative, has a blank Chat. The dialog whose '
-            "id equals the account owner's own user id is the chat with the owner, which the "
-            'client titles Saved Messages; this parser writes Saved Messages in the Chat column '
-            'for it, a label and not a stored value. The own user id is read from the user record '
-            'under the user key of the userconf* preference file in the same package folder as the '
-            'database (userconfing.xml for the first account, userconfig1.xml to userconfig3.xml '
-            'for slots 1 to 3); with no such file in that folder, or a user record this parser does '
-            'not decode, the chat keeps the users-table name. Labelling a row of account slots 1 to '
-            '3 was not exercised on an image: on samsung_a166u_a16_known_20261116 userconfig1.xml to '
-            'userconfig3.xml held no user record, and the slot mapping is covered by a unit test on '
-            'constructed paths. Direction is Outgoing when the out column is nonzero and Incoming '
-            'otherwise, and does not establish who wrote a Saved Messages row: on '
-            'samsung_a166u_a16_known_20261116 the one row in that chat had out 0 and so showed '
-            "Incoming. Reference: Telegram-Android, 'MessageObject.java (isOutOwner: a dialog id "
-            "equal to the client user id is owned without the out value)', "
-            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java#L9892-L9898.'
-            " Reference: Telegram-Android, 'DialogObject.java (SavedMessages title for the self "
-            "user)', "
-            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L151-L152.'
-            " Reference: Telegram-Android, 'UserConfig.java (user key decoded to clientUserId; "
-            "getPreferences names userconfing and userconfig+account)', "
-            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L366-L416.'
+            'established here. States are read by scripts/sqlite_wal.py: each readable earlier committed '
+            'state of the log\'s current generation (states the reader cannot rebuild exactly are skipped '
+            'and counted in the run log; state n is the database after the first n committed '
+            'transactions, and state 0 the database file without its log), the previous generation\'s '
+            'left-over frames where its checks pass, and frames after the last commit where SQLite\'s '
+            'quick_check passes. A Recovered row is reported once, as the newest committed state holding '
+            'its key stored it, else the previous generation\'s newest left-over commit, else the frames '
+            'after the last commit, and is decoded and named the same way as a Live row, with names '
+            'looked up in the current users and chats tables. Recovery Location names the committed '
+            'states the key was read in, with their first and last numbers, and the previous log '
+            'generation with the first and last numbers of its left-over commits; for a key read only '
+            'after the last commit it names the log\'s frames after the last commit. Recovery Method is '
+            'WAL committed states, or WAL uncommitted frames for a key read only after the last commit. '
+            'The previous-generation and uncommitted-frame paths were not exercised on the images listed '
+            'in sample_data or by the unit test. Recovered rows were returned on kevin_pocox7_a15 (4), '
+            'hc_pixel8pro_a16 (4), hc_pixel8pro_a17 (4), hickman_a13 (2), pixel3_a12 (2) and pixel3_a11 '
+            '(4), every one from committed states of the current generation; one on kevin_pocox7_a15 was '
+            'read in state 0 only. The 4 on hickman_a13 and pixel3_a12 have an empty Message and no '
+            'Recorded Media Path, as 5 and 18 Live rows on those images do. On the other images Record '
+            'Origin held Live on every row and Recovery Method and Recovery Location were empty on every '
+            'row. On the images listed in sample_data, each database whose log held left-over frames of a '
+            'previous generation had none of those commits read (on one other image 13 of 267 such '
+            'commits of one database were read, with no Recovered row); on '
+            'samsung_a166u_a16_known_20261116 that database held 830 such frames, none of its 125 commits '
+            'read, and the reader reported that the database file may already hold part of the current '
+            'log. Chat is the name the users or chats table of the same database holds for an id equal to '
+            'the dialog id as stored; a dialog id with no equal id there, a group or channel id among '
+            'them, which is stored negative, has a blank Chat. The dialog whose id equals the account '
+            'owner\'s own user id is the chat with the owner, which the client titles Saved Messages; this '
+            'parser writes Saved Messages in the Chat column for it, a label and not a stored value. The '
+            'own user id is read from the user record under the user key of the userconf* preference file '
+            'in the same package folder as the database (userconfing.xml for the first account, '
+            'userconfig1.xml to userconfig3.xml for slots 1 to 3); with no such file in that folder, or a '
+            'user record this parser does not decode, the chat keeps the users-table name. Labelling a '
+            'row of account slots 1 to 3 was not exercised on an image: on '
+            'samsung_a166u_a16_known_20261116 userconfig1.xml to userconfig3.xml held no user record, and '
+            'the slot mapping is covered by a unit test on constructed paths. Direction is Outgoing when '
+            'the out column is nonzero and Incoming otherwise, and does not establish who wrote a Saved '
+            'Messages row: on samsung_a166u_a16_known_20261116 the one row in that chat had out 0 and so '
+            'showed Incoming. Reference: Telegram-Android, \'MessageObject.java (isOutOwner: a dialog id '
+            'equal to the client user id is owned without the out value)\', '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/MessageObject.java#L9892-L9898. '
+            'Reference: Telegram-Android, \'DialogObject.java (SavedMessages title for the self user)\', '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/DialogObject.java#L151-L152. '
+            'Reference: Telegram-Android, \'UserConfig.java (user key decoded to clientUserId; '
+            'getPreferences names userconfing and userconfig+account)\', '
+            'https://github.com/DrKLO/Telegram/blob/21f7d109da6ab3506c9e9577f98c6a38771ab335/TMessagesProj/src/main/java/org/telegram/messenger/UserConfig.java#L366-L416. '
+            'Telegram-layout clients under other packages: this artifact also reads a cache4.db at files/ '
+            'or files/account1 to files/account4 of any other package when it holds the dialogs and users '
+            'tables and a messages_v2 or messages table, and files/account4 of an org.telegram.messenger '
+            'package too (no image listed in sample_data holds one); the other Telegram artifacts read '
+            'org.telegram.messenger packages only. When a database has no messages_v2 table its older '
+            'messages table is read, keyed on mid alone for recovery. pixel3_a11, an '
+            'org.telegram.messenger install that keeps only the older table, gives 41 rows from it, 4 of '
+            'them Recovered from the write-ahead log; before this change it gave none. Two message '
+            'classes of a client whose code is under org.potato (version 2.47.200101, version code 13892, '
+            'decompiled with jadx 1.5.6) are read as that code reads them (org/potato/tgnet/d0.java). '
+            '0x81FF9C4A (d0.java:16772-16805) reads flags, a second flags integer, the id, from_id as an '
+            'Int32 under bit 8, the peer, a forward header under bit 2, via_bot_id and reply_to_msg_id as '
+            'Int32s under bits 11 and 3, then the date and the text; its forward header is not walked, so '
+            'the text of a forwarded message is looked for after the row\'s date. 0x8C75C832 '
+            '(d0.java:20140-20165) is a service message whose from_id follows the second flags integer '
+            'and the id; its action is read as for Telegram\'s own constructors, and the client\'s phone '
+            'call action reads the same fields as Telegram\'s (d0.java:11512 onward). Thirteen of the 34 '
+            'action constructors the client\'s reader names (d0.java:15710) have no name in this parser '
+            'and are shown as Unrecognised action with the constructor id; two of them, 0x20b8d9b3 and '
+            '0xc559c2b8, each carry one Int32 id (org/potato/tgnet/u.java:4963-4979, '
+            'd0.java:34085-34100). In the test data those two were on 10 rows each, and 0x555555f7 on 2. '
+            'Its peers are the 32-bit Telegram classes (d0.java:38551). In the test data 230 of 235 '
+            '0x81FF9C4A records were walked to the text, 5 forwarded ones fell back to the date search '
+            'and 1 of those found text, and every record with an empty text carried the media flag (bit '
+            '9). 19 more records of that client are under the secret chat class 0x555555fa: 13 were '
+            'walked to the text, and 6 carry a date that differs from the date column and are shown as '
+            'Message text not recovered. Files of other packages are not indexed; a recorded path is '
+            'still matched by file name against the org.telegram.messenger files in the extraction, and '
+            'no row of the test data linked one. Recorded Media Path is read only where the path is the '
+            'last field of the record; the client\'s 0x81FF9C4A reader takes further fields after it '
+            '(d0.java:16847-16883), and none of the 235 such records in the test data gave one, while 4 '
+            'rows under 0x555555fa did. The deleted column of that client\'s messages table and the '
+            'deleted flag its reader takes from bit 30 were 0 on every row of the test data and are not '
+            'reported; the older table on pixel3_a11 has no deleted column. Source File names the '
+            'database when several are read.'
+        )
         ),
-        "paths": ('*/org.telegram.messenger*/files/cache4.db*',
-                  '*/org.telegram.messenger*/files/account1/cache4.db*',
-                  '*/org.telegram.messenger*/files/account2/cache4.db*',
-                  '*/org.telegram.messenger*/files/account3/cache4.db*',
+        "paths": ('*/files/cache4.db*',
+                  '*/files/account[1234]/cache4.db*',
+                  '*/shared_prefs/userconfing*.xml',
                   '*/org.telegram.messenger*/files/file_to_path.db*',
                   '*/org.telegram.messenger*/files/account[123]/file_to_path.db*',
                   '*/org.telegram.messenger*/shared_prefs/userconf*.xml',
@@ -247,6 +280,7 @@ __artifacts_v2__ = {
             "hickman_a13": "29 rows (2 Recovered)",
             "hc_pixel8pro_a17": "17 | 10 rows (4 Recovered)",
             "kevin_pocox7_a15": "1613 rows (4 Recovered)",
+            "pixel3_a11": "41 rows (4 Recovered), from the older messages table",
             "pixel3_a12": "78 rows (2 Recovered)",
             "pixel7a_a14": "34 rows",
             "russell_a14": "51 rows",
@@ -1076,10 +1110,15 @@ _MSG_OLD_LAYOUTS = {
     0xA367E716: ('flags', 'int32', 'fwd_user', 'from', 'peer'),  # TL_messageForwarded_old2
     0x05F46804: ('int32', 'fwd_user', 'from', 'peer', 'bool', 'bool'),  # TL_messageForwarded_old
     0x555555FA: _SECRET,                                         # TL_message_secret
+    # A Telegram-layout client with its code under org.potato: the reader for 0x81FF9C4A reads
+    # flags, flags2, id, from_id (Int32, bit 8), the peer, a forward header this parser has no
+    # reader for (bit 2), then
+    # via_bot_id (Int32, bit 11) and reply_to_msg_id (Int32, bit 3) before the date and text.
+    0x81FF9C4A: ('flags', 'int32', 'int32', 'from?', 'peer', 'fork_fwd?', 'via?', 'reply?'),
     0x555555F9: _SECRET,                                         # TL_message_secret_layer72
     0x555555F8: _SECRET,                                         # TL_message_secret_old
 }
-_OLD_FLAG_BITS = {'from?': 1 << 8, 'fwd_peer?': 1 << 2, 'fwd_user?': 1 << 2,
+_OLD_FLAG_BITS = {'from?': 1 << 8, 'fwd_peer?': 1 << 2, 'fwd_user?': 1 << 2, 'fork_fwd?': 1 << 2,
                   'via?': 1 << 11, 'reply?': 1 << 3}
 # TL_messageEmpty and TL_messageEmpty_layer122: an id and at most a peer.
 _MSG_EMPTY = {0x90A6CA84, 0x83E5DE54}
@@ -1091,6 +1130,7 @@ _WALK_ERRORS = (struct.error, IndexError, UnicodeDecodeError, ValueError)
 
 # Every TL_messageService constructor defined by the client.
 _MSG_SERVICE = {
+    0x8C75C832,   # service class of the org.potato Telegram-layout client
     0x7A800E0A,   # TL_messageService
     0xD3D28540,   # TL_messageService_layer204
     0x2B085862,   # TL_messageService_layer195
@@ -1203,6 +1243,10 @@ _SERVICE_HEADERS = {
     0x1D86F70E: (True, ((0, 'int32'), (0, 'int32'), (0, 'peer'), (0, 'int32'))),
     0x9F8D60BB: (False, ((0, 'int32'), (0, 'int32'), (0, 'peer'), (0, 'int32'),
                          (0, 'int32'), (0, 'int32'))),
+    # The org.potato client's service class reads flags2 and the id before from_id, so its
+    # sender is the third step (the optional third element names the sender's step).
+    0x8C75C832: (True, ((0, 'int32'), (0, 'int32'), (256, 'int32'), (0, 'peer'),
+                        (8, 'int32'), (0, 'int32')), 2),
 }
 
 # Human labels for every TL_messageAction constructor the client defines.
@@ -1419,13 +1463,15 @@ def _decode_service(reader, constructor, result):
 
     result is filled as the walk goes, so a header that cannot be walked to
     its end still gives the fields read before that point. In every header
-    the second field is from_id; result['sender'] is set once that slot has
-    been passed, to None when the record's flags say it holds no from_id.
+    but one the second field is from_id; result['sender'] is set once that slot
+    has been passed, to None when the record's flags say it holds no from_id. An
+    entry with a third element names the step that holds from_id.
     """
     entry = _SERVICE_HEADERS.get(constructor)
     if entry is None:
         return
-    reads_flags, steps = entry
+    reads_flags, steps = entry[0], entry[1]
+    sender_at = entry[2] if len(entry) > 2 else 1
     flags = reader.read_uint32() if reads_flags else 0
     for position, (flag, kind) in enumerate(steps):
         value = None
@@ -1438,7 +1484,7 @@ def _decode_service(reader, constructor, result):
         elif kind == 'reply':
             if not _skip_reply_header(reader):
                 return
-        if position == 1:
+        if position == sender_at:
             result['sender'] = value
     action = reader.read_uint32()
     name = _ACTION_NAMES.get(action)
@@ -1592,6 +1638,11 @@ def _decode_old_message(reader, blob, constructor, date):
             reader.read_int32()
             reader.read_int32()
             forwarded = True
+        elif kind == 'fork_fwd':
+            # A forward header this parser has no reader for: the text is looked for
+            # after the row's date, as for other headers that cannot be walked.
+            return {'sender': sender, 'forwarded': True,
+                    'text': _text_after_date(blob, reader.stream.tell(), date)}
         else:                       # int32, bool, via, reply: four bytes each
             reader.read_int32()
             reply = reply or kind == 'reply'
@@ -1732,6 +1783,9 @@ def _name_lookup(db_file):
 # --- artifacts ---------------------------------------------------------------
 
 _ACCOUNT_DIRS = ('account1', 'account2', 'account3')
+# The opt-in path (_cache4_mains with any_package) also admits account4, which a
+# Telegram-layout client may use; the artifacts pinned to the official package do not.
+_ALL_ACCOUNT_DIRS = _ACCOUNT_DIRS + ('account4',)
 
 
 def _android_user(prefix):
@@ -1749,12 +1803,21 @@ def _android_user(prefix):
     return '/'.join(prefix)
 
 
-def _cache4_mains(context):
+def _is_telegram_layout(db_file):
+    """True when a cache4.db holds the dialogs and users tables and a messages table."""
+    return (does_table_exist_in_db(db_file, 'dialogs') and does_table_exist_in_db(db_file, 'users')
+            and (does_table_exist_in_db(db_file, 'messages_v2')
+                 or does_table_exist_in_db(db_file, 'messages')))
+
+
+def _cache4_mains(context, any_package=False):
     """(staged path, path in the extraction) of each cache4.db to read.
 
     A database is admitted at <package>/files/ or <package>/files/account1 to
-    account3 of an org.telegram.messenger package, and one copy is kept per
-    package, Android user and folder, in the order the files were found.
+    account3 (account4 with any_package) of an org.telegram.messenger package, and one copy is kept per
+    package, Android user and folder, in the order the files were found. With
+    any_package, a database of another package is admitted too when it has the
+    Telegram tables (_is_telegram_layout).
     """
     relative_of = getattr(context, 'get_relative_path', None)
     mains = []
@@ -1767,12 +1830,14 @@ def _cache4_mains(context):
             continue
         if len(parts) >= 3 and parts[-2] == 'files':
             package_at, folder = len(parts) - 3, ''
-        elif len(parts) >= 4 and parts[-2] in _ACCOUNT_DIRS and parts[-3] == 'files':
+        elif len(parts) >= 4 and parts[-2] in (_ALL_ACCOUNT_DIRS if any_package
+                                               else _ACCOUNT_DIRS) and parts[-3] == 'files':
             package_at, folder = len(parts) - 4, parts[-2]
         else:
             continue
         package = parts[package_at]
-        if not package.startswith('org.telegram.messenger'):
+        if not package.startswith('org.telegram.messenger') and not (
+                any_package and _is_telegram_layout(path)):
             continue
         key = (_android_user(parts[:package_at]), package, folder)
         if key in seen:
@@ -1831,16 +1896,16 @@ def _own_id_for_db(db_file, own_ids):
         return None
     if len(parts) >= 3 and parts[-2] == 'files':
         slot, root = 0, '/'.join(parts[:-2])
-    elif len(parts) >= 4 and parts[-2] in _ACCOUNT_DIRS and parts[-3] == 'files':
-        slot, root = _ACCOUNT_DIRS.index(parts[-2]) + 1, '/'.join(parts[:-3])
+    elif len(parts) >= 4 and parts[-2] in _ALL_ACCOUNT_DIRS and parts[-3] == 'files':
+        slot, root = _ALL_ACCOUNT_DIRS.index(parts[-2]) + 1, '/'.join(parts[:-3])
     else:
         return None
     return own_ids.get(root, {}).get(slot)
 
 
-def _rows_per_main(context, data_headers, rows_of):
+def _rows_per_main(context, data_headers, rows_of, any_package=False):
     """Run rows_of(db_file) over each cache4.db; name the database when several are read."""
-    mains = _cache4_mains(context)
+    mains = _cache4_mains(context, any_package)
     data_list = []
     for db_file, relative in mains:
         rows = rows_of(db_file)
@@ -1856,6 +1921,10 @@ def _rows_per_main(context, data_headers, rows_of):
 # write-ahead log holds and the current state does not is reported as Recovered.
 _MESSAGES_SQL = 'SELECT mid, uid, date, out, read_state, data FROM messages_v2'
 _MESSAGE_KEY = (0, 1)
+# The older messages table, which a Telegram-layout client may keep in place of messages_v2,
+# is keyed on mid alone. It is read only when the database has no messages_v2 table.
+_LEGACY_MESSAGES_SQL = 'SELECT mid, uid, date, out, read_state, data FROM messages'
+_LEGACY_MESSAGE_KEY = (0,)
 _WAL_KINDS = (KIND_COMMITTED, KIND_EARLIER, KIND_UNCOMMITTED)
 _ORIGIN_LIVE = 'Live'
 _ORIGIN_RECOVERED = 'Recovered'
@@ -1963,10 +2032,16 @@ def get_telegramMessages(context):
             if os.path.isfile(path):
                 media_index.setdefault(normalized.rsplit('/', 1)[-1], path)
 
-        live = [tuple(row) for row in get_sqlite_db_records(db_file, _MESSAGES_SQL) or []]
+        if does_table_exist_in_db(db_file, 'messages_v2'):
+            query, key_columns = _MESSAGES_SQL, _MESSAGE_KEY
+        else:
+            query, key_columns = _LEGACY_MESSAGES_SQL, _LEGACY_MESSAGE_KEY
+        live = [tuple(row) for row in get_sqlite_db_records(db_file, query) or []]
         records = [(row, _ORIGIN_LIVE, '', '') for row in live]
         records.extend((row, _ORIGIN_RECOVERED, method, location) for row, method, location
-                       in _removed_messages(db_file, {row[:2] for row in live}))
+                       in _removed_messages(db_file, {tuple(row[i] for i in key_columns)
+                                                      for row in live},
+                                            query=query, key_columns=key_columns))
         records.sort(key=lambda record: (record[0][2] is None, record[0][2] or 0))
         for (mid, uid, date, out, read_state, blob), origin, method, location in records:
             decoded = _decode_message_row(blob, date)
@@ -2037,7 +2112,7 @@ def get_telegramMessages(context):
             ))
         return data_list
 
-    headers, data_list, sources = _rows_per_main(context, data_headers, rows_of)
+    headers, data_list, sources = _rows_per_main(context, data_headers, rows_of, any_package=True)
     if _FILE_TO_PATH_READ:
         sources = '\n'.join([sources] + sorted(_FILE_TO_PATH_READ)) if sources else \
             '\n'.join(sorted(_FILE_TO_PATH_READ))
