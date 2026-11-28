@@ -16,7 +16,11 @@ __artifacts_v2__ = {
             "1.5.6; the classes are obfuscated, in defpackage unless named in full. Reads every "
             "app_<package> table of notifs.db (l91.java:41 and 45). A write-ahead log beside the "
             "database is applied; a database with no log beside it is read alone. The test data had "
-            "no write-ahead log. Captured is the time column, which WAMR sets to the device clock "
+            "no write-ahead log. When one database is present under more than one storage path "
+            "(data/data and data/user/0) and the copies read differently, the rows of every copy "
+            "are reported, a row the copies share once. Android User is read from the path, "
+            "including a rollback snapshot under misc_ce/<n>/rollback, and a path that "
+            "names no user is read as user 0. Captured is the time column, which WAMR sets to the device clock "
             "when it handles the notification, not a time the notification carries "
             "(com/drilens/wamr/NotificationListener.java:155 and 200), written as "
             "yyyy-MM-dd HH:mm:ss_SSS in UTC (l91.java:27-29); a value that does not parse is left "
@@ -109,7 +113,9 @@ __artifacts_v2__ = {
             "(jy0.java:16-39, x00.java:20 and 314-337, yh2.java:20-25): 1 Voice Notes, 2 Images, "
             "3 Video, 4 Audio, 5 Documents, 6 Animated Gifs, 7 Stickers, 8 Video Notes. Only 1 and 2 "
             "were seen in the test data. The file is looked up in that folder for the database's "
-            "Android user; Media Format is read from the file's first bytes, and File not in "
+            "Android user. Copies "
+            "of one file under more than one storage path are each listed when their bytes differ. "
+            "Media Format is read from the file's first bytes, and File not in "
             "extraction means no file was found. When it marks a voice note deleted, WAMR renames "
             "its .opus file to .mp3 without converting it (c82.java:88-99; ik0.java:69-75 does the "
             "same rename). The 4 voice note files in the test data are named .mp3 and read as Ogg. "
@@ -150,10 +156,13 @@ __artifacts_v2__ = {
     },
 }
 
+import hashlib
 import os
+import re
 from datetime import datetime, timezone
 
-from scripts.artifacts.storagePathViews import android_user, canonical_path, unique_files
+from scripts.artifacts.storagePathViews import (android_user, canonical_path, union_view_rows,
+                                                unique_files)
 from scripts.ilapfuncs import (artifact_processor, check_in_media, get_sqlite_db_records,
                                is_sqlite_sidecar)
 
@@ -167,7 +176,10 @@ MEDIA_TYPES = {
     7: 'Stickers', 8: 'Video Notes',
 }
 
-_ROOT_STOP = ('data', 'data_mirror', 'media', 'storage', 'sdcard', 'userdata', 'user', 'user_de')
+_ROOT_STOP = ('data', 'data_mirror', 'media', 'mnt', 'storage', 'sdcard', 'userdata', 'user',
+              'user_de')
+_ROLLBACK = re.compile(r'(^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/')
+_EARLIEST = datetime.min.replace(tzinfo=timezone.utc)
 
 
 def _parse_utc(value):
@@ -180,6 +192,10 @@ def _parse_utc(value):
         except ValueError:
             continue
     return ''
+
+
+def _by_time(row):
+    return (row[0] == '', row[0] or _EARLIEST)
 
 
 def _not_null_word(value):
@@ -209,13 +225,24 @@ def _evidence_root(relative_path):
     return '/'.join(parts[:-1])
 
 
-def _stores(context):
-    """Per app data folder: its four WAMR databases, the Android user and the evidence root.
+def _user(relative_path):
+    """The Android user of an app data path, read from a rollback snapshot path too.
 
-    Duplicate storage views of one file (data/data and data/user/0) are read once, and every
-    spelling of one app data folder is grouped under one key."""
+    A path that names no user (data/data, or an extraction rooted at /data/data) is user 0's."""
+    user = android_user(relative_path)
+    if user:
+        return user
+    match = _ROLLBACK.search(str(relative_path).replace('\\', '/'))
+    return match.group(2) if match else '0'
+
+
+def _stores(context):
+    """Per app data folder: every copy of each WAMR database, the Android user and the root.
+
+    A copy under another storage spelling (data/data and data/user/0) is kept when it reads
+    differently, so the rows read from the copies are joined with union_view_rows."""
     stores = {}
-    for file_found in unique_files(context):
+    for file_found in unique_files(context, keep_differing_views=True):
         path = str(file_found)
         if os.path.isdir(path) or is_sqlite_sidecar(path):
             continue
@@ -227,9 +254,8 @@ def _stores(context):
             continue
         relative = context.get_relative_path(path)
         key = canonical_path(context.get_relative_path(container))[0]
-        entry = stores.setdefault(key, {'user': android_user(relative) or '0',
-                                        'root': _evidence_root(relative)})
-        entry.setdefault(rel[1], path)
+        entry = stores.setdefault(key, {'user': _user(relative), 'root': _evidence_root(relative)})
+        entry.setdefault(rel[1], []).append(path)
     return dict(sorted(stores.items()))
 
 
@@ -243,22 +269,34 @@ def _quote(name):
     return '"' + name.replace('"', '""') + '"'
 
 
+def _notification_rows(context, entry):
+    """(rows joined across copies, tables seen in any copy) of one notifs.db.
+
+    Each row ends with the package its table is named for, which the report leaves out."""
+    file_rows = []
+    tables = set()
+    for path in entry.get('notifs.db', []):
+        rows = []
+        for table in _tables(path, 'app_'):
+            tables.add(table[len('app_'):])
+            for row_id, app, title, subtext, content, stamp in get_sqlite_db_records(
+                    path, f'SELECT _id, app, title, subtext, content, time FROM {_quote(table)}'):
+                rows.append((
+                    _parse_utc(stamp), app or table[len('app_'):], _not_null_word(title),
+                    subtext or '', _not_null_word(content), entry['user'], row_id,
+                    table[len('app_'):]))
+        file_rows.append((path, rows))
+    return union_view_rows(context, file_rows), tables
+
+
 @artifact_processor
 def wamr_notifications(context):
     data_list = []
     sources = []
     for entry in _stores(context).values():
-        path = entry.get('notifs.db')
-        if not path:
-            continue
-        sources.append(path)
-        for table in _tables(path, 'app_'):
-            for row_id, app, title, subtext, content, stamp in get_sqlite_db_records(
-                    path, f'SELECT _id, app, title, subtext, content, time FROM {_quote(table)}'):
-                data_list.append((
-                    _parse_utc(stamp), app or table[len('app_'):], _not_null_word(title),
-                    subtext or '', _not_null_word(content), entry['user'], row_id))
-    data_list.sort(key=lambda row: (row[0] == '', row[0] or datetime.min.replace(tzinfo=timezone.utc)))
+        sources.extend(entry.get('notifs.db', []))
+        data_list.extend(row[:-1] for row in _notification_rows(context, entry)[0])
+    data_list.sort(key=_by_time)
     data_headers = (('Captured', 'datetime'), 'App', 'Title', 'Subtext', 'Content',
                     'Android User', 'Row ID')
     return data_headers, data_list, '\n'.join(sources)
@@ -269,25 +307,37 @@ def wamr_whatsapp_chats(context):
     data_list = []
     sources = []
     for entry in _stores(context).values():
-        path = entry.get('textmess.db')
-        if not path:
-            continue
-        sources.append(path)
-        for table in _tables(path, 'chat_'):
-            for row_id, author, content, stamp, deleted in get_sqlite_db_records(
-                    path, f'SELECT _id, author, content, received_at, deleted FROM {_quote(table)}'):
-                data_list.append((
-                    _parse_utc(stamp), author or '', content or '',
-                    'Yes' if deleted == 1 else 'No' if deleted == 0 else str(deleted),
-                    entry['user'], table, row_id))
-    data_list.sort(key=lambda row: (row[0] == '', row[0] or datetime.min.replace(tzinfo=timezone.utc)))
+        file_rows = []
+        for path in entry.get('textmess.db', []):
+            sources.append(path)
+            rows = []
+            for table in _tables(path, 'chat_'):
+                for row_id, author, content, stamp, deleted in get_sqlite_db_records(
+                        path, f'SELECT _id, author, content, received_at, deleted FROM {_quote(table)}'):
+                    rows.append((
+                        _parse_utc(stamp), author or '', content or '',
+                        'Yes' if deleted == 1 else 'No' if deleted == 0 else str(deleted),
+                        entry['user'], table, row_id))
+            file_rows.append((path, rows))
+        data_list.extend(union_view_rows(context, file_rows))
+    data_list.sort(key=_by_time)
     data_headers = (('Captured', 'datetime'), 'Chat', 'Content', 'Marked Deleted',
                     'Android User', 'Chat Table', 'Row ID')
     return data_headers, data_list, '\n'.join(sources)
 
 
+def _digest(path):
+    sha = hashlib.sha256()
+    with open(path, 'rb') as handle:
+        for block in iter(lambda: handle.read(1 << 20), b''):
+            sha.update(block)
+    return sha.hexdigest()
+
+
 def _media_files(context):
-    """{(evidence root, Android user, folder, file name): staged path} for WAMR's copies."""
+    """{(evidence root, Android user, folder, file name): [staged paths]} for WAMR's copies.
+
+    Copies of one file under several storage spellings are kept when their bytes differ."""
     marker = f'/Android/data/{PACKAGE}/files/WAMR/'
     index = {}
     for file_found in unique_files(context):
@@ -303,7 +353,15 @@ def _media_files(context):
             continue
         user = head.rstrip('/').split('/')[-1]
         index.setdefault((_evidence_root(relative.lstrip('/')), user if user.isdigit() else '0',
-                          parts[0], parts[1]), path)
+                          parts[0], parts[1]), []).append(path)
+    for key, paths in index.items():
+        distinct = {}
+        for path in paths:
+            try:
+                distinct.setdefault((os.path.getsize(path), _digest(path)), path)
+            except OSError:
+                distinct.setdefault(('unreadable', path), path)
+        index[key] = list(distinct.values())
     return index
 
 
@@ -332,6 +390,13 @@ def _sniff(path):
     return 'Unknown'
 
 
+def _size(path):
+    try:
+        return os.path.getsize(path)
+    except OSError:
+        return ''
+
+
 @artifact_processor
 def wamr_media(context):
     files = _media_files(context)
@@ -339,35 +404,38 @@ def wamr_media(context):
     data_list = []
     sources = []
     for entry in _stores(context).values():
-        path = entry.get('media.db')
-        if not path:
-            continue
-        sources.append(path)
-        for row_id, name, media_type, stamp, deleted in get_sqlite_db_records(
+        file_rows = []
+        for path in entry.get('media.db', []):
+            sources.append(path)
+            file_rows.append((path, list(get_sqlite_db_records(
                 path, 'SELECT _id, file_name, media_type, download_at, deleted '
-                      'FROM MediaMessages'):
+                      'FROM MediaMessages'))))
+        for row_id, name, media_type, stamp, deleted in union_view_rows(context, file_rows):
             folder = MEDIA_TYPES.get(media_type, '')
             key = (entry['root'], entry['user'], folder, name)
-            found = files.get(key) if folder else None
+            found = files.get(key, []) if folder else []
             if found:
                 named.add(key)
-                sources.append(found)
-                media, media_format = check_in_media(found, name) or '', _sniff(found)
-                size = os.path.getsize(found)
-            else:
-                media, media_format, size = '', 'File not in extraction', ''
-            data_list.append((
-                _parse_utc(stamp), media, media_format, name or '',
-                f'{media_type} ({folder})' if folder else str(media_type),
-                'Yes' if deleted == 1 else 'No' if deleted == 0 else str(deleted),
-                size, 'Yes', entry['user'], row_id))
-    for key, found in sorted(files.items()):
+            base = (_parse_utc(stamp), name or '',
+                    f'{media_type} ({folder})' if folder else str(media_type),
+                    'Yes' if deleted == 1 else 'No' if deleted == 0 else str(deleted))
+            for copy in found or [None]:
+                if copy:
+                    sources.append(copy)
+                    media, media_format, size = (check_in_media(copy, name) or '', _sniff(copy),
+                                                 _size(copy))
+                else:
+                    media, media_format, size = '', 'File not in extraction', ''
+                data_list.append((base[0], media, media_format, base[1], base[2], base[3], size,
+                                  'Yes', entry['user'], row_id))
+    for key, copies in sorted(files.items()):
         if key in named:
             continue
-        sources.append(found)
-        data_list.append((
-            '', check_in_media(found, key[3]) or '', _sniff(found), key[3], key[2], '',
-            os.path.getsize(found), 'No', key[1], ''))
+        for copy in copies:
+            sources.append(copy)
+            data_list.append((
+                '', check_in_media(copy, key[3]) or '', _sniff(copy), key[3], key[2], '',
+                _size(copy), 'No', key[1], ''))
     data_headers = (('Copied', 'datetime'), ('Media', 'media'), 'Media Format', 'File Name',
                     'Media Type', 'Original Deleted', 'Size (bytes)',
                     'In media.db', 'Android User', 'Row ID')
@@ -379,25 +447,22 @@ def wamr_monitored_apps(context):
     data_list = []
     sources = []
     for entry in _stores(context).values():
-        listed = []
-        settings = entry.get('settings.db')
-        if settings:
+        listed = set()
+        for settings in entry.get('settings.db', []):
             sources.append(settings)
             for (value,) in get_sqlite_db_records(
                     settings, "SELECT value FROM Settings WHERE key_name = 'monitored_apps'"):
                 if value and value != 'NULL':
-                    listed.extend(item for item in value.split(';') if item)
-        counts = {}
-        notifs = entry.get('notifs.db')
-        if notifs:
-            sources.append(notifs)
-            for table in _tables(notifs, 'app_'):
-                rows = list(get_sqlite_db_records(notifs, f'SELECT COUNT(*) FROM {_quote(table)}'))
-                counts[table[len('app_'):]] = rows[0][0] if rows else 0
-        for package in sorted(set(listed) | set(counts)):
+                    listed.update(item for item in value.split(';') if item)
+        sources.extend(entry.get('notifs.db', []))
+        rows, tables = _notification_rows(context, entry)
+        counts = dict.fromkeys(tables, 0)
+        for row in rows:
+            counts[row[-1]] = counts.get(row[-1], 0) + 1
+        for package in sorted(listed | set(counts)):
             data_list.append((
                 package, 'Yes' if package in listed else 'No',
-                'Yes' if package in counts else 'No',
+                'Yes' if package in tables else 'No',
                 counts.get(package, ''), entry['user']))
     data_headers = ('App', 'In Monitored List', 'Notification Table', 'Captured Notifications',
                     'Android User')

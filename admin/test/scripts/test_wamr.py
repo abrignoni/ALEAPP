@@ -4,6 +4,7 @@ Each test builds a small com.drilens.wamr tree with the schema WAMR 2.4.1 writes
 textmess.db, media.db, settings.db) and runs the artifacts through the folder seeker. The
 values are made up for the test.
 """
+import fnmatch
 import sqlite3
 import sys
 import tempfile
@@ -110,6 +111,14 @@ class WamrTests(unittest.TestCase):
             with patch.object(wamr, 'check_in_media', side_effect=lambda path, _name:
                               'media:' + context.get_relative_path(path)):
                 headers, rows, _source = function.__wrapped__(context)
+        patterns = wamr.__artifacts_v2__[function.__name__]['paths']
+        for path in context.get_files_found():
+            relative = 'root/' + context.get_relative_path(path)
+            if relative.endswith(('-journal', '-wal', '-shm')) or '/databases/' not in relative \
+                    and '/files/WAMR/' not in relative:
+                continue
+            self.assertTrue(any(fnmatch.fnmatch(relative, pattern) for pattern in patterns),
+                            f'{relative} matches no path of {function.__name__}')
         names = [header[0] if isinstance(header, tuple) else header for header in headers]
         self.assertTrue(all(len(row) == len(names) for row in rows))
         return [dict(zip(names, row)) for row in rows]
@@ -200,6 +209,47 @@ class WamrTests(unittest.TestCase):
         rows = self.run_artifact(wamr.wamr_monitored_apps)
         self.assertEqual([(row['App'], row['In Monitored List']) for row in rows],
                          [('org.example.chat', 'No')])
+
+    def write(self, relative, data):
+        target = self.root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+
+    def test_copies_under_two_storage_paths_are_joined(self):
+        notifs_db(self.app('data/data') / 'notifs.db', {
+            'org.example.chat': [('Alice', None, 'shared', '2026-01-02 03:04:05_000')]})
+        notifs_db(self.app('data/user/0') / 'notifs.db', {
+            'org.example.chat': [('Alice', None, 'shared', '2026-01-02 03:04:05_000'),
+                                 ('Alice', None, 'only here', '2026-01-02 03:04:06_000')]})
+        rows = self.run_artifact(wamr.wamr_notifications)
+        self.assertEqual(sorted(row['Content'] for row in rows), ['only here', 'shared'])
+        apps = self.run_artifact(wamr.wamr_monitored_apps)
+        self.assertEqual([(row['App'], row['Captured Notifications']) for row in apps],
+                         [('org.example.chat', 2)])
+
+    def test_a_rollback_snapshot_keeps_its_user_and_is_not_joined_to_another(self):
+        media_db(self.root / 'data/misc_ce/10/rollback/42/com.drilens.wamr/databases/media.db',
+                 [('IMG-1.jpg', 2, '2026-01-02 03:04:06', 0)])
+        self.write('data/media/0/Android/data/com.drilens.wamr/files/WAMR/Images/IMG-1.jpg', JPEG)
+        rows = self.run_artifact(wamr.wamr_media)
+        named = [row for row in rows if row['In media.db'] == 'Yes']
+        self.assertEqual([(row['Android User'], row['Media Format']) for row in named],
+                         [('10', 'File not in extraction')])
+
+    def test_media_under_mnt_sdcard_is_found(self):
+        media_db(self.app() / 'media.db', [('IMG-1.jpg', 2, '2026-01-02 03:04:06', 0)])
+        self.write('mnt/sdcard/Android/data/com.drilens.wamr/files/WAMR/Images/IMG-1.jpg', JPEG)
+        rows = self.run_artifact(wamr.wamr_media)
+        self.assertEqual([(row['In media.db'], row['Media Format']) for row in rows], [('Yes', 'JPEG')])
+
+    def test_differing_media_copies_are_each_listed(self):
+        tail = 'Android/data/com.drilens.wamr/files/WAMR/Images/IMG-2.jpg'
+        self.write('data/media/0/' + tail, JPEG)
+        self.write('storage/emulated/0/' + tail, JPEG + b'different')
+        self.write('data/media/0/Android/data/com.drilens.wamr/files/WAMR/Images/IMG-3.jpg', JPEG)
+        self.write('storage/emulated/0/Android/data/com.drilens.wamr/files/WAMR/Images/IMG-3.jpg', JPEG)
+        rows = self.run_artifact(wamr.wamr_media)
+        self.assertEqual(sorted(row['File Name'] for row in rows), ['IMG-2.jpg', 'IMG-2.jpg', 'IMG-3.jpg'])
 
 if __name__ == '__main__':
     unittest.main()
