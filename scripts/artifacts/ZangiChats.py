@@ -33,23 +33,24 @@ __artifacts_v2__ = {
         'requirements': 'none',
         'category': 'Messaging',
         'notes': (
-            'One row per row of the recents table in each .db file under com.beint.zangi/databases that holds '
-            'one (files ending in settings.db are skipped; on the tested image the file name is a number). '
-            'Start Time and End Time are startTime and endTime read as Unix milliseconds; a stored 0, a NULL, '
-            'a negative or a non-integer value is shown blank, and only the 0 case occurred in the tested '
-            'data. Duration (s, computed) is End Time minus Start Time and is blank when either is blank or '
-            'when endTime is earlier than startTime. status and call_traffic are shown as stored; their '
-            'meanings are not established. On samsung_a166u_a16_known_20261116, the known-data session had '
-            'two incoming audio calls from one test contact. The first rang on the calling phone from about '
-            '17:22:50 to 17:23:53 UTC and was not answered; its row had status 5, startTime 17:23:09 UTC and '
-            'endTime 0. The second was answered at about 17:27:29 UTC and hung up at 17:27:55 UTC; its row '
-            'had status 1, startTime 17:27:28.968 and endTime 17:27:53.897 UTC, a computed 24.929 s. Whether '
-            'status 5 and 1 stand for missed and answered calls in general is not established. Email and '
-            'Network Call Name had no value on both rows. Number and e164number (as stored) are shown as '
-            'stored; a NULL is shown blank. Rows from several Android users are reported together and no '
-            'column names the user. Only Zangi 6.6.4 was exercised. Of the 62 registered Android images whose '
-            'member lists were read, this is the only one with a com.beint.zangi databases folder.'
-        ),
+            "One row per row of the recents table in each .db file under com.beint.zangi/databases that "
+            "holds one (files ending in settings.db are skipped; on the tested image the file name is a "
+            "number). Start Time and End Time are startTime and endTime read as Unix milliseconds; a "
+            "stored 0, a NULL, a negative or a non-integer value is shown blank, and only the 0 case "
+            "occurred in the tested data. Duration (s, computed) is End Time minus Start Time and is "
+            "blank when either is blank or when endTime is earlier than startTime. status and "
+            "call_traffic are shown as stored; their meanings are not established. On "
+            "samsung_a166u_a16_known_20261116, the known-data session had two incoming audio calls from "
+            "one test contact. The first rang on the calling phone from about 17:22:50 to 17:23:53 UTC "
+            "and was not answered; its row had status 5, startTime 17:23:09 UTC and endTime 0. The "
+            "second was answered at about 17:27:29 UTC and hung up at 17:27:55 UTC; its row had status "
+            "1, startTime 17:27:28.968 and endTime 17:27:53.897 UTC, a computed 24.929 s. Whether "
+            "status 5 and 1 stand for missed and answered calls in general is not established. Email "
+            "and Network Call Name had no value on both rows. Number and e164number (as stored) are "
+            "shown as stored; a NULL is shown blank. Rows from several Android users are reported "
+            "together and no column names the user. Only Zangi 6.6.4 was exercised. When this artifact "
+            "was written (2026-11-16), of the 62 registered Android images whose member lists were "
+            "read, this was the only one with a com.beint.zangi databases folder."),
         'paths': ('*/com.beint.zangi/databases/*',),
         'output_types': 'standard',
         'artifact_icon': 'phone',
@@ -66,30 +67,32 @@ __artifacts_v2__ = {
         'requirements': 'none',
         'category': 'Messaging',
         'notes': (
-            'One row per row of t_group in each Zangi account database, with its member rows from '
-            't_chat_members (m_member_group_id equal to g_group_id) listed as m_chatjid with m_memberrole; '
-            'Member Rows counts them. The join was exercised on one group. Rows of t_chat_members whose '
-            'm_member_group_id is 0 or NULL are not listed; the tested image had one, and its m_chatjid '
-            "equals the group's g_uid. Conversation Last Update is t_conversation.c_last_update_date for the "
-            'conversation whose c_group_id is the group, read as Unix milliseconds. g_state, g_type, '
-            'g_is_accepted and m_memberrole are shown as stored; their meanings are not established. A '
-            't_group without the g_is_accepted column (seen in a database of user_version 114) shows it '
-            'blank. Group '
-            'UID is g_uid as stored. On samsung_a166u_a16_known_20261116 the one group was created by the '
-            "other test phone at about 17:29:12 UTC and was seen in this phone's chat list at 17:29:17 UTC, "
-            'where the app showed it as accepted without a tap; its row held the group name given there, 2 '
-            'member rows (roles 3 and 1), g_is_accepted 2, and a Conversation Last Update of 17:30:23.755 '
-            'UTC, equal to the date of the reply message row and about 2 s before the 17:30:26 UTC the mint '
-            'log records for that reply. Messages whose Chat-ID in the Zangi Chats artifact equals Group UID '
-            "belong to the group's chat (5 rows on the tested image). Rows from several Android users are "
-            'reported together and no column names the user. Not reported from the account database: numbers, '
-            'contacts2, bucket and box tables, message_info, message_live_duration, security_key, Pending, '
-            't_c_size, t_member_configuration, t_msg_status, tableUser, emoji_us and the rest of '
-            't_conversation; user_profile is used only for name joins in Zangi Chats; blocked_numbers and the '
-            'other zero-row tables held no rows. The settings database and zangi_common (users and a '
-            'countries list) are not read. Of the 62 registered Android images whose member lists were read, '
-            'this is the only one with a com.beint.zangi databases folder.'
-        ),
+            "One row per row of t_group in each Zangi account database, with its member rows from "
+            "t_chat_members (m_member_group_id equal to g_group_id) listed as m_chatjid with "
+            "m_memberrole; Member Rows counts them. On samsung_a166u_a16_known_20261116 the join was "
+            "exercised on one group. Rows of t_chat_members whose m_member_group_id is 0 or NULL are "
+            "not listed; the tested image had one, and its m_chatjid equals the group's g_uid. "
+            "Conversation Last Update is t_conversation.c_last_update_date for the conversation whose "
+            "c_group_id is the group, read as Unix milliseconds. g_state, g_type, g_is_accepted and "
+            "m_memberrole are shown as stored; their meanings are not established. When t_group has no "
+            "g_is_accepted column, the g_is_accepted (as stored) column is blank, and that blank is not "
+            "a stored value; the samsung_a166u_a16_known_20261116 database (user_version 127) has the "
+            "column. Group UID is g_uid as stored. On samsung_a166u_a16_known_20261116 the one group "
+            "was created by the other test phone at about 17:29:12 UTC and was seen in this phone's "
+            "chat list at 17:29:17 UTC, where the app showed it as accepted without a tap; its row held "
+            "the group name given there, 2 member rows (roles 3 and 1), g_is_accepted 2, and a "
+            "Conversation Last Update of 17:30:23.755 UTC, equal to the date of the reply message row "
+            "and about 2 s before the 17:30:26 UTC the mint log records for that reply. Messages whose "
+            "Chat-ID in the Zangi Chats artifact equals Group UID belong to the group's chat (5 rows on "
+            "the tested image). Rows from several Android users are reported together and no column "
+            "names the user. Not reported from the account database: numbers, contacts2, bucket and box "
+            "tables, message_info, message_live_duration, security_key, Pending, t_c_size, "
+            "t_member_configuration, t_msg_status, tableUser, emoji_us and the rest of t_conversation; "
+            "user_profile is used only for name joins in Zangi Chats; blocked_numbers and the other "
+            "zero-row tables held no rows. The settings database and zangi_common (users and a "
+            "countries list) are not read. When this artifact was written (2026-11-16), of the 62 "
+            "registered Android images whose member lists were read, this was the only one with a "
+            "com.beint.zangi databases folder."),
         'paths': ('*/com.beint.zangi/databases/*',),
         'output_types': 'standard',
         'artifact_icon': 'users',
@@ -279,7 +282,7 @@ def zangi_groups(context):
         for group_id, jid, role in get_sqlite_db_records(source_path, member_query):
             members.setdefault(group_id, []).append(f'{jid} (role {role})')
         updated = {group_id: last for group_id, last in get_sqlite_db_records(source_path, conversation_query)}
-        # g_is_accepted is missing from t_group in some database versions; it is then blank.
+        # g_is_accepted is missing from t_group in some databases. The column is then blank.
         columns = {row[1] for row in get_sqlite_db_records(source_path, 'PRAGMA table_info(t_group)')}
         accepted = 'g_is_accepted' if 'g_is_accepted' in columns else "''"
         group_query = (f'SELECT g_group_id, g_name, g_uid, g_state, g_type, {accepted} '
