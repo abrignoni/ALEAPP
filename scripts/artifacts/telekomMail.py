@@ -79,24 +79,24 @@ __artifacts_v2__ = {
             "root internal_files, which is the files folder (res/xml/filepaths.xml); a URI under its "
             "cache or external_files root, or any other, is not followed. A file is looked for only "
             "under the app folder that holds the database naming it, so a rollback snapshot that "
-            "differs from the live database is matched to the files in its own folder, and the files of "
-            "a snapshot whose database repeats the live one are taken as repeats of the live files; "
-            "within one folder, byte-identical copies under different storage spellings are listed "
-            "once. File not in extraction marks an entry none of whose copies the extraction holds and "
-            "whose full URI names a file under that root; a missing preview beside a held full copy "
-            "gets no row. No entry was in that state in the test data. Media Format is read from the "
-            "file's first bytes. File Name, Media Type, Size (as stored), Inline and Status (as stored) "
-            "are the entry's fileName, mediaType and subType, sizeInBytes, isInline (shown as Yes or "
-            "No) and the status of its copy. For a file no entry names, File Name is the file's own "
-            "name. Status and stored size are not checked against the file: in the test data all four "
-            "held copies had status NotAvailable and two had a stored size different from the file's. "
-            "For a file no entry names, Mail Folder Path and Attachment Index are read from its path, "
-            "and the mail key in the path is not looked up. In the test data the 8 such files carried 5 "
-            "keys of 24 letters and digits, none equal to a Mail id, messageId or xguid, while the keys "
-            "of the 4 named files were the mail's row id. Such a file may belong to a mail the app no "
-            "longer holds; that is not established. Mail Date is the mail's dateAndTime, read as in "
-            "Telekom Mail - Messages. Android User is read from the database's path; a path that names "
-            "no user shows 0."),
+            "differs from the live database is matched to the files in its own folder, and when a "
+            "snapshot's database repeats the live one and is not kept, a file of the snapshot at a path "
+            "the live mails name is listed with those mails; within one folder, byte-identical copies "
+            "under different storage spellings are listed once. File not in extraction marks an entry "
+            "none of whose copies the extraction holds and whose full URI names a file under that root; "
+            "a missing preview beside a held full copy gets no row. No entry was in that state in the "
+            "test data. Media Format is read from the file's first bytes. File Name, Media Type, Size "
+            "(as stored), Inline and Status (as stored) are the entry's fileName, mediaType and "
+            "subType, sizeInBytes, isInline (shown as Yes or No) and the status of its copy. For a file "
+            "no entry names, File Name is the file's own name. Status and stored size are not checked "
+            "against the file: in the test data all four held copies had status NotAvailable and two "
+            "had a stored size different from the file's. For a file no entry names, Mail Folder Path "
+            "and Attachment Index are read from its path, and the mail key in the path is not looked "
+            "up. In the test data the 8 such files carried 5 keys of 24 letters and digits, none equal "
+            "to a Mail id, messageId or xguid, while the keys of the 4 named files were the mail's row "
+            "id. Such a file may belong to a mail the app no longer holds; that is not established. "
+            "Mail Date is the mail's dateAndTime, read as in Telekom Mail - Messages. Android User is "
+            "read from the database's path; a path that names no user shows 0."),
         "paths": ('*/de.telekom.mail/databases/telekom-database*',
                   '*/de.telekom.mail/files/attachments/*'),
         "output_types": "standard",
@@ -331,6 +331,13 @@ def _stores(context):
     return dict(sorted(stores.items()))
 
 
+def _size(path):
+    try:
+        return os.path.getsize(path)
+    except OSError:
+        return ''
+
+
 def _copies(entry, tail):
     """The staged copies of an attachment tail held under the store's own folder."""
     return entry['files'].get(tail, []) if tail else []
@@ -458,7 +465,10 @@ def telekom_mail_attachments(context):
     data_list = []
     sources = []
     cache = {}
-    for entry in _stores(context).values():
+    stores = _stores(context)
+    # Mail entries by (user, tail), for a folder whose database repeated another copy's.
+    naming = {}
+    for entry in stores.values():
         sources.extend(entry['dbs'])
         named = set()
         per_copy = []
@@ -474,6 +484,8 @@ def telekom_mail_attachments(context):
                         tail = _provider_tail(part.get('path'))
                         if tail:
                             named.add(tail)
+                            naming.setdefault((entry['user'], tail), []).append(
+                                (date, item, key, part.get('status'), subject, folder_path, mail_id))
                         for copy in _copies(entry, tail):
                             found.append((key, copy, part.get('status')))
                     if not found:
@@ -500,8 +512,25 @@ def telekom_mail_attachments(context):
                             _blank(mail_id), _blank(item.get('index'))))
             per_copy.append((path, rows))
         data_list.extend(union_view_rows(context, per_copy))
+        entry['named'] = named
+    for entry in stores.values():
         for tail, copies in sorted(entry['files'].items()):
-            if tail in named:
+            if tail in entry['named']:
+                continue
+            if not entry['dbs'] and (entry['user'], tail) in naming:
+                # The folder's database repeated another copy's and was not kept: its file at a
+                # path that copy's mails name is listed with those mails.
+                for copy in copies:
+                    sources.append(copy)
+                    for date, item, key, status, subject, folder_path, mail_id in naming[(entry['user'], tail)]:
+                        media, media_format = _media(cache, copy, item.get('fileName') or os.path.basename(copy))
+                        data_list.append((
+                            _ms_to_utc(date), media, media_format, 'Preview' if key == 'preview' else 'Full',
+                            _blank(item.get('fileName')),
+                            '/'.join(str(v) for v in (item.get('mediaType'), item.get('subType')) if v),
+                            _blank(item.get('sizeInBytes')), _size(copy), _yes_no(item.get('isInline')),
+                            _blank(status), _blank(subject), _blank(folder_path), 'Yes', entry['user'],
+                            _blank(mail_id), _blank(item.get('index'))))
                 continue
             parts = tail.split('/')
             kind = 'Preview' if 'previews' in parts else 'Full' if 'fulls' in parts else ''

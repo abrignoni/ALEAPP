@@ -160,6 +160,16 @@ class TelekomMailTest(unittest.TestCase):
         self.assertEqual(sorted((row['File Name'], row['Named by a Mail']) for row in rows),
                          [('gone', 'Yes'), ('logo', 'Yes'), ('pic.jpeg', 'No')])
 
+    def test_repeated_snapshot_with_a_differing_file_keeps_the_mail_link(self):
+        app = self.root / 'data' / 'misc_ce' / '0' / 'rollback' / '7' / PKG
+        database(app / 'databases' / 'telekom-database')
+        held = app / 'files' / 'attachments' / ACCOUNT / 'INBOX' / 'mail::2' / 'fulls' / '0'
+        held.mkdir(parents=True)
+        (held / 'logo').write_bytes(PNG + b'different')
+        rows = [row for row in self.run_artifact(tk.telekom_mail_attachments) if row['File Name'] == 'logo']
+        self.assertEqual(sorted((row['Named by a Mail'], row['Mail Subject'], row['File Size (bytes)']) for row in rows),
+                         [('Yes', 'Hi', 40), ('Yes', 'Hi', 49)])
+
     def test_provider_uri_outside_its_roots_is_not_followed(self):
         self.assertIsNone(tk._provider_tail(  # pylint: disable=protected-access
             'content://de.telekom.mail.fileprovider/external_files/Download/x'))
