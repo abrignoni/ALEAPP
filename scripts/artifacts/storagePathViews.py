@@ -52,7 +52,7 @@ holds rows the preferred copy does not, and in 153 each copy holds rows the othe
 no single copy is complete. In 4 the preferred copy did not open as a plain SQLite database;
 whether another copy opened was not recorded. An artifact can pass keep_differing_views=True
 to unique_files, which then also keeps every copy that differs, and pass its rows through
-union_view_rows, which reports a row the copies share once. Eight artifacts do so. The option is off by
+union_view_rows, which reports a row the copies share once. The option is off by
 default because an artifact that keeps the extra copies without the union reports every
 shared row once per copy.
 

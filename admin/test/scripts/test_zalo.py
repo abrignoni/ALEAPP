@@ -245,5 +245,56 @@ class ZaloTests(unittest.TestCase):
         self.assertEqual(media['Named by a Message'], 'Yes')
 
 
+    def test_copies_under_two_storage_paths_are_joined(self):
+        for user_dir, rows in (('data/data', [(PEER, 1, 11, 0, BASE_MS, 'shared', None)]),
+                               ('data/user/0', [(PEER, 1, 11, 0, BASE_MS, 'shared', None),
+                                                (PEER, 2, 12, 0, BASE_MS + 1, 'only here', None)])):
+            app = self.root / user_dir / 'com.zing.zalo' / 'databases'
+            main_db(app / 'zalo')
+            chat_db(app / ACCOUNT_A / f'{PEER}.db', rows)
+        rows = self.run_artifact(zalo.zalo_messages)
+        self.assertEqual(sorted(row['Message'] for row in rows), ['only here', 'shared'])
+        contacts = self.run_artifact(zalo.zalo_contacts)
+        self.assertEqual(len(contacts), 2)
+
+    def test_a_rollback_snapshot_keeps_its_user(self):
+        app = self.root / 'data/misc_ce/10/rollback/42/com.zing.zalo/databases'
+        chat_db(app / ACCOUNT_A / f'{PEER}.db', [(PEER, 1, 11, 3, BASE_MS, '', 'zalo/picture/a.jxl')])
+        media_file(self.root, 'data/media/0/Android/data/com.zing.zalo/files/zalo/picture/a.jxl', JXL)
+        rows = self.run_artifact(zalo.zalo_messages)
+        self.assertEqual(rows[0]['Conversation Key'], f'10/{ACCOUNT_A}/{PEER}')
+        self.assertEqual(rows[0]['Media Format'], 'File not in extraction')
+
+    def test_media_under_mnt_sdcard_is_found(self):
+        app = self.root / 'data/data/com.zing.zalo/databases'
+        chat_db(app / ACCOUNT_A / f'{PEER}.db', [(PEER, 1, 11, 3, BASE_MS, '', 'zalo/picture/a.jxl')])
+        media_file(self.root, 'mnt/sdcard/Android/data/com.zing.zalo/files/zalo/picture/a.jxl', JXL)
+        rows = self.run_artifact(zalo.zalo_messages)
+        self.assertEqual(rows[0]['Media Format'], 'JPEG XL')
+        files = self.run_artifact(zalo.zalo_media)
+        self.assertEqual([row['Named by a Message'] for row in files], ['Yes'])
+
+    def test_differing_media_copies_are_each_listed(self):
+        tail = 'Android/data/com.zing.zalo/files/zalo/file_resource/'
+        media_file(self.root, 'data/media/0/' + tail + 'b.pdf', PDF)
+        media_file(self.root, 'storage/emulated/0/' + tail + 'b.pdf', PDF + b'different')
+        media_file(self.root, 'data/media/0/' + tail + 'c.pdf', PDF)
+        media_file(self.root, 'storage/emulated/0/' + tail + 'c.pdf', PDF)
+        files = self.run_artifact(zalo.zalo_media)
+        self.assertEqual(sorted(row['File Name'] for row in files), ['b.pdf', 'b.pdf', 'c.pdf'])
+
+    def test_an_empty_group_name_in_one_copy_keeps_the_other_copys_name(self):
+        for user_dir in ('data/data', 'data/user/0'):
+            app = self.root / user_dir / 'com.zing.zalo' / 'databases'
+            main_db(app / 'zalo')
+        first = self.root / 'data/data/com.zing.zalo/databases/zalo'
+        with contextlib.closing(sqlite3.connect(first)) as db:
+            with db:
+                db.execute('UPDATE group_info_v6 SET name = NULL')
+        chat_db(self.root / 'data/data/com.zing.zalo/databases' / ACCOUNT_A / f'group_{GROUP}.db',
+                [(PEER, 5, 15, 0, BASE_MS, 'in the group', None)])
+        rows = self.run_artifact(zalo.zalo_messages)
+        self.assertEqual([row['Conversation'] for row in rows], ['Test group'])
+
 if __name__ == '__main__':
     unittest.main()
