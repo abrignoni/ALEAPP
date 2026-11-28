@@ -157,6 +157,10 @@ class MailRuTest(unittest.TestCase):
         self.assertEqual((rows[0]['Created'], rows[0]['Attachment'], rows[0]['Body Text']),
                          (datetime(2026, 1, 1, tzinfo=timezone.utc), 'media:p.jpg', 'draft text'))
 
+    def test_table_cells_stay_apart_in_body_text(self):
+        self.assertEqual(mr._html_text(  # pylint: disable=protected-access
+            '<table><tr><td>Account</td><td>123</td></tr></table>'), 'Account\n123')
+
     def test_contacts(self):
         rows = self.run_artifact(mr.mailru_contacts)
         self.assertEqual([(r['Email'], r['Display Name'], r['Priority (as stored)']) for r in rows],

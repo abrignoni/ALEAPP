@@ -197,7 +197,7 @@ _ROLLBACK = re.compile(r'(^|/)(?:user)?data/misc_(?:ce|de)/(\d+)/rollback/\d+/')
 _STORAGE = re.compile(r'^/storage/emulated/(\d+)/(.+)$')
 # The user folder of shared storage in an extraction path: media/<n>/ or storage/emulated/<n>/.
 _SHARED_USER = re.compile(r'(?:^|/)(?:media|storage/emulated)/(\d+)/Android/data/')
-_BLOCKS = {'br', 'p', 'div', 'tr', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 'blockquote'}
+_BLOCKS = {'br', 'p', 'div', 'tr', 'td', 'th', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'table', 'blockquote'}
 
 
 def _ms_to_utc(value):
@@ -350,15 +350,12 @@ def _media(cache, path, name):
 
 
 def _prefetched(files, user, prefetch_path):
-    """The saved copies a path_to_prefetch value names, below files/ or cache/, and the key."""
+    """The saved copies a path_to_prefetch value names, below files/ and cache/, and their keys."""
     if not prefetch_path:
-        return [], None
+        return [], []
     rel = str(prefetch_path).lstrip('/')
-    for base in ('files', 'cache'):
-        key = (user, f'{base}/{rel}')
-        if key in files:
-            return files[key], key
-    return [], None
+    keys = [(user, f'{base}/{rel}') for base in ('files', 'cache') if (user, f'{base}/{rel}') in files]
+    return [copy for key in keys for copy in files[key]], keys
 
 
 def _size(path):
@@ -371,7 +368,7 @@ def _size(path):
 def _attachment_rows(context, paths):
     return _union(context, paths, '''
         SELECT a.mMessageContent_id, a._id, a.name, a.content_type, a.content_length, a.disposition,
-               a.path_to_prefetch, c.account, c._id, c.subject, m.date
+               a.path_to_prefetch, COALESCE(c.account, a.account), c._id, c.subject, m.date
         FROM mails_attachments a
         LEFT JOIN mail_message_content c ON c.id = a.mMessageContent_id
         LEFT JOIN mail_message m ON m.account = c.account AND m._id = c._id
@@ -449,8 +446,7 @@ def mailru_attachments(context):
                 (_content_id, att_id, name, ctype, length, disposition, prefetch, account, message_id,
                  subject, date) = row
                 copies, found = _prefetched(files, user, prefetch)
-                if found:
-                    named.add(found)
+                named.update(found)
                 for copy in copies or [None]:
                     if copy:
                         sources.append(copy)
