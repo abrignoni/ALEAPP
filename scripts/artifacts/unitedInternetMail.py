@@ -68,12 +68,16 @@ __artifacts_v2__ = {
             "the app's MessageType list (model/MessageType.java:17-26), which its inbox advertising code "
             "also reads (android/mail/advertising/data/network/inboxad/InboxAdResponseConverterKt.java:14 "
             "and 20). What writes those rows was not traced, so they are reported with the mails. Priority "
-            "is as stored. Not reported: the drafts and outbox databases (user content, empty in the test "
-            "data), the cloud storage databases (<account>_resources.db, <account>_timeline.db, "
-            "transfer.db), the full-text index mailSearch, the virtual folder tables, and the app's "
-            "advertising, purchase, monitoring and tracking stores. Other databases in the folder, among "
-            "them mail_search_suggestions.db, track_and_trace_v3.db, mail_pcl.db, operation_store.db and "
-            "draft_operation_store.db, were not examined.")),
+            "is as stored. Not reported, with the reason: the drafts and outbox databases, user content "
+            "that held no rows in the test data, so there was nothing to check a reader against; the "
+            "cloud storage databases (<account>_resources.db, <account>_timeline.db, transfer.db), "
+            "which belong to the provider's online storage feature and are left for an artifact of "
+            "their own; the full-text index mailSearch, which repeats mail fields and was empty; the "
+            "virtual folder tables, which group the same mails into app views such as unread and "
+            "favorites; and the app's advertising, in-app purchase, monitoring and tracking stores, "
+            "which hold app content and telemetry rather than mail. Other databases in the folder, "
+            "among them mail_search_suggestions.db, track_and_trace_v3.db, mail_pcl.db, "
+            "operation_store.db and draft_operation_store.db, were not examined.")),
         "paths": ('*/de.web.mobile.android.mail/databases/mail_room.db*',
                   '*/de.gmx.mobile.android.mail/databases/mail_room.db*',
                   '*/de.eue.mobile.android.mail/databases/mail_room.db*',
@@ -109,8 +113,8 @@ __artifacts_v2__ = {
             "the cached thumbnail the app names from the attachment's uri: attachment_thumbnail_, the uri "
             "with ../ and Mail/ removed and / turned into _, then the width and height "
             "(android/mail/compose/rest/ComposeNetworkExecutor.java:43 and 259-268, "
-            "commands/mail/rest/DownloadAttachmentThumbnailCommand.java:33 and 94-100); when more than one "
-            "size is cached, the first by name is shown. Media Format is read from the file's first bytes. "
+            "commands/mail/rest/DownloadAttachmentThumbnailCommand.java:33 and 94-100). An attachment row is "
+            "listed once for each cached thumbnail file: each size, and each copy whose bytes differ. Media Format is read from the file's first bytes. "
             "File not in extraction means the row names a file that was not found; a blank means the row "
             "names no file inside the app's data folder. Name, Content Type and Size are as stored; Inline "
             "is the stored 0 or 1 shown as No or Yes. Status is as stored; in the test data the rows with a "
@@ -504,10 +508,8 @@ def ui_mail_attachments(context):
             named.update(thumbs)
             if tail:
                 named.add(tail)
-            thumb = ''
-            if thumbs:
-                sources.append(entry['files'][thumbs[0]][0])
-                thumb = _media(cache, entry['files'][thumbs[0]][0], os.path.basename(thumbs[0]))[0]
+            # Every cached size and every differing copy of the thumbnail gets a row.
+            thumb_copies = [copy for thumb_tail in thumbs for copy in entry['files'][thumb_tail]]
             for copy in copies or [None]:
                 if copy:
                     sources.append(copy)
@@ -516,11 +518,16 @@ def ui_mail_attachments(context):
                 else:
                     media, file_size = '', ''
                     media_format = 'File not in extraction' if tail else ''
-                data_list.append((
-                    _ms_to_utc(header), media, thumb, media_format, name or '', ctype or '',
-                    '' if size_value is None else size_value, file_size, _yes_no(inline),
-                    '' if status is None else status, subject or '', entry['package'],
-                    emails.get(account_id, ''), 'Yes', entry['user'], mail_id, att_id))
+                for thumb_copy in thumb_copies or [None]:
+                    thumb = ''
+                    if thumb_copy:
+                        sources.append(thumb_copy)
+                        thumb = _media(cache, thumb_copy, os.path.basename(thumb_copy))[0]
+                    data_list.append((
+                        _ms_to_utc(header), media, thumb, media_format, name or '', ctype or '',
+                        '' if size_value is None else size_value, file_size, _yes_no(inline),
+                        '' if status is None else status, subject or '', entry['package'],
+                        emails.get(account_id, ''), 'Yes', entry['user'], mail_id, att_id))
         for tail, copies in sorted(entry['files'].items()):
             if tail in named or not tail.startswith('cache/attachment_'):
                 continue

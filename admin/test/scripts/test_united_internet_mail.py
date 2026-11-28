@@ -25,6 +25,15 @@ ACCOUNT_UUID = '00000000-0000-0000-0000-000000000001'
 JPEG = b'\xff\xd8\xff\xe0' + b'\x00' * 32
 MS = 1767225600000  # 2026-01-01 00:00:00 UTC
 
+# The fixture files each artifact reads, by a part of their path; each must match its paths.
+READS = {
+    'ui_mail_messages': ('/mail_room.db', '/identitiy_db', '/cache/attachment_', '/room_mail_bodies/'),
+    'ui_mail_attachments': ('/mail_room.db', '/identitiy_db', '/cache/attachment_'),
+    'ui_mail_body_files': ('/mail_room.db', '/room_mail_bodies/'),
+    'ui_mail_accounts': ('/identitiy_db',),
+    'ui_mail_known_receivers': ('/known_receivers',),
+}
+
 
 class EvidenceContext:
     def __init__(self, root, seeker):
@@ -105,12 +114,13 @@ class UnitedInternetMailTests(unittest.TestCase):
             seeker = FileSeekerDir(str(self.root), staging)
             context = EvidenceContext(self.root, seeker)
             patterns = uimail.__artifacts_v2__[function.__name__]['paths']
+            reads = READS[function.__name__]
             for path in context.get_files_found():
                 relative = 'root/' + context.get_relative_path(path)
-                if relative.endswith(('-journal', '-wal', '-shm')):
+                if relative.endswith(('-journal', '-wal', '-shm')) or not any(
+                        part in relative for part in reads):
                     continue
-                self.assertTrue(any(fnmatch.fnmatch(relative, pattern) for pattern in patterns)
-                                or function.__name__ != 'ui_mail_messages',
+                self.assertTrue(any(fnmatch.fnmatch(relative, pattern) for pattern in patterns),
                                 f'{relative} matches no path of {function.__name__}')
             with patch.object(uimail, 'check_in_media', side_effect=lambda path, _name:
                               'media:' + context.get_relative_path(path)):
@@ -202,6 +212,16 @@ class UnitedInternetMailTests(unittest.TestCase):
         rows = self.run_artifact(uimail.ui_mail_messages)
         self.assertEqual([(row['Subject'], row['Android User']) for row in rows], [('Snapshot', '10')])
 
+
+    def test_every_thumbnail_size_and_differing_copy_is_listed(self):
+        self.build('data/data')
+        tail = f'{PKG}/cache/attachment_thumbnail_222_Attachment_MF8y_'
+        self.write(f'data/data/{tail}240x180.temp', JPEG)
+        self.write(f'data/user/0/{tail}120x90.temp', JPEG + b'different')
+        rows = [row for row in self.run_artifact(uimail.ui_mail_attachments) if row['Name'] == 'b.jpg']
+        self.assertEqual(sorted(row['Thumbnail'] for row in rows), sorted([
+            f'media:data/data/{tail}120x90.temp', f'media:data/data/{tail}240x180.temp',
+            f'media:data/user/0/{tail}120x90.temp']))
 
 if __name__ == '__main__':
     unittest.main()
