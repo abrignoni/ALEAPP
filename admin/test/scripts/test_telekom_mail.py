@@ -150,6 +150,16 @@ class TelekomMailTest(unittest.TestCase):
         self.assertEqual(sorted((row['Subject'], row['Folder Name']) for row in rows),
                          [('Changed', 'Renamed'), ('Hi', 'Posteingang')])
 
+    def test_identical_rollback_copy_adds_no_unnamed_files(self):
+        app = self.root / 'data' / 'misc_ce' / '0' / 'rollback' / '7' / PKG
+        database(app / 'databases' / 'telekom-database')
+        held = app / 'files' / 'attachments' / ACCOUNT / 'INBOX' / 'mail::2' / 'fulls' / '0'
+        held.mkdir(parents=True)
+        (held / 'logo').write_bytes(PNG)
+        rows = self.run_artifact(tk.telekom_mail_attachments)
+        self.assertEqual(sorted((row['File Name'], row['Named by a Mail']) for row in rows),
+                         [('gone', 'Yes'), ('logo', 'Yes'), ('pic.jpeg', 'No')])
+
     def test_provider_uri_outside_its_roots_is_not_followed(self):
         self.assertIsNone(tk._provider_tail(  # pylint: disable=protected-access
             'content://de.telekom.mail.fileprovider/external_files/Download/x'))

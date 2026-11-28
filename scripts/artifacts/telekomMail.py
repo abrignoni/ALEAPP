@@ -78,23 +78,25 @@ __artifacts_v2__ = {
             "and every preview member was empty. The URI is resolved through the app's file provider "
             "root internal_files, which is the files folder (res/xml/filepaths.xml); a URI under its "
             "cache or external_files root, or any other, is not followed. A file is looked for only "
-            "under the app folder that holds the database naming it, so a rollback snapshot is matched "
-            "to the files in its own folder; within one folder, byte-identical copies under different "
-            "storage spellings are listed once. File not in extraction marks an entry none of whose "
-            "copies the extraction holds and whose full URI names a file under that root; a missing "
-            "preview beside a held full copy gets no row. No entry was in that state in the test data. "
-            "Media Format is read from the file's first bytes. File Name, Media Type, Size (as stored), "
-            "Inline and Status (as stored) are the entry's fileName, mediaType and subType, "
-            "sizeInBytes, isInline (shown as Yes or No) and the status of its copy. For a file no entry "
-            "names, File Name is the file's own name. Status and stored size are not checked against "
-            "the file: in the test data all four held copies had status NotAvailable and two had a "
-            "stored size different from the file's. For a file no entry names, Mail Folder Path and "
-            "Attachment Index are read from its path, and the mail key in the path is not looked up. In "
-            "the test data the 8 such files carried 5 keys of 24 letters and digits, none equal to a "
-            "Mail id, messageId or xguid, while the keys of the 4 named files were the mail's row id. "
-            "Such a file may belong to a mail the app no longer holds; that is not established. Mail "
-            "Date is the mail's dateAndTime, read as in Telekom Mail - Messages. Android User is read "
-            "from the database's path; a path that names no user shows 0."),
+            "under the app folder that holds the database naming it, so a rollback snapshot that "
+            "differs from the live database is matched to the files in its own folder, and the files of "
+            "a snapshot whose database repeats the live one are taken as repeats of the live files; "
+            "within one folder, byte-identical copies under different storage spellings are listed "
+            "once. File not in extraction marks an entry none of whose copies the extraction holds and "
+            "whose full URI names a file under that root; a missing preview beside a held full copy "
+            "gets no row. No entry was in that state in the test data. Media Format is read from the "
+            "file's first bytes. File Name, Media Type, Size (as stored), Inline and Status (as stored) "
+            "are the entry's fileName, mediaType and subType, sizeInBytes, isInline (shown as Yes or "
+            "No) and the status of its copy. For a file no entry names, File Name is the file's own "
+            "name. Status and stored size are not checked against the file: in the test data all four "
+            "held copies had status NotAvailable and two had a stored size different from the file's. "
+            "For a file no entry names, Mail Folder Path and Attachment Index are read from its path, "
+            "and the mail key in the path is not looked up. In the test data the 8 such files carried 5 "
+            "keys of 24 letters and digits, none equal to a Mail id, messageId or xguid, while the keys "
+            "of the 4 named files were the mail's row id. Such a file may belong to a mail the app no "
+            "longer holds; that is not established. Mail Date is the mail's dateAndTime, read as in "
+            "Telekom Mail - Messages. Android User is read from the database's path; a path that names "
+            "no user shows 0."),
         "paths": ('*/de.telekom.mail/databases/telekom-database*',
                   '*/de.telekom.mail/files/attachments/*'),
         "output_types": "standard",
@@ -299,21 +301,31 @@ def _place(context, path):
 def _stores(context):
     """Per app data folder: user, the database copies and the attachment files by their tail.
 
-    Databases come from unique_files, which keeps differing copies. Attachment files are taken
-    from every staged file, so a rollback snapshot keeps its own copies even when they match a
-    live file byte for byte; within one folder byte-identical copies are dropped."""
+    Databases come from unique_files, which keeps differing copies. A folder whose database is
+    kept takes its attachment files from every staged file, so a rollback snapshot keeps its own
+    copies even when they match a live file byte for byte; a folder whose database repeated
+    another copy keeps only the files unique_files kept. Within one folder byte-identical copies
+    are dropped."""
     stores = {}
+    kept = set()
     for file_found in unique_files(context, keep_differing_views=True):
         path = str(file_found)
+        kept.add(path)
         place = None if os.path.isdir(path) else _place(context, path)
         if place and place[2] == f'databases/{DATABASE}':
             stores.setdefault(place[0], {'dbs': [], 'files': {}, 'user': place[1]})['dbs'].append(path)
+    with_db = {key for key, entry in stores.items() if entry['dbs']}
     for file_found in context.get_files_found():
         path = str(file_found)
         place = None if os.path.isdir(path) else _place(context, path)
-        if place and place[2].startswith('files/attachments/'):
-            entry = stores.setdefault(place[0], {'dbs': [], 'files': {}, 'user': place[1]})
-            entry['files'].setdefault(place[2], []).append(path)
+        if not place or not place[2].startswith('files/attachments/'):
+            continue
+        # A folder whose database was kept keeps every copy of its files; a folder whose
+        # database repeated another copy's keeps only the files unique_files kept.
+        if place[0] not in with_db and path not in kept:
+            continue
+        entry = stores.setdefault(place[0], {'dbs': [], 'files': {}, 'user': place[1]})
+        entry['files'].setdefault(place[2], []).append(path)
     for entry in stores.values():
         entry['files'] = {tail: _distinct(sorted(set(copies))) for tail, copies in entry['files'].items()}
     return dict(sorted(stores.items()))
