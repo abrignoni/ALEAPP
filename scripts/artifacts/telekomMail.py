@@ -46,10 +46,13 @@ __artifacts_v2__ = {
             "Locally, Answered, Forwarded, Outbox State, Priority and Body Format each held one value "
             "across the three mails, so their other outputs did not run. Each database copy is read on "
             "its own, with its folder and account rows, and the copies are then joined: a copy under "
-            "another storage spelling is read when it differs, and a row both hold appears once. A "
-            "rollback snapshot that differs from the live copy is read separately, so a row both hold "
-            "appears twice. Neither case was present in the test data. Android User is read from the "
-            "database's path; a path that names no user shows 0."),
+            "another storage spelling is read when it differs, and a mail whose report row is the same "
+            "in both copies appears once, while a mail whose folder name, account email or any other "
+            "shown value differs between them appears once per copy. A rollback snapshot is read "
+            "separately unless it reads the same as the live copy, so a row both hold then appears "
+            "twice. Neither case was present in the test data. Android User is read from the path of "
+            "the app folder; a path that names no user shows 0. In the test data the path named no "
+            "user, so the 0 shown is that default and the user is not established by it."),
         "paths": ('*/de.telekom.mail/databases/telekom-database*',
                   '*/de.telekom.mail/files/attachments/*'),
         "output_types": "standard",
@@ -80,11 +83,13 @@ __artifacts_v2__ = {
             "cache or external_files root, or any other, is not followed. A file is looked for only "
             "under the app folder that holds the database naming it, so a rollback snapshot that "
             "differs from the live database is matched to the files in its own folder, and when a "
-            "snapshot's database repeats the live one and is not kept, a file of the snapshot at a path "
-            "the live mails name is listed with those mails; within one folder, byte-identical copies "
-            "under different storage spellings are listed once. File not in extraction marks an entry "
-            "none of whose copies the extraction holds and whose full URI names a file under that root; "
-            "a missing preview beside a held full copy gets no row. No entry was in that state in the "
+            "folder's database is not kept, because it repeats the live one or is not in the "
+            "extraction, a file in that folder that differs from the live file, at a path the mails of "
+            "a kept database of the same user name, is listed with those mails, while a file identical "
+            "to the live one is not listed again; within one folder, byte-identical copies under "
+            "different storage spellings are listed once. File not in extraction marks an entry none of "
+            "whose copies the extraction holds and whose full URI names a file under that root; a "
+            "missing preview beside a held full copy gets no row. No entry was in that state in the "
             "test data. Media Format is read from the file's first bytes. File Name, Media Type, Size "
             "(as stored), Inline and Status (as stored) are the entry's fileName, mediaType and "
             "subType, sizeInBytes, isInline (shown as Yes or No) and the status of its copy. For a file "
@@ -96,7 +101,9 @@ __artifacts_v2__ = {
             "to a Mail id, messageId or xguid, while the keys of the 4 named files were the mail's row "
             "id. Such a file may belong to a mail the app no longer holds; that is not established. "
             "Mail Date is the mail's dateAndTime, read as in Telekom Mail - Messages. Android User is "
-            "read from the database's path; a path that names no user shows 0."),
+            "read from the path of the app folder; a path that names no user shows 0. In the test data "
+            "the path named no user, so the 0 shown is that default and the user is not established by "
+            "it. Rollback snapshots and second storage spellings were not present in the test data."),
         "paths": ('*/de.telekom.mail/databases/telekom-database*',
                   '*/de.telekom.mail/files/attachments/*'),
         "output_types": "standard",
