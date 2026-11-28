@@ -146,6 +146,7 @@ __artifacts_v2__ = {
         "category": "Email",
         "notes": (
             (
+            (
             "Class and line references and the reading of database copies are as in WEB.DE, GMX and 1&1 "
             "Mail - Messages. One row per file in cache/room_mail_bodies/<account uuid>/, the folder the "
             "app writes mail bodies to as .html files (core/BodyFileHelper.java:17 and 69-83). The app "
@@ -155,8 +156,11 @@ __artifacts_v2__ = {
             "time (BodyFileHelper.java:77-79); no caller was found. The name is not read as a date. Named "
             "by a Mail is Yes when a row of the mail table names the file in its body column, and Mail "
             "Header Date, Mail Subject and Mail ID are then that mail's; No marks a file that no row of the "
-            "mail table read names. The HTML is not rendered here; the file is kept in the report's data "
-            "folder. Size is the file size.")),
+            "mail table read names. The HTML is not rendered here and the report does not link to it; every "
+            "value is escaped, so no link or image in a body is live in the report. The files are copied "
+            "into the report's data folder as evidence. In the test data 122 of the 142 files referenced "
+            "remote addresses, so opening one directly in a browser can contact those hosts; open them with "
+            "remote content blocked. Size is the file size."))),
         "paths": ('*/de.web.mobile.android.mail/databases/mail_room.db*',
                   '*/de.gmx.mobile.android.mail/databases/mail_room.db*',
                   '*/de.eue.mobile.android.mail/databases/mail_room.db*',
