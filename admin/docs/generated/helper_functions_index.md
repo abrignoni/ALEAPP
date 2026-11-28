@@ -19,8 +19,8 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 630 | `artifact_processor` | `artifact_processor(func)` | (no docstring) |
-| 397 | `logfunc` | `logfunc(message='')` | (no docstring) |
+| 631 | `artifact_processor` | `artifact_processor(func)` | (no docstring) |
+| 398 | `logfunc` | `logfunc(message='')` | (no docstring) |
 | 258 | `open_sqlite_db_readonly` | `open_sqlite_db_readonly(path)` | Opens a sqlite db in read-only mode, so original db (and -wal/journal are intact) |
 | 170 | `get_sqlite_db_records` | `get_sqlite_db_records(path, query, attach_query=None)` | Run a query and return its rows as a SqliteRecords, or [] when it fails. |
 | 134 | `convert_unix_ts_to_utc` | `convert_unix_ts_to_utc(ts)` | (no docstring) |
@@ -28,9 +28,9 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 | 75 | `is_sqlite_sidecar` | `is_sqlite_sidecar(path)` | True for the -wal, -shm or -journal file SQLite keeps beside a database. |
 | 50 | `does_table_exist_in_db` | `does_table_exist_in_db(path, table_name)` | Checks if a table with specified name exists in an sqlite db |
 | 40 | `check_in_embedded_media` | `check_in_embedded_media(source_file, data, name='', force_type=None, force_extension=None, force_creation_date=None, force_modification_date=None)` | Check in embedded media. |
-| 32 | `abxread` | `abxread(in_path, multi_root)` | Copyright 2021-2022, CCL Forensics |
+| 33 | `abxread` | `abxread(in_path, multi_root)` | Copyright 2021-2022, CCL Forensics |
+| 32 | `checkabx` | `checkabx(in_path)` | (no docstring) |
 | 32 | `decode_protobuf` | `decode_protobuf(data, typedef=None)` | Decode schemaless protobuf data via the vendored blackboxprotobuf. |
-| 31 | `checkabx` | `checkabx(in_path)` | (no docstring) |
 | 26 | `null_absent_columns` | `null_absent_columns(path, query)` | Replace references to columns the database lacks with NULL. |
 | 24 | `convert_human_ts_to_utc` | `convert_human_ts_to_utc(ts)` | (no docstring) |
 | 22 | `does_column_exist_in_db` | `does_column_exist_in_db(path, table_name, col_name)` | Checks if a specific col exists |
@@ -93,10 +93,10 @@ for the rest. `admin/docs/helper_functions.md` explains where the five cores' he
 
 | Used by | Name | Signature | First docstring line |
 | ---: | --- | --- | --- |
-| 298 | `unique_files` | `unique_files(context, files=None, keep_differing_views=False)` | The context's files with the duplicate storage views of each file removed. |
+| 299 | `unique_files` | `unique_files(context, files=None, keep_differing_views=False)` | The context's files with the duplicate storage views of each file removed. |
 | 69 | `canonical_path` | `canonical_path(relative_path)` | (key, rank) for a path under an app data directory, else (path, 0). |
 | 33 | `android_user` | `android_user(relative_path)` | The Android user whose storage holds a path under an app data directory. |
-| 16 | `union_view_rows` | `union_view_rows(context, file_rows, ignore=())` | Rows read from every kept copy of each store, with the rows the copies share once. |
+| 17 | `union_view_rows` | `union_view_rows(context, file_rows, ignore=())` | Rows read from every kept copy of each store, with the rows the copies share once. |
 | 13 | `user_files` | `user_files(context, name, files=None, keep_differing_views=False)` | [(path, Android user)] of the files called name, one per user and storage class. |
 | 4 | `without_snapshot_repeats` | `without_snapshot_repeats(rows, source_index=-1)` | rows without the ones from a rollback snapshot that repeat a row the live copy gave. |
 | 2 | `snapshot_key` | `snapshot_key(relative_path)` | The canonical_path key of the live file a rollback snapshot copies, or None. |
