@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "module_name": "batteryUsageStatsStore",
+    "artifact_name": "Battery Usage Stats Snapshots",
+    "function_name": "battery_usage_stats_snapshots",
+    "case_number": "samsunga53_a14",
+    "number_of_columns": 10,
+    "number_of_rows": 10,
+    "total_data_size_bytes": 475,
+    "media_checkins": 0,
+    "media_embedded_checkins": 0,
+    "input_zip_path": "admin/test/cases/data/batteryUsageStatsStore/testdata.batteryUsageStatsStore.battery_usage_stats_snapshots.samsunga53_a14.zip",
+    "start_time": "2026-11-28T14:47:18.884096+00:00",
+    "end_time": "2026-11-28T14:47:18.922721+00:00",
+    "run_time_seconds": 0.012941122055053711,
+    "last_commit": {
+      "hash": "e144d7e92cc03d8195bf1fc989f196d5c1946cf6",
+      "author_name": "Brigs",
+      "author_email": "abrignoni@gmail.com",
+      "date": "2026-11-28T08:38:45-05:00",
+      "message": "Address notes audit for Battery Usage Stats artifacts"
+    }
+  },
+  "headers": [
+    "Session Start",
+    "Session End",
+    "Session Duration (ms)",
+    "Discharge (%)",
+    "Discharged Lower Bound (mAh)",
+    "Discharged Upper Bound (mAh)",
+    "Discharge Duration (ms)",
+    "Device Consumed Power (mAh)",
+    "Battery Capacity (mAh)",
+    "UIDs Recorded"
+  ],
+  "data": [
+    [
+      1765480140,
+      1765480200,
+      "60091",
+      "0",
+      "0.0",
+      "0.0",
+      "4545",
+      "0.0",
+      "4500.0",
+      55
+    ],
+    [
+      1765480200,
+      1765480284,
+      "84761",
+      "0",
+      "0.0",
+      "0.0",
+      "4315",
+      "0.0",
+      "4500.0",
+      52
+    ],
+    [
+      1765480284,
+      1765480350,
+      "65437",
+      "0",
+      "0.0",
+      "0.0",
+      "4502",
+      "0.0",
+      "4500.0",
+      29
+    ],
+    [
+      1765480350,
+      1765480416,
+      "66349",
+      "0",
+      "0.0",
+      "0.0",
+      "5051",
+      "0.0",
+      "4500.0",
+      42
+    ],
+    [
+      1765480416,
+      1765480481,
+      "64889",
+      "0",
+      "0.0",
+      "0.0",
+      "4704",
+      "0.0",
+      "4500.0",
+      38
+    ],
+    [
+      1765480481,
+      1765480625,
+      "144174",
+      "0",
+      "0.0",
+      "0.0",
+      "4821",
+      "0.0",
+      "4500.0",
+      38
+    ],
+    [
+      1765480625,
+      1765480737,
+      "111830",
+      "0",
+      "0.0",
+      "0.0",
+      "4621",
+      "0.0",
+      "4500.0",
+      39
+    ],
+    [
+      1765480737,
+      1765480843,
+      "106112",
+      "0",
+      "0.0",
+      "0.0",
+      "4746",
+      "0.0",
+      "4500.0",
+      38
+    ],
+    [
+      1765480843,
+      1765480942,
+      "98844",
+      "0",
+      "0.0",
+      "0.0",
+      "4672",
+      "0.0",
+      "4500.0",
+      33
+    ],
+    [
+      1765480942,
+      1765488087,
+      "7144829",
+      "0",
+      "0.0",
+      "0.0",
+      "4758",
+      "0.0",
+      "4500.0",
+      36
+    ]
+  ]
+}
