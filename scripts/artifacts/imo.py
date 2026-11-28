@@ -7,7 +7,7 @@ __artifacts_v2__ = {
         "last_update_date": "2026-11-27",
         "requirements": "none",
         "category": "Messaging",
-        "notes": "",
+        "notes": "Database names the accountdb.db each row came from.",
         "paths": ('*/com.imo.android.imous/databases/accountdb.db*',
                   '*/com.imo.android.imoim/databases/accountdb.db*'),
         "output_types": ['html', 'tsv', 'lava'],
@@ -54,7 +54,9 @@ __artifacts_v2__ = {
                   "imofriends.db or imofriends_<number>.db. In test data from a com.imo.android.imoim "
                   "install the messages table held the six columns this artifact reads, and the file "
                   "was named imofriends_<number>.db. With several such files the rows of each are "
-                  "reported."),
+                  "reported, and Database names the file each row came from. Conversation Key joins the "
+                  "Database and the buid, so the conversation view keeps the same buid in two "
+                  "databases apart."),
         "paths": ('*/com.imo.android.imous/databases/imofriends*.db*',
                   '*/com.imo.android.imoim/databases/imofriends*.db*'),
         "output_types": "standard",
@@ -65,7 +67,8 @@ __artifacts_v2__ = {
         },
         "data_views": {
             "conversation": {
-                "conversationDiscriminatorColumn": "Chat Partner",
+                "conversationDiscriminatorColumn": "Conversation Key",
+                "conversationLabelColumn": "Chat Partner",
                 "textColumn": "Last Message",
                 "directionColumn": "Direction",
                 "directionSentValue": "Outgoing",
@@ -112,10 +115,10 @@ def get_imo_account(context):
                 all_rows = []
 
             for row in all_rows:
-                data_list.append((row[0], row[1]))
+                data_list.append((row[0], row[1], context.get_relative_path(file_name)))
             db.close()
 
-    data_headers = ('Account ID', 'Name')
+    data_headers = ('Account ID', 'Name', 'Database')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -163,7 +166,9 @@ def get_imo_messages(context):
                 timestamp = ''
                 if row[3] is not None:
                     timestamp = datetime.datetime.fromtimestamp(int(row[3]), datetime.timezone.utc)
-                data_list.append((timestamp, row[4], row[0], row[2], from_id, to_id, row[5], attachmentPath))
+                database = context.get_relative_path(file_name)
+                data_list.append((timestamp, row[4], row[0], row[2], from_id, to_id, row[5],
+                                  attachmentPath, f'{database}/{row[0]}', database))
             db.close()
 
     data_headers = (
@@ -175,5 +180,7 @@ def get_imo_messages(context):
         'To ID',
         'Message Read',
         'Attachment',
+        'Conversation Key',
+        'Database',
     )
     return data_headers, data_list, '\n'.join(sources)
