@@ -62,7 +62,7 @@ __artifacts_v2__ = {
         'description': 'Groups from the Zangi t_group table with their members from t_chat_members.',
         'author': '@AlexisBrignoni, Claude',
         'creation_date': '2026-11-16',
-        'last_update_date': '2026-11-16',
+        'last_update_date': '2026-11-28',
         'requirements': 'none',
         'category': 'Messaging',
         'notes': (
@@ -72,7 +72,9 @@ __artifacts_v2__ = {
             'm_member_group_id is 0 or NULL are not listed; the tested image had one, and its m_chatjid '
             "equals the group's g_uid. Conversation Last Update is t_conversation.c_last_update_date for the "
             'conversation whose c_group_id is the group, read as Unix milliseconds. g_state, g_type, '
-            'g_is_accepted and m_memberrole are shown as stored; their meanings are not established. Group '
+            'g_is_accepted and m_memberrole are shown as stored; their meanings are not established. A '
+            't_group without the g_is_accepted column (seen in a database of user_version 114) shows it '
+            'blank. Group '
             'UID is g_uid as stored. On samsung_a166u_a16_known_20261116 the one group was created by the '
             "other test phone at about 17:29:12 UTC and was seen in this phone's chat list at 17:29:17 UTC, "
             'where the app showed it as accepted without a tap; its row held the group name given there, 2 '
@@ -262,9 +264,6 @@ def zangi_calls(context):
 
 @artifact_processor
 def zangi_groups(context):
-    group_query = """
-        SELECT g_group_id, g_name, g_uid, g_state, g_type, g_is_accepted FROM t_group ORDER BY g_group_id
-    """
     member_query = """
         SELECT m_member_group_id, m_chatjid, m_memberrole FROM t_chat_members
         WHERE m_member_group_id > 0 ORDER BY m_member_group_id, m_id
@@ -280,6 +279,11 @@ def zangi_groups(context):
         for group_id, jid, role in get_sqlite_db_records(source_path, member_query):
             members.setdefault(group_id, []).append(f'{jid} (role {role})')
         updated = {group_id: last for group_id, last in get_sqlite_db_records(source_path, conversation_query)}
+        # g_is_accepted is missing from t_group in some database versions; it is then blank.
+        columns = {row[1] for row in get_sqlite_db_records(source_path, 'PRAGMA table_info(t_group)')}
+        accepted = 'g_is_accepted' if 'g_is_accepted' in columns else "''"
+        group_query = (f'SELECT g_group_id, g_name, g_uid, g_state, g_type, {accepted} '
+                       'FROM t_group ORDER BY g_group_id')
         for row in get_sqlite_db_records(source_path, group_query):
             group_members = members.get(row[0], [])
             data_list.append((_ms(updated.get(row[0])), row[1] or '', row[2] or '', len(group_members),
