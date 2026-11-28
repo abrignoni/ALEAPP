@@ -17,65 +17,91 @@ __artifacts_v2__ = {
             "LegacyHistoricalRegistry at android16-release "
             "(https://android.googlesource.com/platform/frameworks/base/+/99b01a65cc4c104933788b3143285ab6bae65827/services/core/java/com/android/server/appop/LegacyHistoricalRegistry.java). "
             "On all 17 tested images, Samsung ones included, every element and attribute was one "
-            "that writer writes. This is a different store from appOpsHistoryDb.py (the Android 16 "
-            "app_op_history database), discreteNative.py (system/appops/discrete) and "
-            "appOpsAccesses.py (appops_accesses.xml).\nEach file holds intervals (ops elements) at "
-            "one granularity, and its name is the interval series value base x (1 + m + ... + "
-            "m^depth) (generateFile and computeGlobalIntervalBeginMillis, "
+            "that writer writes. Not tested below Android 11. This is a different store from "
+            "appOpsHistoryDb.py (the Android 16 app_op_history database), discreteNative.py "
+            "(system/appops/discrete) and appOpsAccesses.py (appops_accesses.xml).\nEach file holds "
+            "intervals (ops elements) of one maximum length, and its name is the interval series "
+            "value base x (1 + m + ... + m^depth) (generateFile and "
+            "computeGlobalIntervalBeginMillis, "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#851 "
-            "and #1652), so 900000.xml holds 15-minute intervals and each longer name holds "
-            "intervals ten times longer, with the defaults of 15 minutes and 10 "
+            "and #1652). With the defaults of 15 minutes and 10 "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#158 "
-            "and #161). Within an interval the counts are per UID, package, attribution tag, op and "
-            "st key. Package, UID and Attribution Tag are the na attributes of the pkg, uid and ftr "
-            "elements; Attribution Tag is blank where the platform wrote none. Op Code is the op "
-            "element's na. Access Count, Reject Count and Access Duration (ms) are the ac, rc and du "
-            "attributes as stored, written only when greater than zero "
+            "and #161), 900000.xml holds intervals of up to 15 minutes and each longer name "
+            "intervals of up to ten times longer. On the 16 tested zips all 104 intervals in "
+            "900000.xml were 15 minutes long, and 142 of the 402 intervals in the longer files were "
+            "shorter than their file's full length. When the platform moves counts into a longer "
+            "interval it can split an interval's counts by time (spliceFromEnd, "
+            "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1660).\nWithin "
+            "an interval the counts are per UID, package, attribution tag, op and st key. Package, "
+            "UID and Attribution Tag are the na attributes of the pkg, uid and ftr elements; "
+            "Attribution Tag is blank where the platform wrote none. Op Code is the op element's na. "
+            "Access Count, Reject Count and Access Duration (ms) are the ac, rc and du attributes as "
+            "stored, written only when greater than zero "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1609-1616), "
-            "so a blank means none was recorded.\nApp State and Access Flags are decoded from the st "
-            "na key, the uid state shifted left 31 bits with the op flags in the low 32 "
+            "so a blank means none was recorded. The duration is milliseconds of elapsed realtime "
+            "between an op's start and finish "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/AppOpsService.java#1130-1139).\nApp "
+            "State and Access Flags are decoded from the st na key, the uid state shifted left 31 "
+            "bits with the op flags in the low 32 "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/core/java/android/app/AppOpsManager.java#813-814 "
             "and #844-851), using the UID_STATE and OP_FLAG constants, which are the same at "
-            "android11 and android13; a value outside them is shown as stored. Op Name is the AOSP "
-            "name for the code from the table appOpsAccesses.py uses, shown only when the code is "
-            "below that release's AppOpsManager._NUM_OP (100 at android11, 116 at android12, 121 at "
-            "android13, 136 at android14, 149 at android15 and 163 at android16; "
+            "android11 and android13; a value outside them is shown as its number, and none occurred "
+            "on the tested images. Op Name is the name AOSP main gives the code in the table "
+            "appOpsAccesses.py uses (codes 17 and 61 are spelled differently in android11 to "
+            "android13). It is shown only when the code is below that release's "
+            "AppOpsManager._NUM_OP (100 at android11, 116 at android12, 121 at android13, 136 at "
+            "android14, 149 at android15 and 163 at android16; "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/core/java/android/app/AppOpsManager.java#1348 "
-            "at android13). The release comes from ro.build.version.sdk in system/build.prop, or "
-            "else from the Android release in the usagestats version file "
+            "at android13) and the table holds it. The table has no name for 96 and ends at 155, so "
+            "codes 156 to 162 on Android 16 are unnamed. The release comes from ro.build.version.sdk "
+            "in system/build.prop, or else from the Android release in the usagestats version file "
             "(UsageStatsDatabase.getBuildFingerprint, "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/usage/java/com/android/server/usage/UsageStatsDatabase.java#421-425); "
-            "with neither, codes from 100 are left unnamed. All 17 tested images gave a release. "
-            "Codes left unnamed: 100 on cookbook_a11 (Samsung, Android 11, 129 rows), 139 on "
-            "russell_a14 (Pixel, Android 14, 48 rows), and six codes from 10008 to 10044 on "
-            "kevin_pocox7_a15 (Xiaomi, 5,036 rows); the Op Code is shown.\nInterval Start and "
-            "Interval End follow the platform's own read path. An interval's stored beg and end are "
-            "milliseconds back from the last write, after adding the ov values of the shorter-named "
+            "with neither, or with a release older than Android 11, codes from 100 are left unnamed. "
+            "All 17 tested images gave a release. Codes left unnamed: 100 on cookbook_a11 (Samsung, "
+            "Android 11, 129 rows), 139 on russell_a14 (Pixel, Android 14, 48 rows), and six codes "
+            "from 10008 to 10044 on kevin_pocox7_a15 (Xiaomi, 5,036 rows); the Op Code is "
+            "shown.\nInterval Start and Interval End are computed by this artifact from the stored "
+            "offsets and one file time. Each ops element stores beg and end as millisecond offsets. "
+            "As the platform's reader does, the artifact adds the ov values of the shorter-named "
             "files "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1266 "
-            "and #1288, #1312-1315) and the end of the intervals before this file's series position, "
-            "which is the file name minus the base "
-            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1037 "
-            "and #1086). The last write is taken, as the platform takes it at boot, as the "
-            "modification time of the history file with the shortest name "
+            "and #1288, #1312-1315) and the interval ends of the levels before the file, which sum "
+            "to the file name minus the base "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1037). "
+            "It subtracts the result from the modification time of the history file with the "
+            "shortest name, the time the platform reads at boot as its last write "
             "(getLastPersistTimeMillisDLocked, "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#921-942, "
-            "used at #242). Start Offset Before Reference (ms) and End Offset Before Reference (ms) "
-            "are those offsets, and Reference Time is that file time as the input recorded it; it "
-            "holds one value per history folder. The times are therefore only as good as the file "
+            "used at #242). That anchoring is the artifact's own: the platform's query path works "
+            "from an in-memory time "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#470-471) "
+            "and moves its window by one more base interval "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/appop/HistoricalRegistry.java#1012-1013), "
+            "which is not applied here. Reference Time is that file time as the input recorded it, "
+            "one value per history folder, and Start Offset Before Reference (ms) and End Offset "
+            "Before Reference (ms) are the offsets. The times are therefore only as good as the file "
             "time the extraction kept. When the input recorded only a reading with no zone (a DOS "
-            "time in a zip) the interval times are left blank and the reading is shown in Reference "
-            "Time (no zone, as stored), as on private_mobile_01; when the file names do not form one "
-            "series, no times or offsets are computed. On the 16 tested zips the newest interval "
-            "ended within 8 seconds of the reference on 15. Checked against the separately kept "
-            "discrete op records, which carry their own times: on 14 images 50,580 of 53,117 records "
-            "(95.2%, 62.5% to 99.4% per image) fell in an interval that counts an access to the same "
-            "UID, package and op. On samsungs20_a13, whose history files all carry one identical "
-            "time, 125 of 286 did, and agreement was best with the times moved 3 hours later; why "
-            "was not established. An interval is the platform's bucket for counts, not the time of "
-            "any one access.\nAn op element with no st child gives no row. A Source Folder column is "
-            "added when more than one history folder is read; a test tree with two copies of one "
-            "image's folder gave each copy its rows under its folder."),
+            "time in a zip) the interval times and Reference Time are left blank and the reading is "
+            "shown in Reference Time (no zone, as stored), which was blank on every tested public "
+            "image; when the file names do not form one series (not seen on the tested images), no "
+            "times or offsets are computed. On 15 of the 16 tested zips the smallest stored offset "
+            "was under 8 seconds; on samsungs20_a13 it was about 37 minutes.\nChecked against the "
+            "separately kept discrete op records, which carry their own times, on 14 zips. In "
+            "900000.xml 1,263 of 1,275 records fell in an interval that counts an access to the same "
+            "UID, package and op (99.1%); with the times moved 15 minutes earlier 79.2% did, and 15 "
+            "minutes later 88.6%. In 9900000.xml 10,233 of 10,948 did (93.5%), and more did with the "
+            "times moved later (96.3% at 150 minutes), so the placement of that file's intervals is "
+            "not confirmed to better than one of its intervals; why was not established. In "
+            "99900000.xml 39,072 of 40,044 did (97.6%) and shifts up to 150 minutes did not change "
+            "that, so it does not test the placement. Longer files held 12 records or none. Over all "
+            "files 50,580 of 53,117 did (95.2%, 62.5% to 99.4% per image). On samsungs20_a13 125 of "
+            "286 did: its 900000.xml agreed on 38 of 40 as placed, and its 9900000.xml on 87 of 245 "
+            "as placed and 235 of 285 with the times moved 150 minutes later. An interval is the "
+            "platform's bucket for counts, not the time of any one access.\nAn op element with no st "
+            "child gives no row. A Source Folder column is added when more than one history folder "
+            "is read; a test tree with two copies of one image's folder gave each copy its rows "
+            "under its folder."),
         "paths": ('*/system/appops/history/*.xml', '*/system/build.prop',
                   '*/system/usagestats/*/version', '*/system_ce/*/usagestats/version'),
         "output_types": "standard",
@@ -269,14 +295,14 @@ def _folder_rows(seeker, files, num_ops):
                                 app_state, flags = _decode_key(state.get('na'))
                                 rows.append((
                                     start_time, end_time,
+                                    _ms_to_utc(reference_ms) if reference_ms is not None else '',
+                                    reading,
                                     package.get('na', ''), uid.get('na', ''),
                                     op_name, code, attribution.get('na', ''),
                                     app_state, flags,
                                     state.get('ac', ''), state.get('rc', ''), state.get('du', ''),
                                     end if depths is not None else '',
                                     begin if depths is not None else '',
-                                    _ms_to_utc(reference_ms) if reference_ms is not None else '',
-                                    reading,
                                 ))
         overflow += _int(root.get('ov'), 0)
     return rows
@@ -304,6 +330,8 @@ def app_ops_history_xml(context):
     data_headers = (
         ('Interval Start', 'datetime'),
         ('Interval End', 'datetime'),
+        ('Reference Time', 'datetime'),
+        'Reference Time (no zone, as stored)',
         'Package',
         'UID',
         'Op Name',
@@ -316,8 +344,6 @@ def app_ops_history_xml(context):
         ('Access Duration (ms)', 'number'),
         ('Start Offset Before Reference (ms)', 'number'),
         ('End Offset Before Reference (ms)', 'number'),
-        ('Reference Time', 'datetime'),
-        'Reference Time (no zone, as stored)',
     )
     seeker = context.get_seeker()
     found = [str(path) for path in unique_files(context, keep_differing_views=True)]
