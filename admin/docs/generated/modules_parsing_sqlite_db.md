@@ -105,6 +105,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | netflix |
 | notificationLog |
 | novaLauncher |
+| okTamTam |
 | openTracks |
 | orgzly |
 | osmand |
