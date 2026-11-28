@@ -22,7 +22,8 @@ __artifacts_v2__ = {
             "and the copies are not byte identical (the database or its -wal or -journal), every copy "
             "is read. A row equal in every reported column across the copies is reported once; a "
             "message whose stored values differ between copies is reported once per version, and "
-            "Conversation Database names the copy. Where copies of the zalo database hold different "
+            "Conversation Database names the copy. A copy that cannot be read as SQLite is skipped "
+            "with a line in the run log, and the readable copies are still reported. Where copies of the zalo database hold different "
             "names for Sender Name and Conversation, the name from the data/data copy is used, then "
             "data/user/<n>, then data_mirror. A rollback snapshot that is not byte identical to the "
             "live database is read as its own copy: its rows are reported in addition to the live "
@@ -153,8 +154,9 @@ __artifacts_v2__ = {
             'established, and dob holds the value of the JSON key sdob (ContactProfile.java:285, '
             'lw6.java:166). The stt, avt, cover, username and other profile columns are not reported. '
             'Copies of the zalo database under more than one storage path are read as in Zalo - '
-            'Messages; a contact whose stored values differ between copies is listed once per '
-            'version, with no column naming the copy.')),
+            'Messages; a contact whose stored values or alias differ between copies is listed once '
+            'per version, with no column naming the copy. Alias is taken from the same copy as the '
+            'row.')),
         "paths": ('*/com.zing.zalo/databases/[0-9]*',
                   '*/com.zing.zalo/databases/zalo',
                   '*/com.zing.zalo/databases/zalo-*'),
@@ -224,6 +226,7 @@ __artifacts_v2__ = {
 import hashlib
 import os
 import re
+import sqlite3
 from datetime import datetime, timedelta, timezone
 
 from scripts.artifacts.storagePathViews import (android_user, canonical_path, union_view_rows,
@@ -360,7 +363,14 @@ def _conversation_key(entry, item):
 
 
 def _rows(path, query):
-    return list(get_sqlite_db_records(path, query))
+    """The rows of a query, or [] with a log line when the database cannot be read.
+
+    A damaged copy of a store is then skipped and the readable copies are still reported."""
+    try:
+        return list(get_sqlite_db_records(path, query))
+    except sqlite3.DatabaseError as error:
+        logfunc(f'Zalo: could not read {path}: {error}')
+        return []
 
 
 def _names(mains):
@@ -637,13 +647,13 @@ def zalo_contacts(context):
     data_list = []
     sources = []
     for _container_key, entry in _stores(context).items():
-        names = _names(entry['mains'])
         file_rows = []
         for main in entry['mains']:
             sources.append(main)
             main_rows = []
             file_rows.append((main, main_rows))
-            _contact_rows(main, names, main_rows)
+            # Each copy's own aliases, so an alias that differs between copies is kept.
+            _contact_rows(main, _names([main]), main_rows)
         data_list.extend(union_view_rows(context, file_rows))
     data_headers = (
         ('Stored Time', 'datetime'), 'Account ID', 'User ID', 'Display Name', 'Alias',

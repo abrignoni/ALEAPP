@@ -296,5 +296,29 @@ class ZaloTests(unittest.TestCase):
         rows = self.run_artifact(zalo.zalo_messages)
         self.assertEqual([row['Conversation'] for row in rows], ['Test group'])
 
+    def test_a_damaged_copy_does_not_hide_the_readable_one(self):
+        app = self.root / 'data/data/com.zing.zalo/databases'
+        main_db(app / 'zalo')
+        chat_db(app / ACCOUNT_A / f'{PEER}.db', [(PEER, 1, 11, 0, BASE_MS, 'readable', None)])
+        damaged = self.root / 'data/user/0/com.zing.zalo/databases'
+        damaged.mkdir(parents=True)
+        (damaged / 'zalo').write_bytes(b'SQLite format 3\x00' + b'\xff' * 4000)
+        (damaged / ACCOUNT_A).mkdir()
+        (damaged / ACCOUNT_A / f'{PEER}.db').write_bytes(b'SQLite format 3\x00' + b'\xff' * 4000)
+        rows = self.run_artifact(zalo.zalo_messages)
+        self.assertEqual([row['Message'] for row in rows], ['readable'])
+        self.assertEqual(rows[0]['Conversation'], 'Alias from A')
+        self.assertEqual(len(self.run_artifact(zalo.zalo_contacts)), 2)
+
+    def test_an_alias_that_differs_between_copies_is_kept(self):
+        for user_dir in ('data/data', 'data/user/0'):
+            main_db(self.root / user_dir / 'com.zing.zalo' / 'databases' / 'zalo')
+        second = self.root / 'data/user/0/com.zing.zalo/databases/zalo'
+        with contextlib.closing(sqlite3.connect(second)) as db:
+            with db:
+                db.execute("UPDATE alias_friend SET aliasName = 'Other alias'")
+        aliases = sorted(row['Alias'] for row in self.run_artifact(zalo.zalo_contacts) if row['Alias'])
+        self.assertEqual(aliases, ['Alias from A', 'Other alias'])
+
 if __name__ == '__main__':
     unittest.main()
