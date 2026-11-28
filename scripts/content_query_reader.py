@@ -71,6 +71,8 @@ DETAIL_CHARS = 400
 CACHE_SIZE = 8
 # 'Row: 0' readings tried when several 'Row: 0' lines name different first columns.
 MAX_READINGS = 4
+# Distinct names indexed at first when finding the 'Row: 0' names that form a sequence.
+SEQUENCE_INDEX_CAP = 256
 EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 # What a file holds, as reported by the Content Query Files artifact.
@@ -168,33 +170,52 @@ def _sequence_test(candidates):
     """A test ``(name, index)``: whether the 'Row: 0' line ``index``, the first that names
     ``name``, has a later 'Row: 1' line with the same first column.
 
-    It indexes the side with fewer named lines, so its memory grows with the smaller of the
-    'Row: 0' and 'Row: 1' line counts: the last 'Row: 1' line of each name, or the names of
-    the 'Row: 0' lines that have a later 'Row: 1' line."""
-    zero_lines = one_lines = 0
-    for _index, number, rest in candidates:
-        if number in (0, 1) and FIRST_NAME.match(rest):
-            if number == 0:
-                zero_lines += 1
-            else:
-                one_lines += 1
-    if one_lines <= zero_lines:
-        last_row_one = {}
-        for index, number, rest in candidates:
-            name = FIRST_NAME.match(rest) if number == 1 else None
-            if name:
-                last_row_one[name.group(1)] = index
-        return lambda name, index: last_row_one.get(name, index) > index
+    It indexes the side with fewer distinct names, so its memory grows with the smaller of the
+    'Row: 0' and 'Row: 1' name counts: the last 'Row: 1' line of each name, or the first
+    'Row: 0' line of each name. Which side that is is not known in advance, so each side is
+    tried in turn with a cap on its distinct names, SEQUENCE_INDEX_CAP at first and four
+    times larger on each round, until one fits."""
+    cap = SEQUENCE_INDEX_CAP
+    while True:
+        last_row_one = _last_row_one(candidates, cap)
+        if last_row_one is not None:
+            return lambda name, index: last_row_one.get(name, index) > index
+        in_sequence = _row_zero_names_in_sequence(candidates, cap)
+        if in_sequence is not None:
+            return lambda name, _index: name in in_sequence
+        cap *= 4
+
+
+def _last_row_one(candidates, cap):
+    """{name: index of its last 'Row: 1' line}, or None when there are more than ``cap`` names."""
+    last_row_one = {}
+    for index, number, rest in candidates:
+        match = FIRST_NAME.match(rest) if number == 1 else None
+        if match:
+            name = match.group(1)
+            if name not in last_row_one and len(last_row_one) == cap:
+                return None
+            last_row_one[name] = index
+    return last_row_one
+
+
+def _row_zero_names_in_sequence(candidates, cap):
+    """The 'Row: 0' names with a 'Row: 1' line after their first 'Row: 0' line, or None when
+    there are more than ``cap`` 'Row: 0' names."""
     first_row_zero, in_sequence = {}, set()
     for index, number, rest in candidates:
-        name = FIRST_NAME.match(rest) if number in (0, 1) else None
-        if not name:
+        match = FIRST_NAME.match(rest) if number in (0, 1) else None
+        if not match:
             continue
-        if number == 0:
-            first_row_zero.setdefault(name.group(1), index)
-        elif first_row_zero.get(name.group(1), index) < index:
-            in_sequence.add(name.group(1))
-    return lambda name, _index: name in in_sequence
+        name = match.group(1)
+        if number == 1:
+            if first_row_zero.get(name, index) < index:
+                in_sequence.add(name)
+        elif name not in first_row_zero:
+            if len(first_row_zero) == cap:
+                return None
+            first_row_zero[name] = index
+    return in_sequence
 
 
 def _row_zero_names(candidates):
@@ -219,7 +240,7 @@ def _row_zero_names(candidates):
     else:
         return names
     forms_sequence = _sequence_test(candidates)
-    earliest, in_sequence, others = None, [], []
+    earliest, in_sequence, others, placed = None, [], [], set()
     for index, number, rest in candidates:
         name = FIRST_NAME.match(rest) if number == 0 else None
         if not name:
@@ -227,14 +248,17 @@ def _row_zero_names(candidates):
         name = name.group(1)
         if earliest is None:
             earliest = (index, name)
+            placed.add(name)
             continue
-        if name == earliest[1] or any(name == kept for _index, kept in in_sequence + others):
+        if name in placed:
             continue
         if forms_sequence(name, index):
             if len(in_sequence) < MAX_READINGS - 1:
                 in_sequence.append((index, name))
+                placed.add(name)
         elif len(others) < MAX_READINGS - 1:
             others.append((index, name))
+            placed.add(name)
     if earliest is None:
         return []
     kept = [earliest] + (in_sequence + others)[:MAX_READINGS - 1]
