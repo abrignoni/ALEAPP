@@ -77,24 +77,24 @@ __artifacts_v2__ = {
             "its copy in its full and preview members; in the test data every full member held a URI "
             "and every preview member was empty. The URI is resolved through the app's file provider "
             "root internal_files, which is the files folder (res/xml/filepaths.xml); a URI under its "
-            "cache or external_files root, or any other, is not followed. A file is looked for first in "
-            "the folder of the database that names it, then in the user's other app folders, so a "
-            "rollback snapshot of the database can show a file kept only under the live folder. File "
-            "not in extraction marks an entry none of whose copies the extraction holds and whose full "
-            "URI names a file under that root; a missing preview beside a held full copy gets no row. "
-            "No entry was in that state in the test data. Media Format is read from the file's first "
-            "bytes. File Name, Media Type, Size (as stored), Inline and Status (as stored) are the "
-            "entry's fileName, mediaType and subType, sizeInBytes, isInline (shown as Yes or No) and "
-            "the status of its copy. For a file no entry names, File Name is the file's own name. "
-            "Status and stored size are not checked against the file: in the test data all four held "
-            "copies had status NotAvailable and two had a stored size different from the file's. For a "
-            "file no entry names, Mail Folder Path and Attachment Index are read from its path, and the "
-            "mail key in the path is not looked up. In the test data the 8 such files carried 5 keys of "
-            "24 letters and digits, none equal to a Mail id, messageId or xguid, while the keys of the "
-            "4 named files were the mail's row id. Such a file may belong to a mail the app no longer "
-            "holds; that is not established. Mail Date is the mail's dateAndTime, read as in Telekom "
-            "Mail - Messages. Android User is read from the database's path; a path that names no user "
-            "shows 0."),
+            "cache or external_files root, or any other, is not followed. A file is looked for only "
+            "under the app folder that holds the database naming it, so a rollback snapshot is matched "
+            "to the files in its own folder; within one folder, byte-identical copies under different "
+            "storage spellings are listed once. File not in extraction marks an entry none of whose "
+            "copies the extraction holds and whose full URI names a file under that root; a missing "
+            "preview beside a held full copy gets no row. No entry was in that state in the test data. "
+            "Media Format is read from the file's first bytes. File Name, Media Type, Size (as stored), "
+            "Inline and Status (as stored) are the entry's fileName, mediaType and subType, "
+            "sizeInBytes, isInline (shown as Yes or No) and the status of its copy. For a file no entry "
+            "names, File Name is the file's own name. Status and stored size are not checked against "
+            "the file: in the test data all four held copies had status NotAvailable and two had a "
+            "stored size different from the file's. For a file no entry names, Mail Folder Path and "
+            "Attachment Index are read from its path, and the mail key in the path is not looked up. In "
+            "the test data the 8 such files carried 5 keys of 24 letters and digits, none equal to a "
+            "Mail id, messageId or xguid, while the keys of the 4 named files were the mail's row id. "
+            "Such a file may belong to a mail the app no longer holds; that is not established. Mail "
+            "Date is the mail's dateAndTime, read as in Telekom Mail - Messages. Android User is read "
+            "from the database's path; a path that names no user shows 0."),
         "paths": ('*/de.telekom.mail/databases/telekom-database*',
                   '*/de.telekom.mail/files/attachments/*'),
         "output_types": "standard",
@@ -102,6 +102,7 @@ __artifacts_v2__ = {
     },
 }
 
+import hashlib
 import json
 import os
 import re
@@ -250,44 +251,77 @@ def _container(path):
     return None
 
 
+def _digest(path):
+    sha = hashlib.sha256()
+    with open(path, 'rb') as handle:
+        for block in iter(lambda: handle.read(1 << 20), b''):
+            sha.update(block)
+    return sha.hexdigest()
+
+
+def _distinct(paths):
+    """The paths with byte-identical copies dropped; files are hashed only when sizes match."""
+    if len(paths) < 2:
+        return list(paths)
+    sizes = {}
+    for path in paths:
+        try:
+            sizes.setdefault(os.path.getsize(path), []).append(path)
+        except OSError:
+            sizes.setdefault(('unreadable', path), []).append(path)
+    kept = set()
+    for size, group in sizes.items():
+        if len(group) < 2 or isinstance(size, tuple):
+            kept.update(group)
+            continue
+        seen = {}
+        for path in group:
+            try:
+                seen.setdefault(_digest(path), path)
+            except OSError:
+                seen.setdefault(('unreadable', path), path)
+        kept.update(seen.values())
+    return [path for path in paths if path in kept]
+
+
+def _place(context, path):
+    """(store key, user, tail below the app folder) of a staged path, or None.
+
+    Read from the evidence name, not the staged path: staging rewrites characters such as the
+    colons of the app's mail:: folders."""
+    relative = str(context.get_relative_path(path)).replace('\\', '/')
+    container = _container(relative)
+    if not container:
+        return None
+    return canonical_path(container)[0], _user(relative), relative[len(container):].strip('/')
+
+
 def _stores(context):
-    """Per app data folder: user, the database copies and the attachment files by their tail."""
+    """Per app data folder: user, the database copies and the attachment files by their tail.
+
+    Databases come from unique_files, which keeps differing copies. Attachment files are taken
+    from every staged file, so a rollback snapshot keeps its own copies even when they match a
+    live file byte for byte; within one folder byte-identical copies are dropped."""
     stores = {}
     for file_found in unique_files(context, keep_differing_views=True):
         path = str(file_found)
-        if os.path.isdir(path):
-            continue
-        # The evidence name, not the staged path: staging rewrites characters such as the
-        # colons of the app's mail:: folders.
-        relative = str(context.get_relative_path(path)).replace('\\', '/')
-        container = _container(relative)
-        if not container:
-            continue
-        tail = relative[len(container):].strip('/')
-        key = canonical_path(container)[0]
-        entry = stores.setdefault(key, {'dbs': [], 'files': {}, 'user': _user(relative)})
-        if tail == f'databases/{DATABASE}':
-            entry['dbs'].append(path)
-        elif tail.startswith('files/attachments/'):
-            entry['files'].setdefault(tail, []).append(path)
-    # A rollback snapshot of the database is its own store, while byte-identical copies of its
-    # attachment files may be kept only under the live folder: every store of a user can
-    # resolve a tail through the files of all that user's stores.
-    shared = {}
+        place = None if os.path.isdir(path) else _place(context, path)
+        if place and place[2] == f'databases/{DATABASE}':
+            stores.setdefault(place[0], {'dbs': [], 'files': {}, 'user': place[1]})['dbs'].append(path)
+    for file_found in context.get_files_found():
+        path = str(file_found)
+        place = None if os.path.isdir(path) else _place(context, path)
+        if place and place[2].startswith('files/attachments/'):
+            entry = stores.setdefault(place[0], {'dbs': [], 'files': {}, 'user': place[1]})
+            entry['files'].setdefault(place[2], []).append(path)
     for entry in stores.values():
-        for tail, copies in entry['files'].items():
-            shared.setdefault((entry['user'], tail), []).extend(copies)
-    for entry in stores.values():
-        entry['shared'] = {tail: copies for (user, tail), copies in shared.items()
-                           if user == entry['user']}
+        entry['files'] = {tail: _distinct(sorted(set(copies))) for tail, copies in entry['files'].items()}
     return dict(sorted(stores.items()))
 
 
 def _copies(entry, tail):
-    """The staged copies of an attachment tail: the store's own, else any of the user's stores."""
-    if not tail:
-        return []
-    return entry['files'].get(tail) or entry['shared'].get(tail, [])
+    """The staged copies of an attachment tail held under the store's own folder."""
+    return entry['files'].get(tail, []) if tail else []
 
 
 def _union(context, entry, query):

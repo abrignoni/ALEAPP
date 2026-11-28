@@ -124,9 +124,13 @@ class TelekomMailTest(unittest.TestCase):
         self.assertEqual((unnamed[0]['Copy'], unnamed[0]['Mail Folder Path'], unnamed[0]['Attachment Index'],
                           unnamed[0]['Media Format']), ('Preview', 'INBOX/Sent', '3', 'PNG'))
 
-    def test_rollback_copy_resolves_files_held_under_the_live_folder(self):
-        snapshot = self.root / 'data' / 'misc_ce' / '0' / 'rollback' / '7' / PKG / 'databases' / 'telekom-database'
+    def test_rollback_copy_keeps_its_own_identical_attachment(self):
+        app = self.root / 'data' / 'misc_ce' / '0' / 'rollback' / '7' / PKG
+        snapshot = app / 'databases' / 'telekom-database'
         database(snapshot)
+        held = app / 'files' / 'attachments' / ACCOUNT / 'INBOX' / 'mail::2' / 'fulls' / '0'
+        held.mkdir(parents=True)
+        (held / 'logo').write_bytes(PNG)
         db = sqlite3.connect(snapshot)
         db.execute("UPDATE Mail SET subject = 'Older'")
         db.commit()
