@@ -1,0 +1,37 @@
+{
+    "samsunga53_a14": {
+        "description": "Public image samsunga53_a14 (Evidence Locker). The 34 Android 14 per-UID jobs_<uid>.xml files in system/job, as extracted.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "R5CW32F0PQH_files_full.zip",
+            "os": "macOS-27.2.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-28T09:47:00.813420",
+            "last_commit": {
+                "hash": "b261878c8e38d0bbea757f891a796d3cdb618317",
+                "author_name": "Brigs",
+                "author_email": "abrignoni@gmail.com",
+                "date": "2026-11-28T08:26:40-05:00",
+                "message": "Address notes audit for Job Scheduler artifact"
+            }
+        },
+        "artifacts": {
+            "job_scheduler_jobs": {
+                "search_patterns": [
+                    "*/system/job/jobs.xml",
+                    "*/system/job/jobs_*.xml"
+                ],
+                "file_count": 34,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        },
+        "image_name": "samsunga53_a14",
+        "image_info": {
+            "os_name": "Android",
+            "os_version": "14",
+            "device_model": "Samsung A53 SM-S536DL"
+        }
+    }
+}

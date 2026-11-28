@@ -1,0 +1,39 @@
+{
+    "samsunga53_a14": {
+        "description": "Public image samsunga53_a14 (Evidence Locker). History files 900000.xml and 99900000.xml as extracted, with the usagestats version file and system/build.prop. 999900000.xml was left out to keep the case small; the image has no 9900000.xml, so the case still covers a skipped level and the ov sum.",
+        "maker": "",
+        "make_data": {
+            "input_data_path": "R5CW32F0PQH_files_full.zip",
+            "os": "macOS-27.2.1-arm64-arm-64bit-Mach-O",
+            "timestamp": "2026-11-28T09:47:04.211161",
+            "last_commit": {
+                "hash": "31a31c90ed7067c501a154f1b78734a86c05956f",
+                "author_name": "Brigs",
+                "author_email": "abrignoni@gmail.com",
+                "date": "2026-11-28T09:13:22-05:00",
+                "message": "App Ops History: per-folder release, blank times after an unreadable file"
+            }
+        },
+        "artifacts": {
+            "app_ops_history_xml": {
+                "search_patterns": [
+                    "*/system/appops/history/*.xml",
+                    "*/system/build.prop",
+                    "*/system/usagestats/*/version",
+                    "*/system_ce/*/usagestats/version"
+                ],
+                "file_count": 4,
+                "expected_output": {
+                    "headers": [],
+                    "data": []
+                }
+            }
+        },
+        "image_name": "samsunga53_a14",
+        "image_info": {
+            "os_name": "Android",
+            "os_version": "14",
+            "device_model": "Samsung A53 SM-S536DL"
+        }
+    }
+}
