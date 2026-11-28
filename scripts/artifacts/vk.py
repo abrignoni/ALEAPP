@@ -10,6 +10,7 @@ __artifacts_v2__ = {
         "category": "Messaging",
         "notes": (
             (
+            (
             "Class and line references are to the VK 8.183 APK (version code 54465) decompiled with jadx "
             "1.5.6, in com/vk/im/engine/internal/storage/delegates unless named in full; the obfuscated "
             "helper classes are in xsna. Reads the messages table of each databases/vkim-<number>.sqlite; "
@@ -40,20 +41,22 @@ __artifacts_v2__ = {
             "contact, above 0 a user, below -2147483648 a group, below -2000000000 an email, below 0 a "
             "group (its id negated), 0 unknown. Conversation is the chat title stored in dialogs, the "
             "user's name or the group's title, and blank when the id is in none of them or is a contact "
-            "or email. Conversation Key joins the Account Number and the Dialog ID, which is what the "
-            "conversation view groups by. Attachments lists the content type of each message_attaches row "
-            "of the message, named from the app's map of attachment classes to numbers (xsna/s34.java:48, "
-            "written at messages/b.java:506). The attachment objects themselves (the attach column, "
-            "written with the app's own Serializer) are not decoded and no attachment file is linked; the "
-            "app has an image cache folder (cache/fresco_cache), and how its file names relate to an "
-            "attachment was not traced. Edited and Hidden are is_edited and is_hidden shown as Yes or No; "
-            "Expire TTL and Delete TTL are expire_ttl and delete_ttl as stored (messages/a.java:418-425), "
-            "and the TTL columns were empty in the test data. Local ID and Conversation Message ID are "
-            "local_id and cnv_msg_id. Not reported: the channel tables (channels, channel_messages, "
-            "channels_recommendations), and what fills them was not traced; the full-text search tables, "
-            "which repeat message and name text (messages/b.java:256); the dialog appearance, theme and "
-            "background tables; and the app's other databases, which were not examined for message "
-            "content.")),
+            "or email. Conversation Key joins the folders above the device storage (when the input holds "
+            "more than one device), the Android User, the Account Number and the Dialog ID, which is what "
+            "the conversation view groups by. Database names the database copy each row was read from, "
+            "and it is left out when copies are compared. Attachments lists the content type of each "
+            "message_attaches row of the message, named from the app's map of attachment classes to "
+            "numbers (xsna/s34.java:48, written at messages/b.java:506). The attachment objects "
+            "themselves (the attach column, written with the app's own Serializer) are not decoded and no "
+            "attachment file is linked; the app has an image cache folder (cache/fresco_cache), and how "
+            "its file names relate to an attachment was not traced. Edited and Hidden are is_edited and "
+            "is_hidden shown as Yes or No; Expire TTL and Delete TTL are expire_ttl and delete_ttl as "
+            "stored (messages/a.java:418-425), and the TTL columns were empty in the test data. Local ID "
+            "and Conversation Message ID are local_id and cnv_msg_id. Not reported: the channel tables "
+            "(channels, channel_messages, channels_recommendations), and what fills them was not traced; "
+            "the full-text search tables, which repeat message and name text (messages/b.java:256); the "
+            "dialog appearance, theme and background tables; and the app's other databases, which were "
+            "not examined for message content."))),
         "paths": ('*/com.vkontakte.android/databases/vkim-*.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "message-circle",
@@ -79,12 +82,14 @@ __artifacts_v2__ = {
         "category": "Messaging",
         "notes": (
             (
+            (
             "Class and line references, Account Number and the reading of database copies are as in VK - "
             "Messages. One row per dialogs row. Dialog ID, Dialog Kind and Conversation are derived as in "
             "VK - Messages. Unread Count is count_unread, Last Conversation Message ID is last_msg_cnv_id "
             "and Members Count is chat_settings_members_count, all as stored; Members Count was empty in "
             "the test data. Messages in Database counts the rows of the messages table for that dialog, "
-            "which need not be every message the conversation had.")),
+            "which need not be every message the conversation had. Database names the database copy each "
+            "row was read from."))),
         "paths": ('*/com.vkontakte.android/databases/vkim-*.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "message-square",
@@ -99,6 +104,7 @@ __artifacts_v2__ = {
         "category": "Messaging",
         "notes": (
             (
+            (
             "Account Number and the reading of database copies are as in VK - Messages. One row per users "
             "row. First Name and Last Name are first_name_nom and last_name_nom (the app also stores "
             "other grammatical cases of the name, not reported). Domain, Mobile Phone and Friend Status "
@@ -108,7 +114,8 @@ __artifacts_v2__ = {
             "stored value has 13 digits; otherwise it is shown in Last Seen (as stored), which is blank "
             "when the value was converted. What sets it was not traced. Birthday joins birthday_year, "
             "birthday_month and birthday_day with hyphens; empty or zero parts are left out. The contacts "
-            "table, which has local_phone, local_name and device_local_id columns, is not reported.")),
+            "table, which has local_phone, local_name and device_local_id columns, is not reported. "
+            "Database names the database copy each row was read from."))),
         "paths": ('*/com.vkontakte.android/databases/vkim-*.sqlite*',),
         "output_types": "standard",
         "artifact_icon": "users",
@@ -196,13 +203,41 @@ def _stores(context):
         relative = context.get_relative_path(path)
         container = canonical_path(context.get_relative_path(os.path.dirname(os.path.dirname(path))))[0]
         entry = stores.setdefault((container, match.group(1)), {
-            'paths': [], 'user': _user(relative), 'account': match.group(1)})
+            'paths': [], 'user': _user(relative), 'account': match.group(1),
+            'root': _evidence_root(relative)})
         entry['paths'].append(path)
     return dict(sorted(stores.items()))
 
 
 def _union(context, entry, query):
     return union_view_rows(context, [(path, _rows(path, query)) for path in entry['paths']])
+
+
+def _union_with_source(context, entry, query):
+    """Rows joined across copies, each ending with the database it was read from.
+
+    The database path differs between copies of one database, so it is left out when the
+    copies' rows are compared."""
+    file_rows = []
+    for path in entry['paths']:
+        relative = context.get_relative_path(path)
+        file_rows.append((path, [tuple(row) + (relative,) for row in _rows(path, query)]))
+    if not file_rows:
+        return []
+    width = max((len(rows[0]) for _, rows in file_rows if rows), default=0)
+    return union_view_rows(context, file_rows, ignore=(width - 1,) if width else ())
+
+
+_ROOT_STOP = ('data', 'data_mirror', 'userdata', 'user', 'user_de')
+
+
+def _evidence_root(relative_path):
+    """The folders above the device's storage in a relative path ('' for a plain /data dump)."""
+    parts = str(relative_path).replace('\\', '/').strip('/').split('/')
+    for index, part in enumerate(parts):
+        if part in _ROOT_STOP or part == PACKAGE:
+            return '/'.join(parts[:index])
+    return '/'.join(parts[:-1])
 
 
 def _dialog_kind(dialog_id):
@@ -266,7 +301,7 @@ def vk_messages(context):
             attaches.setdefault(msg_id, []).append(
                 ATTACH_TYPES.get(content_type, str(content_type)))
         for (local_id, dialog_id, cnv_id, stamp, member_type, member_id, incoming, msg_type, body,
-             edited, hidden, expire_ttl, delete_ttl) in _union(context, entry, '''
+             edited, hidden, expire_ttl, delete_ttl, database) in _union_with_source(context, entry, '''
                 SELECT local_id, dialog_id, cnv_msg_id, time, from_member_type, from_member_id,
                        is_incoming, type, body, is_edited, is_hidden, expire_ttl, delete_ttl
                 FROM messages ORDER BY time'''):
@@ -286,15 +321,21 @@ def vk_messages(context):
                 _ms_to_utc(stamp), direction, sender, _conversation(names, dialog_id), message,
                 ', '.join(attaches.get(local_id, [])), type_name, sender_id_or_blank(member_id),
                 sender_type, dialog_id, _dialog_kind(dialog_id),
-                f"{entry['account']}/{dialog_id}", _yes_no(edited), _yes_no(hidden),
+                _conversation_key(entry, dialog_id), _yes_no(edited), _yes_no(hidden),
                 '' if expire_ttl is None else expire_ttl, '' if delete_ttl is None else delete_ttl,
-                entry['account'], entry['user'], local_id, cnv_id))
+                entry['account'], entry['user'], local_id, cnv_id, database))
     data_headers = (
         ('Timestamp', 'datetime'), 'Direction', 'Sender', 'Conversation', 'Message', 'Attachments',
         'Message Type', 'Sender ID', 'Sender Type', 'Dialog ID', 'Dialog Kind', 'Conversation Key',
         'Edited', 'Hidden', 'Expire TTL (as stored)', 'Delete TTL (as stored)', 'Account Number',
-        'Android User', 'Local ID', 'Conversation Message ID')
+        'Android User', 'Local ID', 'Conversation Message ID', 'Database')
     return data_headers, data_list, '\n'.join(sources)
+
+
+def _conversation_key(entry, dialog_id):
+    """Evidence root, Android user, account number and dialog: one key per conversation."""
+    key = f"{entry['user']}/{entry['account']}/{dialog_id}"
+    return f"{entry['root']}/{key}" if entry['root'] else key
 
 
 def sender_id_or_blank(value):
@@ -314,17 +355,17 @@ def vk_dialogs(context):
         names = _names(context, entry)
         counts = dict(_union(context, entry,
                              'SELECT dialog_id, COUNT(*) FROM messages GROUP BY dialog_id'))
-        for dialog_id, unread, last_msg, members in _union(context, entry, '''
+        for dialog_id, unread, last_msg, members, database in _union_with_source(context, entry, '''
                 SELECT id, count_unread, last_msg_cnv_id, chat_settings_members_count FROM dialogs
                 ORDER BY id'''):
             data_list.append((
                 _conversation(names, dialog_id), dialog_id, _dialog_kind(dialog_id),
                 counts.get(dialog_id, 0), '' if unread is None else unread,
                 '' if last_msg is None else last_msg, '' if members is None else members,
-                entry['account'], entry['user']))
+                entry['account'], entry['user'], database))
     data_headers = ('Conversation', 'Dialog ID', 'Dialog Kind', 'Messages in Database',
                     'Unread Count', 'Last Conversation Message ID', 'Members Count', 'Account Number',
-                    'Android User')
+                    'Android User', 'Database')
     return data_headers, data_list, '\n'.join(sources)
 
 
@@ -341,7 +382,7 @@ def vk_users(context):
     for entry in _stores(context).values():
         sources.extend(entry['paths'])
         for (uid, first, last, domain, phone, friend, blocked, blocked_by_me, deactivated, seen,
-             day, month, year) in _union(context, entry, '''
+             day, month, year, database) in _union_with_source(context, entry, '''
                 SELECT id, first_name_nom, last_name_nom, domain, mobile_phone, friend_status,
                        blocked, blocked_by_me, deactivated, online_last_seen, birthday_day,
                        birthday_month, birthday_year
@@ -352,9 +393,9 @@ def vk_users(context):
                 first or '', last or '', domain or '', phone or '',
                 '' if friend is None else friend, _yes_no(blocked), _yes_no(blocked_by_me),
                 '' if deactivated is None else deactivated, birthday, entry['account'],
-                entry['user']))
+                entry['user'], database))
     data_headers = (('Last Seen', 'datetime'), 'Last Seen (as stored)', 'User ID', 'First Name',
                     'Last Name', 'Domain', 'Mobile Phone', 'Friend Status (as stored)', 'Blocked',
                     'Blocked by Me', 'Deactivated (as stored)', 'Birthday',
-                    'Account Number', 'Android User')
+                    'Account Number', 'Android User', 'Database')
     return data_headers, data_list, '\n'.join(sources)

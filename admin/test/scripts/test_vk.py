@@ -124,5 +124,14 @@ class VkTests(unittest.TestCase):
                  -20: 'Group', -2000000001: 'Email', -2147483649: 'Group', 0: 'Unknown'}
         self.assertEqual({k: vk._dialog_kind(k) for k in cases}, cases)  # pylint: disable=protected-access
 
+    def test_two_android_users_keep_separate_conversations(self):
+        vkim(self.root / 'data/data/com.vkontakte.android/databases/vkim-123.sqlite')
+        vkim(self.root / 'data/user/10/com.vkontakte.android/databases/vkim-123.sqlite',
+             extra_message=(5, 10, 3, MS + 4000, 1, 10, 1, 1, 'user ten', 0, 0, None, None))
+        keys = {(row['Android User'], row['Conversation Key'], row['Database'])
+                for row in self.run_artifact(vk.vk_messages) if row['Dialog ID'] == 10}
+        self.assertEqual({key[1] for key in keys}, {'0/123/10', '10/123/10'})
+        self.assertTrue(all(key[2].endswith('vkim-123.sqlite') for key in keys))
+
 if __name__ == '__main__':
     unittest.main()
