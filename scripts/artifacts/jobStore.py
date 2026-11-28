@@ -1,79 +1,90 @@
 __artifacts_v2__ = {
     "job_scheduler_jobs": {
         "name": "Job Scheduler Persisted Jobs",
-        "description": "Background jobs that apps scheduled with JobScheduler and asked to keep across "
-                       "reboots, with the last successful and failed run times, the scheduled run window "
-                       "and the extras the app attached.",
+        "description": "Jobs scheduled with JobScheduler and marked persisted, which the platform keeps "
+                       "across reboots, with the recorded last successful and failed run times, the "
+                       "scheduled run window and the extras attached to the job.",
         "author": "@AlexisBrignoni, Claude",
         "creation_date": "2026-11-28",
         "last_update_date": "2026-11-28",
         "requirements": "none",
         "category": "Installed Apps",
         "notes": (
-            "Reads the JobScheduler store in system/job: jobs.xml, one file for all apps, and "
-            "jobs_<uid>.xml, one file per app UID, which JobStore writes from Android 14 "
-            "(JOB_FILE_SPLIT_PREFIX, "
+            "Reads the JobScheduler store in system/job: jobs.xml, one file for all jobs, and "
+            "jobs_<uid>.xml, one file per UID, which JobStore writes from Android 14 when its "
+            "split-file setting is on (JOB_FILE_SPLIT_PREFIX, "
             "https://android.googlesource.com/platform/frameworks/base/+/6e47c7075b91983ae501114425ea25e6df7690c8/apex/jobscheduler/service/java/com/android/server/job/JobStore.java#101 "
-            "and #738). In the tested images jobs.xml held the jobs on the 7 Android 10 to 13 images "
-            "and the per-UID files on the 3 Android 14 and 16 images. One row per job element. Only "
-            "jobs the app marked as persisted are written (JobStore.java at android13-release, "
+            "and #734-738). In the tested images jobs.xml held the jobs on the 7 Android 10 to 13 "
+            "images and the per-UID files on the 3 Android 14 and 16 images. One row per job "
+            "element. Only jobs marked as persisted are written (JobStore.java at android13-release, "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/apex/jobscheduler/service/java/com/android/server/job/JobStore.java#466), "
-            "so a job an app did not ask to keep across reboots is not here, and the file holds the "
-            "jobs scheduled when it was last written, not every job that ever ran.\nThe fields and "
-            "their meanings are AOSP JobStore's (addAttributesToJobTag, writeConstraintsToXml, "
-            "writeExecutionCriteriaToXml and writeBundleToXml, JobStore.java#537-652 at "
+            "so a job not marked persisted is not here, and the file holds the jobs scheduled when "
+            "it was last written, not every job that ever ran.\nThe fields and their meanings are "
+            "AOSP JobStore's (addAttributesToJobTag, writeConstraintsToXml, "
+            "writeExecutionCriteriaToXml and writeBundleToXml, JobStore.java#537-668 at "
             "android13-release, and the same methods at android14-release, which add Namespace and "
-            "Cumulative Execution Time). The writer was checked at the android10, 11, 12, 13, 14, 15 "
-            "and 16 release branches. On all 10 tested images, Samsung ones included, every "
-            "attribute and child element was one the AOSP writer writes.\nLast Successful Run is "
-            "lastSuccessfulRunTime, the wall clock time JobSchedulerService records when it "
-            "reschedules a periodic job after a run finished (getRescheduleJobForPeriodic, "
+            "Cumulative Execution Time). The attribute and element names the writer emits were read "
+            "at the android10 to android16 release branch heads on 2026-11-28. On all 10 tested "
+            "images, Samsung ones included, every attribute and child element was one the AOSP "
+            "writer writes. On samsungs20_a13 the file was text XML in a layout the AOSP writer does "
+            "not produce, as were that image's other system XML files; how the extraction came to "
+            "hold it in that form was not established, and it is read as given.\nLast Successful Run "
+            "is lastSuccessfulRunTime, the wall clock time JobSchedulerService at android13-release "
+            "records when it reschedules a periodic job after a run (getRescheduleJobForPeriodic, "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/apex/jobscheduler/service/java/com/android/server/job/JobSchedulerService.java#1934 "
             "and #1949). It was set only on periodic jobs: 1,306 of the 2,047 tested rows, none of "
             "them one-off. Last Failed Run is lastFailedRunTime, the wall clock time recorded when a "
             "job is rescheduled after a failure (getRescheduleJobForFailureLocked, "
             "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/apex/jobscheduler/service/java/com/android/server/job/JobSchedulerService.java#1843), "
             "set on 134 rows. Both are Unix milliseconds rendered in UTC, and the platform writes 0 "
-            "when the time was never recorded, shown as blank.\nEarliest Run and Deadline are the "
-            "delay and deadline attributes. At write time JobStore converts the job's elapsed-time "
-            "window to wall clock with the clock it had then, or writes the wall clock times it read "
-            "at boot if it has not yet been able to convert them "
+            "when the time was never recorded, shown as blank. JobSchedulerService was read at "
+            "android13-release only.\nEarliest Run and Deadline are the delay and deadline "
+            "attributes. At write time JobStore converts the job's elapsed-time window to wall clock "
+            "with the clock it had then, or writes the wall clock times it read at boot if it has "
+            "not yet been able to convert them "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/apex/jobscheduler/service/java/com/android/server/job/JobStore.java#639-652). "
             "They are blank when the job has no delay or no deadline.\nSource Package is "
-            "sourcePackageName, the app the job runs for, or the package of the job service when the "
-            "file names none. Job Service Package and Job Service Class name the service that runs "
-            "the job; for account sync jobs that is android and "
-            "com.android.server.content.SyncJobService. Source Tag was set only on those sync jobs, "
-            "375 of 375 rows, and SyncManager builds it as provider/account type/account name "
-            "(SyncOperation.wakeLockName, "
-            "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/content/SyncOperation.java#586-593, "
-            "passed as the tag at "
-            "https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/content/SyncManager.java#1691), "
-            "so it names the sync authority and the account. Source User is sourceUserId, the "
-            "Android user, as stored; it held one value on all rows of some images. UID and Job ID "
-            "are as stored.\nSchedule is Periodic or One-off from the element the job carries; Period "
-            "(ms) and Flex (ms) are the periodic job's interval and flex window. Constraints lists "
-            "the constraint attributes present: network when a network requirement is written, then "
-            "idle, charging, battery-not-low, storage-not-low and the Android 14 prefer- forms. The "
-            "network capability and transport numbers are not decoded or shown.\nCumulative Execution "
-            "Time (ms) is cumulativeExecutionTime, written from Android 14, the time the job has "
-            "run, reset for periodic jobs after a successful run (JobStatus.java, "
+            "sourcePackageName, which JobStatus describes as the app in which the job is hosted "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/apex/jobscheduler/service/java/com/android/server/job/controllers/JobStatus.java#193-196), "
+            "or the package of the job service when the file names none; no tested job lacked it. "
+            "Job Service Package and Job Service Class name the service that runs the job; for "
+            "account sync jobs that is android and com.android.server.content.SyncJobService, and "
+            "only on those 375 rows did Source Package differ from Job Service Package. Source Tag "
+            "was set only on those sync jobs, 375 of 375 rows. SyncManager passes "
+            "SyncOperation.wakeLockName as the tag "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/content/SyncManager.java#1691-1692). "
+            "At android13-release and android14-release that is provider/account type/account name "
+            "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/services/core/java/com/android/server/content/SyncOperation.java#586-593), "
+            "and the 327 tags on the 9 Android 10 to 14 images have three parts, so they name the "
+            "sync authority and the account. At android15-release it is provider/account type only "
+            "(https://android.googlesource.com/platform/frameworks/base/+/cc8bb19595c661f5cf42f330457000e643c67d1b/services/core/java/com/android/server/content/SyncOperation.java#586-592), "
+            "and the 48 tags on the Android 16 image have two parts, with no account name. Source "
+            "User is sourceUserId, the Android user, as stored; it held one value on 6 of the 10 "
+            "images. UID and Job ID are as stored.\nSchedule is Periodic or One-off from the element "
+            "the job carries; Period (ms) and Flex (ms) are the periodic job's interval and flex "
+            "window. Constraints lists the constraint attributes present: network when a network "
+            "requirement is written, then idle, charging, battery-not-low, storage-not-low and the "
+            "Android 14 prefer- forms; no tested job had a prefer- attribute. The network capability "
+            "and transport numbers are not decoded or shown.\nCumulative Execution Time (ms) is "
+            "cumulativeExecutionTime, written from Android 14, the time the job has run, reset for "
+            "periodic jobs after a successful run (JobStatus.java, "
             "https://android.googlesource.com/platform/frameworks/base/+/6e47c7075b91983ae501114425ea25e6df7690c8/apex/jobscheduler/service/java/com/android/server/job/controllers/JobStatus.java#408-412). "
             "It was blank on the Android 13 and earlier images and 0 on 510 of the 517 later rows. "
-            "Namespace is written from Android 14 when the app set one.\nExtras is the "
-            "PersistableBundle the app attached, one name = value line per entry in the element "
+            "Namespace is written from Android 14 when the job has one.\nExtras is the "
+            "PersistableBundle attached to the job, one name = value line per entry in the element "
             "forms XmlUtils.writeValueXml writes, a nested bundle's names joined with a dot and an "
             "array's items in brackets "
             "(https://android.googlesource.com/platform/frameworks/base/+/d27f9960456403533af0a0d5d9f14cf71c9c8cf6/core/java/com/android/internal/util/XmlUtils.java#830). "
-            "The names and values are the app's own and their meaning is not established here. "
-            "Android 14 work items (job-work-item) are added to Extras with a work item number; none "
-            "of the tested images had one.\nNot shown: bias, priority, flags, internalFlags, back-off "
-            "policy, the network capability numbers, the estimated byte counts and the Android 15 "
-            "debug tags, which describe how the scheduler treats a job rather than what the app "
-            "did.\nCopies of one file under storage-view spellings are reported once. A Source File "
-            "column is added when jobs files are read from more than one job folder; a test tree "
-            "with two copies of one image's folder and a third image's file gave each copy its own "
-            "rows under its path."),
+            "The names and values are set by whoever scheduled the job and their meaning is not "
+            "established here. A bundle nested more than 10 levels deep is shown as (nested bundle "
+            "not read); none was. Android 14 work items (job-work-item) are read from the item's "
+            "extras element and added to Extras with a work item number; this path is unexercised, "
+            "as none of the tested images had one.\nNot shown: bias, priority, flags, internalFlags, "
+            "the back-off policy and initial back-off, the network capability and transport numbers, "
+            "the estimated and minimum network byte counts, the work item delivery count, and the "
+            "Android 15 debug and trace tags.\nA Source File column is added when jobs files are read "
+            "from more than one job folder; a test tree with two copies of one image's folder and a "
+            "third image's file gave each copy its own rows under its path."),
         "paths": ('*/system/job/jobs.xml', '*/system/job/jobs_*.xml'),
         "output_types": "standard",
         "artifact_icon": "clock",
@@ -83,11 +94,11 @@ __artifacts_v2__ = {
             "galaxys10_a10": "Android 10 | 164 rows",
             "pixel3_a11": "Android 11 | 269 rows",
             "pixel3_a12": "Android 12 | 168 rows",
-            "pixel7a_a14": "Android 14 | 209 rows from 38 per-UID files",
+            "pixel7a_a14": "Android 14 | 209 rows, 38 per-UID files read (5 with no jobs)",
             "russell_pixel6a_a13": "Android 13 | 359 rows",
             "s20fe_a13": "Android 13 | 126 rows",
-            "samsung_a166u_a16_known_20261116": "Android 16 | 137 rows from 29 per-UID files",
-            "samsunga53_a14": "Android 14 | 171 rows from 34 per-UID files",
+            "samsung_a166u_a16_known_20261116": "Android 16 | 137 rows, 29 per-UID files read (3 with no jobs)",
+            "samsunga53_a14": "Android 14 | 171 rows, 34 per-UID files read (6 with no jobs)",
             "samsungs20_a13": "Android 13 | 185 rows",
         },
     },
@@ -184,7 +195,8 @@ def _job_row(job):
     if element is not None:
         extras.extend(_bundle_lines(element))
     for number, item in enumerate(job.findall('job-work-item'), 1):
-        for line in _bundle_lines(item):
+        item_extras = item.find('extras')
+        for line in (_bundle_lines(item_extras) if item_extras is not None else []):
             extras.append(f'work item {number}: {line}')
 
     return (
