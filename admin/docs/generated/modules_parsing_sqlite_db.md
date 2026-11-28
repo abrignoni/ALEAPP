@@ -101,6 +101,7 @@ This document outlines LEAPP modules parsing SQLite databases using the new `get
 | musicolet |
 | mxPlayer |
 | netflix |
+| notificationLog |
 | novaLauncher |
 | openTracks |
 | orgzly |
