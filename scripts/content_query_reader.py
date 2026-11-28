@@ -549,7 +549,8 @@ def read_tool_status(path):
     """(status, uri, problem) of an ALEX .status.json.
 
     status is the status as written, '' when there is none to show; uri is the URI the file
-    names, '' when it names none that can be shown; problem says why either is missing, or ''."""
+    names, '' when the file has no uri key, None when the key holds no URI that can be read (a
+    status that cannot be tied to a query); problem says why either is missing, or ''."""
     try:
         with open(path, 'rb') as handle:
             raw = handle.read()
@@ -563,11 +564,14 @@ def read_tool_status(path):
         return '', '', f'status file is not JSON: {type(error).__name__}'
     if not isinstance(data, dict):
         return '', '', 'status file holds no status text'
-    uri, problems = data.get('uri'), []
-    if not isinstance(uri, str) or not uri.strip():
-        uri = ''
+    uri, problems = data.get('uri', ''), []
+    if 'uri' not in data:
+        pass
+    elif not isinstance(uri, str) or not uri.strip():
+        uri = None
+        problems.append('status file holds a URI that is not text')
     elif not _writable(uri):
-        uri = ''
+        uri = None
         problems.append('status file holds a URI that is not valid text (a lone surrogate)')
     status = data.get('status')
     if not isinstance(status, str) or not status.strip():

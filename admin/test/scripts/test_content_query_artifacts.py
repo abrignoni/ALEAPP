@@ -4,6 +4,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO_ROOT))
@@ -264,6 +265,23 @@ class AlexPrfsTest(unittest.TestCase):
         sms = by_file['sms/sms.txt']
         self.assertEqual((sms['URI'], sms['Status'], sms['Tool Status']), ('content://sms', reader.ROWS, 'empty'))
         self.assertEqual(sms['Detail'], 'the status file names content://sms/inbox, not the URI of this file name')
+
+    def test_status_of_a_uri_that_is_not_text_is_not_compared_with_the_text(self):
+        # A status file whose uri key holds no text cannot be tied to this query: its status is shown
+        # as written, but not compared with the text, in Detail or in the log.
+        for uri in ('7', '"content://\\udfff"'):
+            with self.subTest(uri=uri):
+                self.paths.clear()
+                self.write('sms/sms', 'Row: 0 _id=12, body=Hi\n', '{"uri": %s, "status": "empty"}' % uri)
+                with mock.patch.object(contentQuery, 'logfunc') as log:
+                    _names, by_file, _no_name, _sources = self.files()
+                sms = by_file['sms/sms.txt']
+                self.assertEqual((sms['URI'], sms['Status'], sms['Tool Status']),
+                                 ('content://sms', reader.ROWS, 'empty'))
+                self.assertNotIn('ALEX wrote', sms['Detail'])
+                self.assertIn(contentQuery.NOTE_STATUS_NOT_COMPARED, sms['Detail'])
+                self.assertIn('status file holds a URI that is not', sms['Detail'])
+                self.assertFalse([call for call in log.call_args_list if 'ALEX status' in str(call)])
 
     def test_nested_prfs_folder_keeps_its_own_status_files(self):
         # A PRFS folder inside another: each folder takes only the status files of its own files.

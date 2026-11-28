@@ -295,8 +295,12 @@ class LayoutTest(unittest.TestCase):
             self.assertEqual(status_of(b'{"status": "\\ud800"}'),
                              ('', '', 'status file holds a status that is not valid text (a lone surrogate)'))
             self.assertEqual(status_of(b'{"uri": "content://\\udfff", "status": "rows"}'),
-                             ('rows', '', 'status file holds a URI that is not valid text (a lone surrogate)'))
-            self.assertEqual(status_of(b'{"uri": 7, "status": "rows"}'), ('rows', '', ''))
+                             ('rows', None, 'status file holds a URI that is not valid text (a lone surrogate)'))
+            # A uri key that holds no text gives None, unlike a missing key: the status cannot be tied to a query.
+            not_text = 'status file holds a URI that is not text'
+            for value in (b'7', b'null', b'""', b'" "', b'["content://sms"]'):
+                self.assertEqual(status_of(b'{"uri": ' + value + b', "status": "rows"}'), ('rows', None, not_text))
+            self.assertEqual(status_of(b'{"uri": 7}'), ('', None, no_status + '; ' + not_text))
             # Deep nesting: json.loads raises RecursionError up to Python 3.13 and reads the array from
             # 3.14 on. Either way the file gets a problem text and no status.
             self.assertIn(status_of(b'[' * 100000 + b']' * 100000),

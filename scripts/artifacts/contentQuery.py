@@ -53,7 +53,8 @@ __artifacts_v2__ = {
                  "cannot be written as UTF-8), and, on a row of its own, when a status file has no text file "
                  "beside it. URI is the one the file name stands for; for a file no artifact reads, it is the URI "
                  "the status file names, and Detail says so; a status file naming another URI than the file name "
-                 "is flagged in Detail, and its status is not compared with the text. The <name>.json ALEX writes "
+                 "is flagged in Detail, and its status is not compared with the text, nor is the status of a "
+                 "status file whose URI is not text. The <name>.json ALEX writes "
                  "with JSON output on is not read. A row of a folder "
                  "can say 'not queried by this tool' when the layout has no file for "
                  "that URI (android_triage does not query SMS, MMS or the call log; ALEX does not query "
@@ -643,6 +644,8 @@ NOTE_ADDRESSES_UNKNOWN = ('addresses unknown: no mms/mms_addr.txt in this folder
 NOTE_ADDRESSES_ABSENT = ('addresses unknown: no mms/mms_addr.txt in this folder of the extraction (ALEX writes one '
                          'into its PRFS zip for every query it runs)')
 NOTE_URI_FROM_STATUS = 'URI as the status file names it'
+NOTE_STATUS_NOT_COMPARED = ('the status was not compared with the text: the status file names no URI that can '
+                            'be read')
 NOTE_NO_ADDRESS_ROWS = 'no FROM, TO, CC or BCC rows for this message in mms_addr.txt'
 NOTE_ADDRESSES_INCOMPLETE = ('addresses unknown: no FROM, TO, CC or BCC row for this message was read, and '
                              'mms_addr.txt is incomplete ({reason})')
@@ -1042,7 +1045,7 @@ def _shown_uri(uri, tool_uri, notes):
     if not uri:
         if tool_uri:
             notes.append(NOTE_URI_FROM_STATUS)
-        return tool_uri
+        return tool_uri or ''
     if tool_uri and tool_uri != uri:
         notes.append(f'the status file names {tool_uri}, not the URI of this file name')
     return uri
@@ -1061,9 +1064,10 @@ def _file_row(context, layout, folder_relative, uri, path, read_by, statuses, so
     relative = _relative(context, path)
     name = relative[len(folder_relative) + 1:] if relative.startswith(folder_relative + '/') else relative
     tool_status, tool_uri, problem = _tool_status(layout, relative, statuses, sources)
-    # A status file naming another URI than the file name describes another query: its status is
-    # shown as written, but not compared with this file's text.
-    same_query = not (uri and tool_uri and tool_uri != uri)
+    # A status file naming another URI than the file name describes another query, and one whose URI
+    # cannot be read cannot be tied to this query: its status is shown as written, but not compared with
+    # this file's text.
+    same_query = tool_uri is not None and not (uri and tool_uri and tool_uri != uri)
     uri_notes = []
     uri = _shown_uri(uri, tool_uri, uri_notes)
     try:
@@ -1073,6 +1077,8 @@ def _file_row(context, layout, folder_relative, uri, path, read_by, statuses, so
         detail = '; '.join(filter(None, [_read_error(error)] + uri_notes + [problem]))
         return (layout, folder_relative, uri, name, reader.UNREADABLE, tool_status, '', detail, '', read_by)
     notes = ([dump.detail] if dump.detail else []) + dump.warnings + uri_notes + ([problem] if problem else [])
+    if tool_uri is None and tool_status:
+        notes.append(NOTE_STATUS_NOT_COMPARED)
     if same_query and reader.tool_status_disagrees(tool_status, dump.status):
         notes.append(f'ALEX wrote status {tool_status} for this file, which its own row parser sets; the text '
                      f'reads as {dump.status}')
