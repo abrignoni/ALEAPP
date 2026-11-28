@@ -194,5 +194,12 @@ class WamrTests(unittest.TestCase):
                           rows['org.example.earlier']['Captured Notifications']), ('No', 0))
 
 
+    def test_a_null_monitored_list_reads_as_no_list(self):
+        settings_db(self.app() / 'settings.db', 'NULL')
+        notifs_db(self.app() / 'notifs.db', {'org.example.chat': []})
+        rows = self.run_artifact(wamr.wamr_monitored_apps)
+        self.assertEqual([(row['App'], row['In Monitored List']) for row in rows],
+                         [('org.example.chat', 'No')])
+
 if __name__ == '__main__':
     unittest.main()
