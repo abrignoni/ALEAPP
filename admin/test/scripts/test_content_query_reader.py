@@ -5,6 +5,7 @@ import sys
 import tempfile
 import tracemalloc
 import unittest
+from unittest import mock
 from datetime import datetime, timezone
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -195,6 +196,74 @@ class ParseRowsTest(unittest.TestCase):
         self.assertEqual(names, ['_id', 'a0', 'a2', 'z0'])
         self.assertLessEqual(CountingList.reads, 4 * len(candidates) + 20)
         self.assertEqual(names, reader._row_zero_names(list(candidates)))  # pylint: disable=protected-access
+
+    def test_ranking_cost_is_linear_and_bounded_by_distinct_row_zero_names(self):
+        # The cost written in _sequence_test, on every shape the reviews of #2172 raised, with a
+        # small cap so that several rounds run: names held by the two sides at most
+        # D0 + max(cap, 4 * D0), and at most four reads per candidate (plus one per round).
+        cap = 4
+
+        def row_zero(names, repeat=1):
+            return ''.join(f'Row: 0 {name}=x\n' for name in names for _ in range(repeat))
+
+        def row_one(names):
+            return ''.join(f'Row: 1 {name}=x\n' for name in names)
+
+        def distinct(prefix, count):
+            return [f'{prefix}{i}' for i in range(count)]
+
+        shapes = {
+            'few Row: 0, many unrelated Row: 1': row_zero(distinct('a', 4)) + row_one(distinct('m', 2000)),
+            'many Row: 0, one Row: 1': row_zero(distinct('a', 2000)),
+            'many on both sides': row_zero(distinct('a', 2000)) + row_one(distinct('m', 2000)),
+            'few Row: 0 repeated past many Row: 1': row_zero(distinct('a', 4), 600) + row_one(distinct('m', 2000)),
+            'Row: 0 just past a cap, Row: 1 far past it': row_zero(distinct('a', 4 ** 4)) + row_one(distinct('m', 4 ** 5 + 1)),
+            'repeated prefix, then many on both sides': ''.join(f'Row: {i % 2} p{i % 4}=x\n' for i in range(4000))
+                                                        + row_zero(distinct('a', 600)) + row_one(distinct('m', 600)),
+        }
+        held = []
+
+        class LastRowOne(reader._LastRowOne):  # pylint: disable=protected-access
+            def scan(self, cap):
+                done = super().scan(cap)
+                held.append(('one', len(self.last)))
+                return done
+
+        class RowZeroInSequence(reader._RowZeroInSequence):  # pylint: disable=protected-access
+            def scan(self, cap):
+                done = super().scan(cap)
+                held.append(('zero', len(self.first)))
+                return done
+
+        class CountingList(list):
+            reads = 0
+
+            def __iter__(self):
+                for row in list.__iter__(self):
+                    CountingList.reads += 1
+                    yield row
+
+        for shape, body in shapes.items():
+            with self.subTest(shape=shape):
+                text = 'Row: 0 _id=1, body=x\n' + body + 'Row: 1 _id=2, body=y\n'
+                candidates = CountingList(reader._candidates(reader._lines(text)))  # pylint: disable=protected-access
+                row_zero_names = {rest.split('=', 1)[0] for _index, number, rest in candidates if number == 0}
+                del held[:]
+                CountingList.reads = 0
+                with mock.patch.object(reader, 'SEQUENCE_INDEX_CAP', cap), \
+                        mock.patch.object(reader, '_LastRowOne', LastRowOne), \
+                        mock.patch.object(reader, '_RowZeroInSequence', RowZeroInSequence):
+                    names = reader._row_zero_names(candidates)  # pylint: disable=protected-access
+                reads = CountingList.reads
+                self.assertEqual(names, reader._row_zero_names(list(candidates)))  # pylint: disable=protected-access
+                latest, most = {}, 0
+                for side, count in held:
+                    latest[side] = count
+                    most = max(most, sum(latest.values()))
+                d0 = len(row_zero_names)
+                self.assertTrue(held)
+                self.assertLessEqual(most, d0 + max(cap, 4 * d0))
+                self.assertLessEqual(reads, 4 * len(candidates) + len(held))
 
     def test_row_zero_name_forming_a_sequence_is_tried_after_many_leading_lines(self):
         # More leading 'Row: 0' lines with distinct first columns than MAX_READINGS: the name

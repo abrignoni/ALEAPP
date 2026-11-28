@@ -175,7 +175,14 @@ def _sequence_test(candidates):
     'Row: 0' line of each name. Which side that is is not known in advance, so each side is
     tried in turn with a cap on its distinct names, SEQUENCE_INDEX_CAP at first and four
     times larger on each round, until one fits. Each side keeps its partial index and
-    resumes at the candidate where it stopped, so each reads the candidates at most once."""
+    resumes at the candidate where it stopped, so each reads the candidates at most once.
+
+    Cost, with D0 the distinct 'Row: 0' names: time linear in the number of candidates (each
+    side reads every candidate once, plus one more read of the candidate it stopped at per
+    round); memory of at most D0 + max(SEQUENCE_INDEX_CAP, 4 * D0) names in all. The 'Row: 0'
+    side never holds more than D0. The 'Row: 1' side holds at most the current cap, and the
+    last round's cap is SEQUENCE_INDEX_CAP or under four times the smaller name count, since
+    both sides went past the cap of the round before."""
     row_one, row_zero = _LastRowOne(candidates), _RowZeroInSequence(candidates)
     cap = SEQUENCE_INDEX_CAP
     while True:
@@ -258,7 +265,10 @@ def _row_zero_names(candidates):
     lines. Otherwise which names form a sequence is found first (see _sequence_test), then the
     'Row: 0' lines are read in order. A name left out at its first 'Row: 0' line stays out:
     its list was full, and a later line of a sequence name past its last 'Row: 1' line could
-    only make it a fallback, which is not used when the sequence names fill the shortlist."""
+    only make it a fallback, which is not used when the sequence names fill the shortlist.
+
+    Cost: time linear in the number of candidates; memory bounded by the distinct 'Row: 0'
+    names (see _sequence_test), whatever the 'Row: 1' lines hold."""
     names = []
     for _index, number, rest in candidates:
         name = FIRST_NAME.match(rest) if number == 0 else None
