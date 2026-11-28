@@ -282,6 +282,24 @@ class AlexPrfsTest(unittest.TestCase):
                                  + contentQuery.NOTE_STATUS_NOT_COMPARED)
                 self.assertFalse([call for call in log.call_args_list if 'ALEX status' in str(call)])
 
+    def test_status_file_over_the_limit_is_not_read(self):
+        # A status file over STATUS_FILE_LIMIT is not parsed: Status still comes from the text, Tool
+        # Status is blank and Detail says why, with nothing compared.
+        self.write('sms/sms', 'Row: 0 _id=12, body=Hi\n', '{"uri": "content://sms", "status": "empty"}')
+        with mock.patch.object(reader, 'STATUS_FILE_LIMIT', 10):
+            _names, by_file, _no_name, _sources = self.files()
+        sms = by_file['sms/sms.txt']
+        self.assertEqual((sms['Status'], sms['Tool Status']), (reader.ROWS, ''))
+        self.assertEqual(sms['Detail'], 'status file is larger than 10 bytes, not read')
+
+    def test_long_uri_of_a_status_file_is_cut_in_detail(self):
+        long_uri = 'content://sms/' + 'a' * 1000
+        self.write('sms/sms', 'Row: 0 _id=12, body=Hi\n', '{"uri": "%s", "status": "rows"}' % long_uri)
+        _names, by_file, _no_name, _sources = self.files()
+        detail = by_file['sms/sms.txt']['Detail']
+        self.assertTrue(detail.startswith('the status file names content://sms/aaa'), detail)
+        self.assertLess(len(detail), 500)
+
     def test_nested_prfs_folder_keeps_its_own_status_files(self):
         # A PRFS folder inside another: each folder takes only the status files of its own files.
         self.write('call_log/call_log_calls', 'No result found.\n', '{"status": "empty"}')

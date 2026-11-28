@@ -49,8 +49,9 @@ __artifacts_v2__ = {
                  "exactly 'No result found.', error otherwise. Status still comes from the text, and Detail says "
                  "when ALEX's status does not stand for it (rows for rows; empty for 'No result found.' or an "
                  "empty file; error for access denied, provider error or text not recognised), when the status "
-                 "file is missing, cannot be read or holds no usable status (none, only white space, or text that "
-                 "cannot be written as UTF-8), and, on a row of its own, when a status file has no text file "
+                 "file is missing, cannot be read, is larger than 1 MiB (not read) or holds no status that is "
+                 "valid text (anything but text that is not only white space and can be written as UTF-8), and, "
+                 "on a row of its own, when a status file has no text file "
                  "beside it. URI is the one the file name stands for; for a file no artifact reads, it is the URI "
                  "the status file names, and Detail says so; a status file naming another URI than the file name "
                  "is flagged in Detail, and its status is not compared with the text, nor is the status of a "
@@ -1046,7 +1047,7 @@ def _shown_uri(uri, tool_uri, notes):
             notes.append(NOTE_URI_FROM_STATUS)
         return tool_uri or ''
     if tool_uri and tool_uri != uri:
-        notes.append(f'the status file names {tool_uri}, not the URI of this file name')
+        notes.append(f'the status file names {reader._cut(tool_uri)}, not the URI of this file name')  # pylint: disable=protected-access
     return uri
 
 
